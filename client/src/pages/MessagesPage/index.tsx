@@ -2,11 +2,23 @@ import React, { useState, useMemo, useContext } from 'react'
 import Box from '@mui/material/Box'
 import ChatMessageList from '../../components/Chat/ChatMessageList'
 import Chat from '../../components/Chat/Chat'
-import { useQuery } from '@apollo/client'
-import { GET_LATEST_MESSAGES } from '../../graphql/queries/messages'
 import AppContext from '../../config/context'
 import { User } from '../../types'
 
+
+interface UserProp {
+    _id: string
+    firstName: string
+    lastName: string
+}
+
+interface MessageProp {
+    messageId: string
+    message: string
+    createdAt: number
+    fromUser: UserProp
+    toUser: UserProp
+}
 
 interface Message {
     _id: string
@@ -19,36 +31,23 @@ interface Message {
     timestamp: number
 }
 
-export default function MessagesPage () {
+interface MessagesPageProps {
+    latestMessages: MessageProp[]
+    latestMessagesCount: number
+    latestMessagesLoading: boolean
+    fetchMoreMessages: () => void
+}
+
+export default function MessagesPage (props: MessagesPageProps) {
 
     const context = useContext(AppContext)
     const loggedInUser = context.loggedInUser as User
 
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
-    const { data, fetchMore, loading } = useQuery(GET_LATEST_MESSAGES, {
-        variables: {
-            offset: 0,
-            limit: 10,
-        },
-    })
-
-    const total = useMemo(() => {
-        const total = data?.getLatestMessages?.total
-        return total ?? 0
-    }, [data])
-
-    const latestMessages = useMemo(() => {
-        const latestMessages = data?.getLatestMessages?.data
-        if (Array.isArray(latestMessages)) {
-            return latestMessages
-        }
-        return []
-    }, [data])
-
     const messages: Message[] = useMemo(() => {
-        if (Array.isArray(latestMessages)) {
-            return latestMessages.map(message => {
+        if (Array.isArray(props.latestMessages)) {
+            return props.latestMessages.map(message => {
                 const user = message.fromUser._id === loggedInUser._id ? message.toUser : message.fromUser
                 return {
                     _id: message.messageId,
@@ -62,7 +61,7 @@ export default function MessagesPage () {
             })
         }
         return []
-    }, [latestMessages, selectedUserId])
+    }, [props.latestMessages, selectedUserId])
 
     const handleClickUser = (_id: string) => {
         setSelectedUserId(_id)
@@ -74,14 +73,6 @@ export default function MessagesPage () {
 
     const handleMessage = () => {
 
-    }
-
-    const handleFetchMore = () => {
-        fetchMore({
-            variables: {
-                offset: latestMessages.length,
-            }
-        })
     }
 
     return (
@@ -123,12 +114,12 @@ export default function MessagesPage () {
                     <ChatMessageList
                         username={loggedInUser.username}
                         messages={messages}
-                        messagesLoading={loading}
+                        messagesLoading={props.latestMessagesLoading}
                         onClickUser={handleClickUser}
                         onViewProfile={handleViewProfile}
                         onMessage={handleMessage}
-                        onFetchMore={handleFetchMore}
-                        hasMore={latestMessages.length < total} />
+                        onFetchMore={props.fetchMoreMessages}
+                        hasMore={props.latestMessages.length < props.latestMessagesCount} />
                     <Chat />
                 </Box>
             </Box>
