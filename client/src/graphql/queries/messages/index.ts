@@ -24,3 +24,19 @@ export const GET_LATEST_MESSAGES = gql`
         }
     }    
 `
+
+export const GET_LATEST_CHAT_MESSAGES = gql`
+    query getLatestChatMessages($userId: String!, $offset: Int!, $limit: Int!) {
+        getLatestChatMessages(userId: $userId, offset: $offset, limit: $limit) {
+            total
+            data {
+                _id
+                fromUserId
+                toUserId
+                message
+                photoURL
+                createdAt
+            }
+        }
+    }
+`
