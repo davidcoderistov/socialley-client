@@ -26,7 +26,7 @@ export default function MessagesPage () {
 
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
-    const { data, fetchMore } = useQuery(GET_LATEST_MESSAGES, {
+    const { data, fetchMore, loading } = useQuery(GET_LATEST_MESSAGES, {
         variables: {
             offset: 0,
             limit: 10,
@@ -123,6 +123,7 @@ export default function MessagesPage () {
                     <ChatMessageList
                         username={loggedInUser.username}
                         messages={messages}
+                        messagesLoading={loading}
                         onClickUser={handleClickUser}
                         onViewProfile={handleViewProfile}
                         onMessage={handleMessage}

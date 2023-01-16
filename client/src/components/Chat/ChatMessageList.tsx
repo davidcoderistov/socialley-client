@@ -25,6 +25,7 @@ interface Props {
     onViewProfile: () => void
     onMessage: () => void
     messages: Message[]
+    messagesLoading: boolean
     onClickUser: (userId: string) => void
     onFetchMore: () => void
     hasMore: boolean
@@ -173,7 +174,21 @@ export default function ChatMessageList (props: Props) {
                             paddingTop='8px'
                             sx={{ overscrollBehavior: 'contain' }}
                         >
-                            { props.messages.length > 0 ? (
+                            { props.messagesLoading ? (
+                                <Box
+                                    component='div'
+                                    display='flex'
+                                    position='relative'
+                                    flexDirection='column'
+                                    paddingY='0'
+                                >
+                                    { _range(10).map(index => (
+                                        <ChatMessageListItem
+                                            key={index}
+                                            loading={true} />
+                                    ))}
+                                </Box>
+                            ) : props.messages.length > 0 ? (
                                 <InfiniteScroll
                                     next={props.onFetchMore}
                                     hasMore={props.hasMore}
@@ -217,16 +232,19 @@ export default function ChatMessageList (props: Props) {
                             ) : (
                                 <Box
                                     component='div'
+                                    height='100%'
+                                    width='100%'
                                     display='flex'
-                                    position='relative'
                                     flexDirection='column'
-                                    paddingY='0'
+                                    justifyContent='center'
+                                    alignItems='center'
                                 >
-                                    { _range(10).map(index => (
-                                        <ChatMessageListItem
-                                            key={index}
-                                            loading={true} />
-                                    ))}
+                                    <Typography
+                                        variant='body2'
+                                        color='#757575'
+                                    >
+                                        No new messages
+                                    </Typography>
                                 </Box>
                             )}
                         </Box>
