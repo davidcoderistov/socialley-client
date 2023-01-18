@@ -53,6 +53,15 @@ const cache = new InMemoryCache({
                             data: [...existing.data, ...incoming.data],
                         }
                     }
+                },
+                getLatestChatMessages: {
+                    keyArgs: ['userId'],
+                    merge (existing = { data: [] }, incoming) {
+                        return {
+                            ...incoming,
+                            data: [...existing.data, ...incoming.data],
+                        }
+                    }
                 }
             }
         }
