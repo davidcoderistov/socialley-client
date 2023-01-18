@@ -5,7 +5,7 @@ import moment from 'moment'
 
 
 interface Props {
-    timestamp: string
+    timestamp: number
 }
 
 export default function MessageSeparator (props: Props) {
