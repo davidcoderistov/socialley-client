@@ -75,10 +75,14 @@ const addMessageSeparators = (currentMessages: React.ReactNode[], originalMessag
 }
 
 interface ChatProps {
-    userId: string
+    user: {
+        _id: string
+        firstName: string
+        lastName: string
+    }
 }
 
-export default function Chat ({ userId }: ChatProps) {
+export default function Chat ({ user }: ChatProps) {
 
     const [
         loadChatMessages,
@@ -86,7 +90,7 @@ export default function Chat ({ userId }: ChatProps) {
         getChatMessages,
     ] = useLatestChatMessages({ limit: 10 })
 
-    const data = getChatMessages(userId)
+    const data = getChatMessages(user._id)
 
     const messages = useMemo(() => {
         if (data) {
@@ -94,20 +98,20 @@ export default function Chat ({ userId }: ChatProps) {
             return addMessageSeparators(
                 parseMessages(
                     messagesReversed,
-                    userId,
+                    user._id,
                 ),
                 messagesReversed,
                 data.chatMessagesCount
             )
         }
         return []
-    }, [data, userId])
+    }, [data, user])
 
     useEffect(() => {
         if (data === null) {
-            loadChatMessages(userId)
+            loadChatMessages(user._id)
         }
-    }, [userId, data])
+    }, [user, data])
 
     return (
         <Box
@@ -207,8 +211,8 @@ export default function Chat ({ userId }: ChatProps) {
                                     position='relative'
                                 >
                                     <UserAvatar
-                                        firstName='Anita'
-                                        lastName='Ristova'
+                                        firstName={user.firstName}
+                                        lastName={user.lastName}
                                         size={24}
                                         fontSize={12} />
                                 </Box>
@@ -229,7 +233,7 @@ export default function Chat ({ userId }: ChatProps) {
                                         variant='body1'
                                         noWrap
                                     >
-                                        Anita Ristova
+                                        { user.firstName } { user.lastName }
                                     </Typography>
                                 </Box>
                             </Box>
