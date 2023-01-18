@@ -1,15 +1,7 @@
 import { useApolloClient, useLazyQuery } from '@apollo/client'
 import { GET_LATEST_CHAT_MESSAGES } from '../graphql/queries/messages'
+import { Message } from '../types'
 
-
-export interface Message {
-    _id: string
-    fromUserId: string
-    toUserId: string
-    message: string
-    photoURL: string
-    createdAt: number
-}
 
 export function useLatestChatMessages ({ limit }: { limit: number }) {
 
