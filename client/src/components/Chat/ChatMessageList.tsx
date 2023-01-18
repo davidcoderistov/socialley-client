@@ -172,6 +172,7 @@ export default function ChatMessageList (props: Props) {
                             height='100%'
                             overflow='hidden auto'
                             paddingTop='8px'
+                            paddingBottom='24px'
                             sx={{ overscrollBehavior: 'contain' }}
                         >
                             { props.messagesLoading ? (
