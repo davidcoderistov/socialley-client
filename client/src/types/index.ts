@@ -7,3 +7,12 @@ export interface User {
     email: string
     accessToken: string
 }
+
+export interface Message {
+    _id: string
+    fromUserId: string
+    toUserId: string
+    message: string | null
+    photoURL: string | null
+    createdAt: number
+}
