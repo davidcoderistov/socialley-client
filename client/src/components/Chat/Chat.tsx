@@ -1,4 +1,8 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useContext } from 'react'
+import { useMutation } from '@apollo/client'
+import { CREATE_MESSAGE } from '../../graphql/mutations/messages'
+import AppContext from '../../config/context'
+import { User, Message } from '../../types'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
@@ -9,7 +13,8 @@ import UserAvatar from '../UserAvatar'
 import TextMessage from './TextMessage'
 import PhotoMessage from './PhotoMessage'
 import MessageSeparator from './MessageSeparator'
-import { useLatestChatMessages, Message } from '../../hooks/useLatestChatMessages'
+import { useLatestChatMessages } from '../../hooks/useLatestChatMessages'
+import { useAddChatMessageWriter, useUpdateChatMessageWriter } from '../../hooks/graphql/messages'
 import _reverse from 'lodash/reverse'
 import moment from 'moment'
 
@@ -37,7 +42,7 @@ const parseMessages = (apiMessages: Message[], userId: string) => {
                     showAvatar={showAvatar}
                     user={{ firstName: 'Anita', lastName: 'Ristova' }} />
             )
-        } else {
+        } else if (message.message) {
             return (
                 <TextMessage
                     key={message._id}
@@ -84,6 +89,15 @@ interface ChatProps {
 
 export default function Chat ({ user }: ChatProps) {
 
+    const context = useContext(AppContext)
+    const loggedInUser = context.loggedInUser as User
+
+    const [message, setMessage] = useState('')
+
+    const [createMessage] = useMutation<{ createMessage: Message }>(CREATE_MESSAGE)
+    const [addChatMessage] = useAddChatMessageWriter()
+    const [updateChatMessage] = useUpdateChatMessageWriter()
+
     const [
         loadChatMessages,
         fetchMoreChatMessages,
@@ -112,6 +126,34 @@ export default function Chat ({ user }: ChatProps) {
             loadChatMessages(user._id)
         }
     }, [user, data])
+
+    const onSendMessage = () => {
+        const addMessage = addChatMessage(user._id, {
+            fromUserId: loggedInUser._id,
+            toUserId: user._id,
+            message,
+        })
+        if (addMessage) {
+            createMessage({
+                variables: {
+                    message: {
+                        toUserId: user._id,
+                        message,
+                    }
+                }
+            }).then((data) => {
+                const createMessage = data.data?.createMessage
+                if (createMessage) {
+                    updateChatMessage({ userId: user._id, messageId: addMessage._id }, createMessage)
+                }
+            }).catch(console.log)
+            setMessage('')
+        }
+    }
+
+    const onChangeMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setMessage(event.target.value)
+    }
 
     return (
         <Box
@@ -377,11 +419,14 @@ export default function Chat ({ user }: ChatProps) {
                                         }}
                                         placeholder='Message...'
                                         fullWidth
+                                        value={message}
+                                        onChange={onChangeMessage}
                                     />
                                 </Box>
                                 <Button
                                     variant='text'
                                     sx={{ textTransform: 'none' }}
+                                    onClick={onSendMessage}
                                 >
                                     Send
                                 </Button>
