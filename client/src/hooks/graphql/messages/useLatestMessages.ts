@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useQuery } from '@apollo/client'
-import { GET_LATEST_MESSAGES } from '../graphql/queries/messages'
+import { GET_LATEST_MESSAGES } from '../../../graphql/queries/messages'
 
 
 interface User {
