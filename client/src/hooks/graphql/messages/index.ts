@@ -1,4 +1,4 @@
 export * from './useLatestMessages'
 export * from './useLatestChatMessages'
-export * from './useAddChatMessageWriter'
-export * from './useUpdateChatMessageWriter'
+export * from './useAddChatMessage'
+export * from './useUpdateChatMessage'

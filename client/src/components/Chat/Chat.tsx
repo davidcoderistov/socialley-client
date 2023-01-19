@@ -13,7 +13,7 @@ import UserAvatar from '../UserAvatar'
 import TextMessage from './TextMessage'
 import PhotoMessage from './PhotoMessage'
 import MessageSeparator from './MessageSeparator'
-import { useLatestChatMessages, useAddChatMessageWriter, useUpdateChatMessageWriter } from '../../hooks/graphql/messages'
+import { useLatestChatMessages, useAddChatMessage, useUpdateChatMessage } from '../../hooks/graphql/messages'
 import _reverse from 'lodash/reverse'
 import moment from 'moment'
 
@@ -94,8 +94,8 @@ export default function Chat ({ user }: ChatProps) {
     const [message, setMessage] = useState('')
 
     const [createMessage] = useMutation<{ createMessage: Message }>(CREATE_MESSAGE)
-    const [addChatMessage] = useAddChatMessageWriter()
-    const [updateChatMessage] = useUpdateChatMessageWriter()
+    const [addChatMessage] = useAddChatMessage()
+    const [updateChatMessage] = useUpdateChatMessage()
 
     const [
         loadChatMessages,

@@ -4,7 +4,7 @@ import { LatestChatMessagesQueryData } from '../../../graphql/types'
 import { Message } from '../../../types'
 
 
-export function useUpdateChatMessageWriter () {
+export function useUpdateChatMessage () {
 
     const client = useApolloClient()
 

@@ -13,7 +13,7 @@ interface AddMessage {
     photoURL?: string | null
 }
 
-export function useAddChatMessageWriter () {
+export function useAddChatMessage () {
 
     const client = useApolloClient()
 
