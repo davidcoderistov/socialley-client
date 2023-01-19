@@ -1,4 +1,5 @@
 export * from './useLatestMessages'
+export * from './useUpdateLatestMessage'
 export * from './useLatestChatMessages'
 export * from './useAddChatMessage'
 export * from './useUpdateChatMessage'
