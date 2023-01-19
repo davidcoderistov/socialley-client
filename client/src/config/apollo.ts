@@ -46,13 +46,7 @@ const cache = new InMemoryCache({
         Query: {
             fields: {
                 getLatestMessages: {
-                    keyArgs: false,
-                    merge (existing = { data: [] }, incoming) {
-                        return {
-                            ...incoming,
-                            data: [...existing.data, ...incoming.data],
-                        }
-                    }
+                    keyArgs: false
                 },
                 getLatestChatMessages: {
                     keyArgs: ['userId']

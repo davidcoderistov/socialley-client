@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_LATEST_MESSAGES } from '../../../graphql/queries/messages'
+import { LatestMessagesQueryData } from '../../../graphql/types'
 
 
 interface User {
@@ -40,8 +41,17 @@ export function useLatestMessages ({ limit }: { limit: number }) {
         fetchMore({
             variables: {
                 offset: latestMessages.length,
+            },
+            updateQuery (existing: LatestMessagesQueryData, { fetchMoreResult }: { fetchMoreResult: LatestMessagesQueryData }) {
+                return {
+                    ...existing,
+                    getLatestMessages: {
+                        ...existing.getLatestMessages,
+                        data: [...existing.getLatestMessages.data, ...fetchMoreResult.getLatestMessages.data]
+                    }
+                }
             }
-        })
+        }).catch(console.log)
     }
 
     return [
