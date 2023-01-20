@@ -30,9 +30,10 @@ type RenderProps = {
     userId: string
     firstName: string
     lastName: string
-    photoURL?: string
+    avatarURL: string | null
+    photoURL?: string | null
     selected: boolean
-    message: string
+    message?: string | null
     timestamp: number
     onClick: (userId: string) => void
     loading?: never
@@ -43,6 +44,7 @@ type LoadingProps = {
     userId?: never
     firstName?: never
     lastName?: never
+    avatarURL?: never
     photoURL?: never
     selected?: never
     message?: never
@@ -94,7 +96,7 @@ export default function ChatMessageListItem (props: Props) {
                 <UserAvatar
                     firstName={props.firstName ?? ''}
                     lastName={props.lastName ?? ''}
-                    photoURL={props.photoURL} />
+                    photoURL={props.avatarURL} />
             )}
             <Box
                 component='div'

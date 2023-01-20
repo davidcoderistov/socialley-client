@@ -6,7 +6,7 @@ import Dashboard from '../Dashboard'
 import HomePage from '../../pages/HomePage'
 import MessagesPage from '../../pages/MessagesPage'
 import ProfilePage from '../../pages/ProfilePage'
-import { useLatestMessages } from '../../hooks/graphql/messages/useLatestMessages'
+import { useLatestMessages } from '../../hooks/graphql/messages'
 
 
 interface SignedInRouterProps {

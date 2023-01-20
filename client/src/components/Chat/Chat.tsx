@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import { CREATE_MESSAGE } from '../../graphql/mutations/messages'
 import AppContext from '../../config/context'
-import { User, Message } from '../../types'
+import { User, Message, MessageUser, FullMessage } from '../../types'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
@@ -79,11 +79,7 @@ const addMessageSeparators = (currentMessages: React.ReactNode[], originalMessag
 }
 
 interface ChatProps {
-    user: {
-        _id: string
-        firstName: string
-        lastName: string
-    }
+    user: MessageUser
 }
 
 export default function Chat ({ user }: ChatProps) {
@@ -93,7 +89,7 @@ export default function Chat ({ user }: ChatProps) {
 
     const [message, setMessage] = useState('')
 
-    const [createMessage] = useMutation<{ createMessage: Message }>(CREATE_MESSAGE)
+    const [createMessage] = useMutation<{ createMessage: FullMessage }>(CREATE_MESSAGE)
     const [addChatMessage] = useAddChatMessage()
     const [updateChatMessage] = useUpdateChatMessage()
     const [addLatestMessage] = useAddLatestMessage()
@@ -144,7 +140,14 @@ export default function Chat ({ user }: ChatProps) {
             }).then((data) => {
                 const createMessage = data.data?.createMessage
                 if (createMessage) {
-                    updateChatMessage({ userId: user._id, messageId: addMessage._id }, createMessage)
+                    updateChatMessage({ userId: user._id, messageId: addMessage._id }, {
+                        _id: createMessage._id,
+                        fromUserId: createMessage.fromUser._id,
+                        toUserId: createMessage.toUser._id,
+                        message: createMessage.message,
+                        photoURL: createMessage.photoURL,
+                        createdAt: createMessage.createdAt,
+                    })
                     addLatestMessage(user, {
                         _id: createMessage._id,
                         message: createMessage.message,

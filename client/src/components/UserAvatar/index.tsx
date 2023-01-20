@@ -6,7 +6,7 @@ import { getInitial } from '../../utils'
 interface Props {
     firstName: string
     lastName: string
-    photoURL?: string
+    photoURL?: string | null
     size?: number
     fontSize?: number
 }

@@ -7,17 +7,16 @@ import CreateIcon from '@mui/icons-material/Create'
 import ChatMessageListItem from './ChatMessageListItem'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import _range from 'lodash/range'
+import { MessageUser } from '../../types'
 
 
 interface Message {
     _id: string
-    userId: string
-    firstName: string
-    lastName: string
-    photoURL?: string
-    selected: boolean
-    message: string
+    message: string | null
+    photoURL: string | null
     timestamp: number
+    selected: boolean
+    user: MessageUser
 }
 
 interface Props {
@@ -219,9 +218,10 @@ export default function ChatMessageList (props: Props) {
                                             <ChatMessageListItem
                                                 key={message._id}
                                                 _id={message._id}
-                                                userId={message.userId}
-                                                firstName={message.firstName}
-                                                lastName={message.lastName}
+                                                userId={message.user._id}
+                                                firstName={message.user.firstName}
+                                                lastName={message.user.lastName}
+                                                avatarURL={message.user.avatarURL}
                                                 photoURL={message.photoURL}
                                                 message={message.message}
                                                 timestamp={message.timestamp}

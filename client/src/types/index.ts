@@ -27,7 +27,7 @@ export interface Message {
     createdAt: number
 }
 
-interface MessageUser {
+export interface MessageUser {
     _id: string
     firstName: string
     lastName: string

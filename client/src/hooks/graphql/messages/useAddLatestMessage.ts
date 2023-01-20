@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/client'
 import { GET_LATEST_MESSAGES } from '../../../graphql/queries/messages'
 import AppContext from '../../../config/context'
 import { LatestMessagesQueryData } from '../../../graphql/types'
-import { User } from '../../../types'
+import { User, MessageUser } from '../../../types'
 
 
 interface LatestMessage {
@@ -13,12 +13,6 @@ interface LatestMessage {
     createdAt: number
 }
 
-interface UserArg {
-    _id: string
-    firstName: string
-    lastName: string
-}
-
 export function useAddLatestMessage () {
 
     const context = useContext(AppContext)
@@ -26,7 +20,7 @@ export function useAddLatestMessage () {
 
     const client = useApolloClient()
 
-    const addLatestMessage = (user: UserArg, { _id, message = null, photoURL = null, createdAt }: LatestMessage) => {
+    const addLatestMessage = (user: MessageUser, { _id, message = null, photoURL = null, createdAt }: LatestMessage) => {
         client.cache.updateQuery({
             query: GET_LATEST_MESSAGES,
         }, (queryData: LatestMessagesQueryData | null) => {
@@ -44,7 +38,7 @@ export function useAddLatestMessage () {
                             ...queryData.getLatestMessages,
                             data: [{
                                 ...latestMessage,
-                                messageId: _id,
+                                _id,
                                 message,
                                 photoURL,
                                 createdAt,
@@ -57,16 +51,18 @@ export function useAddLatestMessage () {
                         getLatestMessages: {
                             ...queryData.getLatestMessages,
                             data: [{
-                                messageId: _id,
+                                _id,
                                 fromUser: {
                                     _id: user._id,
                                     firstName: user.firstName,
                                     lastName: user.lastName,
+                                    avatarURL: user.avatarURL,
                                 },
                                 toUser: {
                                     _id: loggedInUser._id,
                                     firstName: loggedInUser.firstName,
                                     lastName: loggedInUser.lastName,
+                                    avatarURL: loggedInUser.avatarURL,
                                 },
                                 message,
                                 photoURL,

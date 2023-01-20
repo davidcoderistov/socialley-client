@@ -5,8 +5,18 @@ export const CREATE_MESSAGE = gql`
     mutation createMessage($message: CreateMessageInput) {
         createMessage(message: $message) {
             _id
-            fromUserId
-            toUserId
+            fromUser {
+                _id
+                firstName
+                lastName
+                avatarURL
+            }
+            toUser {
+                _id
+                firstName
+                lastName
+                avatarURL
+            }
             message
             photoURL
             createdAt

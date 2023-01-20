@@ -1,22 +1,9 @@
 import { useMemo } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_LATEST_MESSAGES } from '../../../graphql/queries/messages'
+import { FullMessage } from '../../../types'
 import { LatestMessagesQueryData } from '../../../graphql/types'
 
-
-interface User {
-    _id: string
-    firstName: string
-    lastName: string
-}
-
-interface LatestMessage {
-    messageId: string
-    message: string
-    createdAt: number
-    fromUser: User
-    toUser: User
-}
 
 export function useLatestMessages ({ limit }: { limit: number }) {
 
@@ -27,7 +14,7 @@ export function useLatestMessages ({ limit }: { limit: number }) {
         },
     })
 
-    const latestMessages: LatestMessage[] = useMemo(() => {
+    const latestMessages: FullMessage[] = useMemo(() => {
         const latestMessages = data?.getLatestMessages?.data
         if (Array.isArray(latestMessages)) {
             return latestMessages

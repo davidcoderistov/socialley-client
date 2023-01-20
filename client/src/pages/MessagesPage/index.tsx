@@ -3,36 +3,20 @@ import Box from '@mui/material/Box'
 import ChatMessageList from '../../components/Chat/ChatMessageList'
 import Chat from '../../components/Chat/Chat'
 import AppContext from '../../config/context'
-import { User } from '../../types'
+import { User, FullMessage, MessageUser } from '../../types'
 
-
-interface UserProp {
-    _id: string
-    firstName: string
-    lastName: string
-}
-
-interface MessageProp {
-    messageId: string
-    message: string
-    createdAt: number
-    fromUser: UserProp
-    toUser: UserProp
-}
 
 interface Message {
     _id: string
-    userId: string
-    firstName: string
-    lastName: string
-    photoURL?: string
-    selected: boolean
-    message: string
+    message: string | null
+    photoURL: string | null
     timestamp: number
+    selected: boolean
+    user: MessageUser
 }
 
 interface MessagesPageProps {
-    latestMessages: MessageProp[]
+    latestMessages: FullMessage[]
     latestMessagesCount: number
     latestMessagesLoading: boolean
     fetchMoreMessages: () => void
@@ -50,18 +34,30 @@ export default function MessagesPage (props: MessagesPageProps) {
             return props.latestMessages.map(message => {
                 const user = message.fromUser._id === loggedInUser._id ? message.toUser : message.fromUser
                 return {
-                    _id: message.messageId,
-                    userId: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    _id: message._id,
                     message: message.message,
+                    photoURL: message.photoURL,
                     timestamp: message.createdAt,
                     selected: selectedUserId === user._id,
+                    user: {
+                        _id: user._id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        avatarURL: user.avatarURL,
+                    }
                 }
             })
         }
         return []
     }, [props.latestMessages, selectedUserId])
+
+    const selectedUser: MessageUser | null = useMemo(() => {
+        const message = messages.find(message => message.user._id === selectedUserId)
+        if (message) {
+            return message.user
+        }
+        return null
+    }, [selectedUserId])
 
     const handleClickUser = (_id: string) => {
         setSelectedUserId(_id)
@@ -120,7 +116,11 @@ export default function MessagesPage (props: MessagesPageProps) {
                         onMessage={handleMessage}
                         onFetchMore={props.fetchMoreMessages}
                         hasMore={props.latestMessages.length < props.latestMessagesCount} />
-                    <Chat />
+                    { selectedUser ? (
+                        <Chat user={selectedUser} />
+                    ): (
+                        <div>Empty STATE</div>
+                    )}
                 </Box>
             </Box>
         </Box>

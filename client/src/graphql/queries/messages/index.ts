@@ -6,16 +6,18 @@ export const GET_LATEST_MESSAGES = gql`
         getLatestMessages(offset: $offset, limit: $limit) {
             total
             data {
-                messageId
+                _id
                 fromUser {
                     _id
                     firstName
                     lastName
+                    avatarURL
                 }
                 toUser {
                     _id
                     firstName
                     lastName
+                    avatarURL
                 }
                 message
                 photoURL
