@@ -13,7 +13,7 @@ import UserAvatar from '../UserAvatar'
 import TextMessage from './TextMessage'
 import PhotoMessage from './PhotoMessage'
 import MessageSeparator from './MessageSeparator'
-import { useLatestChatMessages, useAddChatMessage, useUpdateChatMessage, useUpdateLatestMessage } from '../../hooks/graphql/messages'
+import { useLatestChatMessages, useAddChatMessage, useUpdateChatMessage, useAddLatestMessage } from '../../hooks/graphql/messages'
 import _reverse from 'lodash/reverse'
 import moment from 'moment'
 
@@ -96,7 +96,7 @@ export default function Chat ({ user }: ChatProps) {
     const [createMessage] = useMutation<{ createMessage: Message }>(CREATE_MESSAGE)
     const [addChatMessage] = useAddChatMessage()
     const [updateChatMessage] = useUpdateChatMessage()
-    const [updateLatestMessage] = useUpdateLatestMessage()
+    const [addLatestMessage] = useAddLatestMessage()
 
     const [
         loadChatMessages,
@@ -145,7 +145,7 @@ export default function Chat ({ user }: ChatProps) {
                 const createMessage = data.data?.createMessage
                 if (createMessage) {
                     updateChatMessage({ userId: user._id, messageId: addMessage._id }, createMessage)
-                    updateLatestMessage(user._id, {
+                    addLatestMessage(user, {
                         _id: createMessage._id,
                         message: createMessage.message,
                         photoURL: createMessage.photoURL,
