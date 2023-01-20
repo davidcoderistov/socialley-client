@@ -60,6 +60,7 @@ export default function AppRouter () {
             lastName: data.refresh.lastName,
             username: data.refresh.username,
             email: data.refresh.email,
+            avatarURL: data.refresh.avatarURL,
             accessToken: data.refresh.accessToken,
         }
     }

@@ -33,6 +33,7 @@ export default function LoginPage () {
                 lastName: data.login.lastName,
                 username: data.login.username,
                 email: data.login.email,
+                avatarURL: data.login.avatarURL,
                 accessToken: data.login.accessToken,
             })
         }).catch((err: ApolloError) => {
