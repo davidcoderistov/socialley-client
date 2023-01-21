@@ -121,9 +121,9 @@ export default function AppRouter () {
                     LOADING
                 </div>
             ) : loggedInUser ? (
-                <SignedInRouter
-                    loggedInUser={loggedInUser}
-                    setLoggedInUser={setLoggedInUser} />
+                <AppContext.Provider value={{ loggedInUser, setLoggedInUser }}>
+                    <SignedInRouter />
+                </AppContext.Provider>
             ) : (
                 <AppContext.Provider value={{ loggedInUser, setLoggedInUser }}>
                     <Routes>
