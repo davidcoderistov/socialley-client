@@ -4,10 +4,12 @@ import Dashboard from '../Dashboard'
 import HomePage from '../../pages/HomePage'
 import MessagesPage from '../../pages/MessagesPage'
 import ProfilePage from '../../pages/ProfilePage'
-import { useLatestMessages } from '../../hooks/graphql/messages'
+import { useLatestMessages, useReceiveMessage } from '../../hooks/graphql/messages'
 
 
 export default function SignedInRouter () {
+
+    useReceiveMessage()
 
     const [
         { latestMessages, latestMessagesCount, latestMessagesLoading},
