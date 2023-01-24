@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useContext } from 'react'
+import React, { useState, useMemo } from 'react'
+import { useLoggedInUser } from '../../hooks/misc'
 import Box from '@mui/material/Box'
 import ChatMessageList from '../../components/Chat/ChatMessageList'
 import Chat from '../../components/Chat/Chat'
-import AppContext from '../../config/context'
-import { User, FullMessage, MessageUser } from '../../types'
+import { FullMessage, MessageUser } from '../../types'
 
 
 interface Message {
@@ -24,9 +24,7 @@ interface MessagesPageProps {
 
 export default function MessagesPage (props: MessagesPageProps) {
 
-    const context = useContext(AppContext)
-    const loggedInUser = context.loggedInUser as User
-
+    const [loggedInUser] = useLoggedInUser()
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
     const messages: Message[] = useMemo(() => {

@@ -1,17 +1,15 @@
-import { useContext } from 'react'
 import { useApolloClient } from '@apollo/client'
+import { useLoggedInUser } from '../../misc'
 import { GET_LATEST_MESSAGES } from '../../../graphql/queries/messages'
-import AppContext from '../../../config/context'
 import { LatestMessagesQueryData } from '../../../graphql/types'
-import { User, FullMessage } from '../../../types'
+import { FullMessage } from '../../../types'
 
 
 export function useAddLatestMessage () {
 
-    const context = useContext(AppContext)
-    const loggedInUser = context.loggedInUser as User
-
     const client = useApolloClient()
+
+    const [loggedInUser] = useLoggedInUser()
 
     const addLatestMessage = (message: FullMessage) => {
         client.cache.updateQuery({

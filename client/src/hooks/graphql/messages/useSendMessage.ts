@@ -1,8 +1,7 @@
-import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import { CREATE_MESSAGE } from '../../../graphql/mutations/messages'
-import AppContext from '../../../config/context'
-import { FullMessage, User } from '../../../types'
+import { FullMessage } from '../../../types'
+import { useLoggedInUser } from '../../misc'
 import { useAddLatestMessage } from './useAddLatestMessage'
 import { useAddChatMessage } from './useAddChatMessage'
 import { v4 as uuid } from 'uuid'
@@ -11,8 +10,7 @@ import moment from 'moment'
 
 export function useSendMessage () {
 
-    const context = useContext(AppContext)
-    const loggedInUser = context.loggedInUser as User
+    const [loggedInUser] = useLoggedInUser()
 
     const [createMessage] = useMutation<{ createMessage: FullMessage }>(CREATE_MESSAGE)
     const [addChatMessage] = useAddChatMessage()
