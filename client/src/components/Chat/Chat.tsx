@@ -148,12 +148,7 @@ export default function Chat ({ user }: ChatProps) {
                         photoURL: createMessage.photoURL,
                         createdAt: createMessage.createdAt,
                     })
-                    addLatestMessage(user, {
-                        _id: createMessage._id,
-                        message: createMessage.message,
-                        photoURL: createMessage.photoURL,
-                        createdAt: createMessage.createdAt,
-                    })
+                    addLatestMessage(createMessage)
                 }
             }).catch(console.log)
             setMessage('')
