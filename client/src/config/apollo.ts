@@ -24,9 +24,9 @@ const authLink = new ApolloLink((operation, forward) => {
 
 const wsLink = new GraphQLWsLink(createClient({
     url: 'ws://localhost:5000/api',
-    connectionParams: {
+    connectionParams: () => ({
         accessToken: getStorageLoggedInUser()?.accessToken,
-    }
+    })
 }))
 
 const splitLink = split(
