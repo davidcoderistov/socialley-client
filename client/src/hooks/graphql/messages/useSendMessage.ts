@@ -3,8 +3,8 @@ import { useMutation } from '@apollo/client'
 import { CREATE_MESSAGE } from '../../../graphql/mutations/messages'
 import AppContext from '../../../config/context'
 import { FullMessage, User } from '../../../types'
-import { useAddChatMessage } from './useAddChatMessage'
 import { useAddLatestMessage } from './useAddLatestMessage'
+import { useAddChatMessage } from './useAddChatMessage'
 import { v4 as uuid } from 'uuid'
 import moment from 'moment'
 
@@ -40,12 +40,9 @@ export function useSendMessage () {
             const createMessage = data.data?.createMessage
             if (createMessage) {
                 addChatMessage(userId, {
-                    _id: createMessage._id,
+                    ...createMessage,
                     fromUserId: createMessage.fromUser._id,
                     toUserId: createMessage.toUser._id,
-                    message: createMessage.message,
-                    photoURL: createMessage.photoURL,
-                    createdAt: createMessage.createdAt,
                 }, false, addMessage._id)
                 addLatestMessage(createMessage)
             }
