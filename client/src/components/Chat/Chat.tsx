@@ -18,64 +18,94 @@ import _reverse from 'lodash/reverse'
 import moment from 'moment'
 
 
-const parseMessages = (apiMessages: Message[], userId: string) => {
-    let showAvatar = false
-    let avatarShown = false
-    return apiMessages.map(message => {
-        const messageType = message.fromUserId === userId ? 'received' : 'sent'
-        if (messageType === 'sent') {
-            showAvatar = false
-            avatarShown = false
-        } else {
-            showAvatar = !avatarShown && !showAvatar
-            if (!avatarShown && showAvatar) {
-                avatarShown = true
-            }
-        }
-        if (message.photoURL) {
-            return (
-                <PhotoMessage
-                    key={message._id}
-                    messageType={messageType}
-                    photoURL={message.photoURL}
-                    showAvatar={showAvatar}
-                    user={{ firstName: 'Anita', lastName: 'Ristova' }} />
-            )
-        } else if (message.message) {
-            return (
-                <TextMessage
-                    key={message._id}
-                    messageType={messageType}
-                    message={message.message}
-                    showAvatar={showAvatar}
-                    user={{ firstName: 'Anita', lastName: 'Ristova' }} />
-            )
-        }
-    })
+type ChatMessage = {
+    _id: string
+    fromUserId: string
+    toUserId: string
+    message: string | null
+    photoURL: string | null
+    createdAt: number
+    key?: never
+    type?: never
+} | {
+    _id?: never
+    fromUserId?: never
+    toUserId?: never
+    message?: never
+    photoURL?: never
+    createdAt: number
+    key: string
+    type: string
 }
 
-const addMessageSeparators = (currentMessages: React.ReactNode[], originalMessages: Message[], messagesCount: number) => {
+const timestampMessages = (messages: Message[], messagesCount: number): ChatMessage[] => {
+    const messagesCopy: ChatMessage[] = Array.from(messages)
     let separatorsCount = 0
-    for (let i = 0; i < originalMessages.length - 1; ++i) {
-        const first = moment(originalMessages[i].createdAt)
-        const second = moment(originalMessages[i+1].createdAt)
+    for (let i = 0; i < messages.length - 1; ++i) {
+        const first = moment(messages[i].createdAt)
+        const second = moment(messages[i+1].createdAt)
         if (second.diff(first, 'minutes') > 10) {
-            currentMessages.splice(separatorsCount + i + 1, 0, (
-                <MessageSeparator
-                    key={i}
-                    timestamp={originalMessages[i+1].createdAt} />
-            ))
+            messagesCopy.splice(separatorsCount + i + 1, 0, {
+                key: `${i}-message-separator`,
+                createdAt: messages[i+1].createdAt,
+                type: 'time'
+            })
             ++separatorsCount
         }
     }
-    if (originalMessages.length === messagesCount) {
-        currentMessages.splice(0, 0, (
-            <MessageSeparator
-                key='first-message-separator'
-                timestamp={originalMessages[0].createdAt} />
-        ))
+    if (messages.length === messagesCount) {
+        messagesCopy.splice(0, 0, {
+            key: 'first-message-separator',
+            createdAt: messages[0].createdAt,
+            type: 'time'
+        })
     }
-    return currentMessages
+    return messagesCopy
+}
+
+const getNodeMessages = (user: MessageUser, messages: Message[], messagesCount: number) => {
+
+    return timestampMessages(messages, messagesCount).map((message, index, timestampedMessages) => {
+        if (message.type === 'time') {
+            return (
+                <MessageSeparator
+                    key={message.key}
+                    timestamp={message.createdAt} />
+            )
+        } else {
+            const messageType = message.fromUserId === user._id ? 'received' : 'sent'
+            let showAvatar = false
+            if (messageType === 'received') {
+                if (index + 1 <= timestampedMessages.length - 1) {
+                    const nextMessage = timestampedMessages[index + 1]
+                    if (nextMessage.type === 'time' || nextMessage.fromUserId !== user._id) {
+                        showAvatar = true
+                    }
+                } else {
+                    showAvatar = true
+                }
+            }
+            if (message.photoURL) {
+                return (
+                    <PhotoMessage
+                        key={message._id}
+                        messageType={messageType}
+                        photoURL={message.photoURL}
+                        showAvatar={showAvatar}
+                        user={{ firstName: user.firstName, lastName: user.lastName }} />
+                )
+            } else if (message.message) {
+                return (
+                    <TextMessage
+                        key={message._id}
+                        messageType={messageType}
+                        message={message.message}
+                        showAvatar={showAvatar}
+                        user={{ firstName: user.firstName, lastName: user.lastName }} />
+                )
+            }
+        }
+    })
 }
 
 interface ChatProps {
@@ -104,13 +134,9 @@ export default function Chat ({ user }: ChatProps) {
 
     const messages = useMemo(() => {
         if (data) {
-            const messagesReversed = _reverse(Array.from(data.chatMessages))
-            return addMessageSeparators(
-                parseMessages(
-                    messagesReversed,
-                    user._id,
-                ),
-                messagesReversed,
+            return getNodeMessages(
+                user,
+                _reverse(Array.from(data.chatMessages)),
                 data.chatMessagesCount
             )
         }
