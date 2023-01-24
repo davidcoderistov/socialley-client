@@ -1,8 +1,5 @@
-import React, { useState, useEffect, useMemo, useContext } from 'react'
-import { useMutation } from '@apollo/client'
-import { CREATE_MESSAGE } from '../../graphql/mutations/messages'
-import AppContext from '../../config/context'
-import { User, Message, MessageUser, FullMessage } from '../../types'
+import React, { useState, useEffect, useMemo } from 'react'
+import { Message, MessageUser } from '../../types'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
@@ -13,7 +10,7 @@ import UserAvatar from '../UserAvatar'
 import TextMessage from './TextMessage'
 import PhotoMessage from './PhotoMessage'
 import MessageSeparator from './MessageSeparator'
-import { useLatestChatMessages, useAddChatMessage, useUpdateChatMessage, useAddLatestMessage } from '../../hooks/graphql/messages'
+import { useLatestChatMessages, useSendMessage } from '../../hooks/graphql/messages'
 import _reverse from 'lodash/reverse'
 import moment from 'moment'
 
@@ -114,15 +111,9 @@ interface ChatProps {
 
 export default function Chat ({ user }: ChatProps) {
 
-    const context = useContext(AppContext)
-    const loggedInUser = context.loggedInUser as User
-
     const [message, setMessage] = useState('')
 
-    const [createMessage] = useMutation<{ createMessage: FullMessage }>(CREATE_MESSAGE)
-    const [addChatMessage] = useAddChatMessage()
-    const [updateChatMessage] = useUpdateChatMessage()
-    const [addLatestMessage] = useAddLatestMessage()
+    const [sendMessage] = useSendMessage()
 
     const [
         loadChatMessages,
@@ -150,35 +141,8 @@ export default function Chat ({ user }: ChatProps) {
     }, [user, data])
 
     const onSendMessage = () => {
-        const addMessage = addChatMessage(user._id, {
-            fromUserId: loggedInUser._id,
-            toUserId: user._id,
-            message,
-        })
-        if (addMessage) {
-            createMessage({
-                variables: {
-                    message: {
-                        toUserId: user._id,
-                        message,
-                    }
-                }
-            }).then((data) => {
-                const createMessage = data.data?.createMessage
-                if (createMessage) {
-                    updateChatMessage({ userId: user._id, messageId: addMessage._id }, {
-                        _id: createMessage._id,
-                        fromUserId: createMessage.fromUser._id,
-                        toUserId: createMessage.toUser._id,
-                        message: createMessage.message,
-                        photoURL: createMessage.photoURL,
-                        createdAt: createMessage.createdAt,
-                    })
-                    addLatestMessage(createMessage)
-                }
-            }).catch(console.log)
-            setMessage('')
-        }
+        sendMessage(user._id, message, null)
+        setMessage('')
     }
 
     const onChangeMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
