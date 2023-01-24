@@ -3,6 +3,7 @@ import { useLoggedInUser } from '../../hooks/misc'
 import Box from '@mui/material/Box'
 import ChatMessageList from '../../components/Chat/ChatMessageList'
 import Chat from '../../components/Chat/Chat'
+import SendMessageContainer from '../../components/Chat/SendMessageContainer'
 import { FullMessage, MessageUser } from '../../types'
 
 
@@ -69,6 +70,10 @@ export default function MessagesPage (props: MessagesPageProps) {
 
     }
 
+    const handleClickSendMessage = () => {
+
+    }
+
     return (
         <Box component='div' width='100%' height='670px'>
             <Box
@@ -117,7 +122,7 @@ export default function MessagesPage (props: MessagesPageProps) {
                     { selectedUser ? (
                         <Chat user={selectedUser} />
                     ): (
-                        <div>Empty STATE</div>
+                        <SendMessageContainer onSendMessage={handleClickSendMessage} />
                     )}
                 </Box>
             </Box>
