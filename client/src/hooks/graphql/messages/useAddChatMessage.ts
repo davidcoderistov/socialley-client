@@ -2,46 +2,42 @@ import { useApolloClient } from '@apollo/client'
 import { GET_LATEST_CHAT_MESSAGES } from '../../../graphql/queries/messages'
 import { LatestChatMessagesQueryData } from '../../../graphql/types'
 import { Message } from '../../../types'
-import { v4 as uuid } from 'uuid'
-import moment from 'moment'
 
-
-interface AddMessage {
-    fromUserId: string
-    toUserId: string
-    message?: string | null
-    photoURL?: string | null
-}
 
 export function useAddChatMessage () {
 
     const client = useApolloClient()
 
-    const addChatMessage = (userId: string, { fromUserId, toUserId, message = null, photoURL = null }: AddMessage): Message | null => {
-        let newMessage = null
+    const addChatMessage = (userId: string, message: Message, temporary: boolean = false, updateMessageId: string | null = null) => {
         client.cache.updateQuery({
             query: GET_LATEST_CHAT_MESSAGES,
             variables: { userId },
         }, (queryData: LatestChatMessagesQueryData | null) => {
             if (queryData) {
-                newMessage = {
-                    _id: uuid(),
-                    fromUserId: fromUserId,
-                    toUserId: toUserId,
-                    message: message,
-                    photoURL: photoURL,
-                    createdAt: moment().unix(),
-                }
-                return {
-                    ...queryData,
-                    getLatestChatMessages: {
-                        ...queryData.getLatestChatMessages,
-                        data: [newMessage, ...queryData.getLatestChatMessages.data]
+                const findIndex = queryData.getLatestChatMessages.data.findIndex(m => m._id === updateMessageId)
+                if (findIndex > -1) {
+                    const newMessages = Array.from(queryData.getLatestChatMessages.data)
+                    newMessages[findIndex] = {...message}
+                    return {
+                        ...queryData,
+                        getLatestChatMessages: {
+                            ...queryData.getLatestChatMessages,
+                            data: newMessages,
+                            total: queryData.getLatestChatMessages.total + 1,
+                        }
+                    }
+                } else {
+                    return {
+                        ...queryData,
+                        getLatestChatMessages: {
+                            ...queryData.getLatestChatMessages,
+                            data: [message, ...queryData.getLatestChatMessages.data],
+                            total: temporary ? queryData.getLatestChatMessages.total: queryData.getLatestChatMessages.total + 1,
+                        }
                     }
                 }
             }
         })
-        return newMessage
     }
 
     return [addChatMessage] as const
