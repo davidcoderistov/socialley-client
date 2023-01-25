@@ -49,6 +49,7 @@ export default function ChatMessageList (props: Props) {
             position='relative'
             width='350px'
             sx={{ verticalAlign: 'baseline' }}
+            bgcolor='#000000'
         >
             <Box
                 component='div'

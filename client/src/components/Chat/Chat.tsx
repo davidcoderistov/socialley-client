@@ -163,6 +163,7 @@ export default function Chat ({ user }: ChatProps) {
             position='relative'
             minHeight={0}
             minWidth={0}
+            bgcolor='#000000'
         >
             <Box
                 component='div'

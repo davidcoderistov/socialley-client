@@ -75,7 +75,7 @@ export default function MessagesPage (props: MessagesPageProps) {
     }
 
     return (
-        <Box component='div' width='100%' height='670px'>
+        <Box component='div' width='100%' height='100%' paddingY='10px' paddingX='130px'>
             <Box
                 component='div'
                 alignItems='center'
@@ -95,7 +95,6 @@ export default function MessagesPage (props: MessagesPageProps) {
                     component='div'
                     height='100%'
                     width='100%'
-                    maxWidth='935px'
                     overflow='hidden'
                     flex='1 1 auto'
                     minHeight={0}
