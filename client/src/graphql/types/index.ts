@@ -14,3 +14,15 @@ export interface LatestChatMessagesQueryData {
         total: number
     }
 }
+
+interface UserBySearchQuery {
+    _id: string
+    username: string
+    firstName: string
+    lastName: string
+    avatarURL?: string | null
+}
+
+export interface UsersBySearchQueryData {
+    getUsersBySearchQuery: UserBySearchQuery[]
+}
