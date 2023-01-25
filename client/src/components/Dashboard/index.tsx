@@ -14,7 +14,7 @@ import { styled, createTheme, ThemeProvider } from '@mui/material/styles'
 import NavLink from './NavLink'
 
 
-const drawerWidth: number = 245
+const drawerWidth: number = 265
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -86,13 +86,61 @@ export default function Dashboard (props: Props) {
                         color: 'white'
                     }}
                 >
-                    <Container maxWidth='lg' sx={{ mt: 4, mb: 4 }}>
-                        <Grid container>
-                            <Grid container item xs={12}>
-                                { props.children }
-                            </Grid>
-                        </Grid>
-                    </Container>
+                    <Box
+                        component='div'
+                        height='100%'
+                        width='100%'
+                    >
+                        <Box
+                            component='section'
+                            width='100%'
+                            height='100%'
+                            display='flex'
+                            flexDirection='column'
+                            flexGrow='1'
+                        >
+                            <Box
+                                component='div'
+                                height='100%'
+                                display='flex'
+                                flexDirection='column'
+                                flexGrow='1'
+                                bgcolor='rgb(18,18,18)'
+                                maxHeight='100%'
+                            >
+                                <Box
+                                    component='div'
+                                    height='100%'
+                                    width='100%'
+                                    minHeight={0}
+                                    minWidth={0}
+                                    flex='1 1 auto'
+                                    display='flex'
+                                    flexDirection='column'
+                                    justifyContent='flex-start'
+                                    alignItems='stretch'
+                                    alignContent='stretch'
+                                    position='relative'
+                                    boxSizing='border-box'
+                                >
+                                    <Box
+                                        component='div'
+                                        height='100%'
+                                        width='100%'
+                                        display='flex'
+                                        flexDirection='column'
+                                        alignItems='center'
+                                        border='0'
+                                        position='relative'
+                                        boxSizing='border-box'
+                                        margin='0'
+                                    >
+                                        { props.children }
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </Box>
                 </Box>
             </Box>
         </ThemeProvider>
