@@ -23,7 +23,7 @@ export function useSendMessage () {
             toUserId: userId,
             message,
             photoURL,
-            createdAt: moment().unix(),
+            createdAt: moment().valueOf(),
         }
         addChatMessage(userId, addMessage, true)
         createMessage({
