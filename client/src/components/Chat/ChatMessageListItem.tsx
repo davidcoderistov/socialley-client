@@ -124,7 +124,7 @@ export default function ChatMessageListItem (props: Props) {
                 >
                     { props.loading ? (
                         <Skeleton sx={{ backgroundColor: '#262626', width: '75%' }} animation='wave' />
-                    ) : (
+                    ) : props.message === null && props.avatarURL === null ? null : (
                         <>
                             <Typography
                                 variant='body2'
