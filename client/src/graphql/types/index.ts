@@ -1,6 +1,10 @@
 import { FullMessage, Message } from '../../types'
 
 
+export interface LatestMessageQueryData {
+    getLatestMessage: FullMessage | null
+}
+
 export interface LatestMessagesQueryData {
     getLatestMessages: {
         data: FullMessage[]
