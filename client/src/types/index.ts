@@ -41,4 +41,5 @@ export interface FullMessage {
     message: string | null
     photoURL: string | null
     createdAt: number
+    temporary: boolean
 }
