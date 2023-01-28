@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useApolloClient, useLazyQuery } from '@apollo/client'
+import { useAddLatestMessage } from '../../hooks/graphql/messages'
 import { GET_LATEST_MESSAGES, GET_LATEST_MESSAGE } from '../../graphql/queries/messages'
 import { LatestMessagesQueryData } from '../../graphql/types'
 import Box from '@mui/material/Box'
@@ -47,6 +48,8 @@ export default function MessagesPage (props: MessagesPageProps) {
     const [loggedInUser] = useLoggedInUser()
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
     const [sendMessageModalOpen, setSendMessageModalOpen] = useState(false)
+
+    const [addLatestMessage] = useAddLatestMessage()
 
     const messages: Message[] = useMemo(() => {
         if (Array.isArray(props.latestMessages)) {
@@ -119,22 +122,7 @@ export default function MessagesPage (props: MessagesPageProps) {
             }
         }).then(data => {
             const message = data.data?.getLatestMessage
-            client.cache.updateQuery({
-                query: GET_LATEST_MESSAGES
-            },  (queryData: LatestMessagesQueryData | null) => {
-                if (queryData) {
-                    return {
-                        ...queryData,
-                        getLatestMessages: {
-                            ...queryData.getLatestMessages,
-                            data: [
-                                message ? { ...message, temporary: true } : createLatestMessage(user),
-                                ...queryData.getLatestMessages.data
-                            ],
-                        }
-                    }
-                }
-            })
+            addLatestMessage(message ? { ...message, temporary: true } : createLatestMessage(user))
         }).catch(console.log).finally(() => setSelectedUserId(user._id))
     }
 
