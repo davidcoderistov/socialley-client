@@ -1,11 +1,16 @@
 import React, { useState, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
+import { useApolloClient, useLazyQuery } from '@apollo/client'
+import { GET_LATEST_MESSAGES, GET_LATEST_MESSAGE } from '../../graphql/queries/messages'
+import { LatestMessagesQueryData } from '../../graphql/types'
 import Box from '@mui/material/Box'
 import ChatMessageList from '../../components/Chat/ChatMessageList'
 import Chat from '../../components/Chat/Chat'
 import SendMessageContainer from '../../components/Chat/SendMessageContainer'
 import SendMessageModal from '../../components/SendMessageModal'
 import { FullMessage, MessageUser } from '../../types'
+import { v4 as uuid } from 'uuid'
+import moment from 'moment'
 
 
 interface Message {
@@ -34,6 +39,10 @@ interface SendMessageUser {
 }
 
 export default function MessagesPage (props: MessagesPageProps) {
+
+    const client = useApolloClient()
+
+    const [getLatestMessage] = useLazyQuery(GET_LATEST_MESSAGE)
 
     const [loggedInUser] = useLoggedInUser()
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
@@ -89,9 +98,65 @@ export default function MessagesPage (props: MessagesPageProps) {
         setSendMessageModalOpen(false)
     }
 
-    const handleClickSendMessageToUser = (user: SendMessageUser) => {
+    const handleClickSendMessageToUser = async (user: SendMessageUser) => {
         setSendMessageModalOpen(false)
+        const queryData: LatestMessagesQueryData | null = client.cache.readQuery({
+            query: GET_LATEST_MESSAGES,
+        })
+        if (queryData) {
+            const findIndex = queryData.getLatestMessages.data.findIndex(latestMessage =>
+                (latestMessage.fromUser._id === loggedInUser._id && latestMessage.toUser._id === user._id) ||
+                (latestMessage.toUser._id === loggedInUser._id && latestMessage.fromUser._id === user._id))
+            if (findIndex > -1) {
+                // TODO: Scroll to user
+                setSelectedUserId(user._id)
+                return
+            }
+        }
+        getLatestMessage({
+            variables: {
+                userId: user._id
+            }
+        }).then(data => {
+            const message = data.data?.getLatestMessage
+            client.cache.updateQuery({
+                query: GET_LATEST_MESSAGES
+            },  (queryData: LatestMessagesQueryData | null) => {
+                if (queryData) {
+                    return {
+                        ...queryData,
+                        getLatestMessages: {
+                            ...queryData.getLatestMessages,
+                            data: [
+                                message ? { ...message, temporary: true } : createLatestMessage(user),
+                                ...queryData.getLatestMessages.data
+                            ],
+                        }
+                    }
+                }
+            })
+        }).catch(console.log).finally(() => setSelectedUserId(user._id))
     }
+
+    const createLatestMessage = (user: SendMessageUser) => ({
+        _id: uuid(),
+        fromUser: {
+            _id: loggedInUser._id,
+            firstName: loggedInUser.firstName,
+            lastName: loggedInUser.lastName,
+            avatarURL: loggedInUser.avatarURL ?? null
+        },
+        toUser: {
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            avatarURL: user.avatarURL ?? null
+        },
+        message: null,
+        photoURL: null,
+        createdAt: moment().valueOf(),
+        temporary: true,
+    })
 
     return (
         <Box component='div' width='100%' height='100%' paddingY='10px' paddingX='130px'>
