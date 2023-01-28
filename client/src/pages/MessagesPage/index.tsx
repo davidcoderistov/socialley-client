@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import ChatMessageList from '../../components/Chat/ChatMessageList'
 import Chat from '../../components/Chat/Chat'
 import SendMessageContainer from '../../components/Chat/SendMessageContainer'
+import SendMessageModal from '../../components/SendMessageModal'
 import { FullMessage, MessageUser } from '../../types'
 
 
@@ -20,13 +21,23 @@ interface MessagesPageProps {
     latestMessages: FullMessage[]
     latestMessagesCount: number
     latestMessagesLoading: boolean
+    hasMoreLatestMessages: boolean
     fetchMoreMessages: () => void
+}
+
+interface SendMessageUser {
+    _id: string
+    username: string
+    firstName: string
+    lastName: string
+    avatarURL?: string | null
 }
 
 export default function MessagesPage (props: MessagesPageProps) {
 
     const [loggedInUser] = useLoggedInUser()
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+    const [sendMessageModalOpen, setSendMessageModalOpen] = useState(false)
 
     const messages: Message[] = useMemo(() => {
         if (Array.isArray(props.latestMessages)) {
@@ -67,11 +78,19 @@ export default function MessagesPage (props: MessagesPageProps) {
     }
 
     const handleMessage = () => {
-
+        setSendMessageModalOpen(true)
     }
 
     const handleClickSendMessage = () => {
+        setSendMessageModalOpen(true)
+    }
 
+    const handleCloseSendMessageModal = () => {
+        setSendMessageModalOpen(false)
+    }
+
+    const handleClickSendMessageToUser = (user: SendMessageUser) => {
+        setSendMessageModalOpen(false)
     }
 
     return (
@@ -117,7 +136,7 @@ export default function MessagesPage (props: MessagesPageProps) {
                         onViewProfile={handleViewProfile}
                         onMessage={handleMessage}
                         onFetchMore={props.fetchMoreMessages}
-                        hasMore={props.latestMessages.length < props.latestMessagesCount} />
+                        hasMore={props.hasMoreLatestMessages} />
                     { selectedUser ? (
                         <Chat user={selectedUser} />
                     ): (
@@ -125,6 +144,12 @@ export default function MessagesPage (props: MessagesPageProps) {
                     )}
                 </Box>
             </Box>
+            { sendMessageModalOpen && (
+                <SendMessageModal
+                    open={sendMessageModalOpen}
+                    onClickUser={handleClickSendMessageToUser}
+                    onCloseModal={handleCloseSendMessageModal} />
+            )}
         </Box>
     )
 }

@@ -12,7 +12,7 @@ export default function SignedInRouter () {
     useReceiveMessage()
 
     const [
-        { latestMessages, latestMessagesCount, latestMessagesLoading},
+        { latestMessages, latestMessagesCount, hasMoreLatestMessages, latestMessagesLoading},
         fetchMoreMessages
     ] = useLatestMessages({ limit: 10 })
 
@@ -26,6 +26,7 @@ export default function SignedInRouter () {
                     <MessagesPage
                         latestMessages={latestMessages}
                         latestMessagesCount={latestMessagesCount}
+                        hasMoreLatestMessages={hasMoreLatestMessages}
                         latestMessagesLoading={latestMessagesLoading}
                         fetchMoreMessages={fetchMoreMessages} />
                 } />
