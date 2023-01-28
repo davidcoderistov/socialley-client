@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client'
 import { GET_LATEST_MESSAGES } from '../../../graphql/queries/messages'
 import { FullMessage } from '../../../types'
 import { LatestMessagesQueryData } from '../../../graphql/types'
+import _differenceBy from 'lodash/differenceBy'
 
 
 export function useLatestMessages ({ limit }: { limit: number }) {
@@ -24,17 +25,28 @@ export function useLatestMessages ({ limit }: { limit: number }) {
 
     const latestMessagesCount: number = useMemo(() => data?.getLatestMessages?.total ?? 0, [data])
 
+    const offset: number = useMemo(() => latestMessages.filter(message => !message.temporary).length, [latestMessages])
+
+    const hasMoreLatestMessages: boolean = useMemo(() => offset < latestMessagesCount, [offset, latestMessagesCount])
+
     const handleFetchMore = () => {
         fetchMore({
             variables: {
-                offset: latestMessages.length,
+                offset,
             },
             updateQuery (existing: LatestMessagesQueryData, { fetchMoreResult }: { fetchMoreResult: LatestMessagesQueryData }) {
                 return {
                     ...existing,
                     getLatestMessages: {
                         ...existing.getLatestMessages,
-                        data: [...existing.getLatestMessages.data, ...fetchMoreResult.getLatestMessages.data]
+                        data: [
+                            ..._differenceBy(
+                                existing.getLatestMessages.data,
+                                fetchMoreResult.getLatestMessages.data,
+                                '_id'
+                            ),
+                            ...fetchMoreResult.getLatestMessages.data.map(message => ({ ...message, temporary: false }))
+                        ]
                     }
                 }
             }
@@ -42,7 +54,7 @@ export function useLatestMessages ({ limit }: { limit: number }) {
     }
 
     return [
-        { latestMessages, latestMessagesCount, latestMessagesLoading: loading },
+        { latestMessages, latestMessagesCount, hasMoreLatestMessages, latestMessagesLoading: loading },
         handleFetchMore
     ] as const
 }
