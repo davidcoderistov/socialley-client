@@ -52,6 +52,15 @@ const cache = new InMemoryCache({
                     keyArgs: ['userId']
                 }
             }
+        },
+        FullMessage: {
+            fields: {
+                temporary: {
+                    read (temporary = false) {
+                        return temporary
+                    }
+                }
+            },
         }
     }
 })
