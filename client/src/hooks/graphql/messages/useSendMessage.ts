@@ -42,7 +42,7 @@ export function useSendMessage () {
                     fromUserId: createMessage.fromUser._id,
                     toUserId: createMessage.toUser._id,
                 }, false, addMessage._id)
-                addLatestMessage(createMessage)
+                addLatestMessage({ ...createMessage, temporary: false })
             }
         }).catch(console.log)
     }
