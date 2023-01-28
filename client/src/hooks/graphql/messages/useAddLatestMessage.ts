@@ -22,12 +22,15 @@ export function useAddLatestMessage () {
                     (latestMessage.toUser._id === loggedInUser._id && latestMessage.fromUser._id === userId))
                 if (findIndex > -1) {
                     const newMessages = Array.from(queryData.getLatestMessages.data)
+                    const oldMessage = {...newMessages[findIndex]}
+                    const isFirstMessage = oldMessage.message === null && oldMessage.photoURL === null
                     newMessages.splice(findIndex, 1)
                     return {
                         ...queryData,
                         getLatestMessages: {
                             ...queryData.getLatestMessages,
-                            data: [message, ...newMessages]
+                            data: [message, ...newMessages],
+                            total: isFirstMessage ? queryData.getLatestMessages.total + 1 : queryData.getLatestMessages.total
                         }
                     }
                 } else {
@@ -36,7 +39,7 @@ export function useAddLatestMessage () {
                         getLatestMessages: {
                             ...queryData.getLatestMessages,
                             data: [message, ...queryData.getLatestMessages.data],
-                            total: queryData.getLatestMessages.total + 1
+                            total: message.temporary ? queryData.getLatestMessages.total : queryData.getLatestMessages.total + 1
                         }
                     }
                 }
