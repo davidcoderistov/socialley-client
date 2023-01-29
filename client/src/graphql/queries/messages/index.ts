@@ -51,6 +51,14 @@ export const GET_LATEST_MESSAGES = gql`
     }    
 `
 
+export const GET_LATEST_MESSAGES_COUNT = gql`
+    query getLatestMessagesCount {
+        getLatestMessagesCount {
+            count
+        }
+    }
+`
+
 export const GET_LATEST_CHAT_MESSAGES = gql`
     query getLatestChatMessages($userId: String!, $offset: Int!, $limit: Int!) {
         getLatestChatMessages(userId: $userId, offset: $offset, limit: $limit) {
