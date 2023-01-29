@@ -1,4 +1,6 @@
-import { useSubscription } from '@apollo/client'
+import { useSubscription, useLazyQuery, useApolloClient } from '@apollo/client'
+import { GET_LATEST_MESSAGES, GET_LATEST_MESSAGES_COUNT } from '../../../graphql/queries/messages'
+import { LatestMessagesQueryData, LatestMessagesCountQueryData } from '../../../graphql/types'
 import { MESSAGE_CREATED_SUBSCRIPTION } from '../../../graphql/subscriptions/messages'
 import { FullMessage } from '../../../types'
 import { useLoggedInUser } from '../../misc'
@@ -8,9 +10,13 @@ import { useAddChatMessage } from './useAddChatMessage'
 
 export function useReceiveMessage () {
 
+    const client = useApolloClient()
+
     const [loggedInUser] = useLoggedInUser()
     const [addLatestMessage] = useAddLatestMessage()
     const [addChatMessage] = useAddChatMessage()
+
+    const [getLatestMessagesCount] = useLazyQuery<LatestMessagesCountQueryData>(GET_LATEST_MESSAGES_COUNT)
 
     useSubscription<{ messageCreated: FullMessage }>(MESSAGE_CREATED_SUBSCRIPTION, {
         onData (data) {
@@ -19,7 +25,33 @@ export function useReceiveMessage () {
                 if (message) {
                     const userId = message.fromUser._id === loggedInUser._id ?
                         message.toUser._id : message.fromUser._id
-                    addLatestMessage(message)
+                    const queryData: LatestMessagesQueryData | null = client.cache.readQuery({
+                        query: GET_LATEST_MESSAGES,
+                    })
+                    const findIndex = queryData?.getLatestMessages.data.findIndex(latestMessage =>
+                        (latestMessage.fromUser._id === loggedInUser._id && latestMessage.toUser._id === userId) ||
+                        (latestMessage.toUser._id === loggedInUser._id && latestMessage.fromUser._id === userId))
+                    if (findIndex != null && findIndex < 0) {
+                        getLatestMessagesCount().then(data => {
+                            if (data.data) {
+                                const count = data.data?.getLatestMessagesCount.count
+                                client.cache.updateQuery({
+                                    query: GET_LATEST_MESSAGES,
+                                }, (queryData: LatestMessagesQueryData | null) => {
+                                    if (queryData) {
+                                        return {
+                                            ...queryData,
+                                            getLatestMessages: {
+                                                ...queryData.getLatestMessages,
+                                                total: count
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }).catch(console.log)
+                    }
+                    addLatestMessage({ ...message, temporary: false })
                     addChatMessage(userId, {
                         ...message,
                         fromUserId: message.fromUser._id,
