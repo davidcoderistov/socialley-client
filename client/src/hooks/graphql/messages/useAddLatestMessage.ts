@@ -38,8 +38,7 @@ export function useAddLatestMessage () {
                         ...queryData,
                         getLatestMessages: {
                             ...queryData.getLatestMessages,
-                            data: [message, ...queryData.getLatestMessages.data],
-                            total: message.temporary ? queryData.getLatestMessages.total : queryData.getLatestMessages.total + 1
+                            data: [message, ...queryData.getLatestMessages.data]
                         }
                     }
                 }
