@@ -12,6 +12,12 @@ export interface LatestMessagesQueryData {
     }
 }
 
+export interface LatestMessagesCountQueryData {
+    getLatestMessagesCount: {
+        count: number
+    }
+}
+
 export interface LatestChatMessagesQueryData {
     getLatestChatMessages: {
         data: Message[]
