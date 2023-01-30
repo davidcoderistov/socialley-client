@@ -61,6 +61,15 @@ const cache = new InMemoryCache({
                     }
                 }
             },
+        },
+        Message: {
+            fields: {
+                temporary: {
+                    read (temporary = false) {
+                        return temporary
+                    }
+                }
+            },
         }
     }
 })

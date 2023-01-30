@@ -70,6 +70,7 @@ export const GET_LATEST_CHAT_MESSAGES = gql`
                 message
                 photoURL
                 createdAt
+                temporary @client
             }
         }
     }

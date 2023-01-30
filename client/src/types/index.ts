@@ -25,6 +25,7 @@ export interface Message {
     message: string | null
     photoURL: string | null
     createdAt: number
+    temporary: boolean
 }
 
 export interface MessageUser {
