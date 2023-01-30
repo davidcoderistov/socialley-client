@@ -97,6 +97,7 @@ export default function SendMessageModal (props: Props) {
                         onChange={handleChangeSearchQuery}
                         placeholder='Search...'
                         fullWidth
+                        autoFocus
                     />
                 </Box>
                 <Box
