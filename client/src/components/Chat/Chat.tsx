@@ -4,12 +4,14 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
+import CircularProgress from '@mui/material/CircularProgress'
 import { PhotoOutlined } from '@mui/icons-material'
 import InputBase from '@mui/material/InputBase'
 import UserAvatar from '../UserAvatar'
 import TextMessage from './TextMessage'
 import PhotoMessage from './PhotoMessage'
 import MessageSeparator from './MessageSeparator'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import { useLatestChatMessages, useSendMessage } from '../../hooks/graphql/messages'
 import _reverse from 'lodash/reverse'
 import moment from 'moment'
@@ -149,6 +151,10 @@ export default function Chat ({ user }: ChatProps) {
         setMessage(event.target.value)
     }
 
+    const onFetchMore = () => {
+        fetchMoreChatMessages(user._id, data?.chatMessagesOffset ?? 0)
+    }
+
     return (
         <Box
             component='div'
@@ -283,7 +289,6 @@ export default function Chat ({ user }: ChatProps) {
                             flexBasis='32px'
                             flexDirection='row'
                         >
-                            BUTTON
                         </Box>
                     </Box>
                 </Box>
@@ -327,19 +332,44 @@ export default function Chat ({ user }: ChatProps) {
                         position='relative'
                     >
                         <Box
+                            id='scrollableChat'
                             component='div'
-                            display='block'
+                            display='flex'
+                            flexDirection='column-reverse'
                             paddingX='20px'
                             paddingTop='20px'
                             flex='0 1 auto'
-                            sx={{ overflowX: 'hidden', overflowY: 'auto' }}
+                            height='100%'
+                            overflow='hidden auto'
+                            sx={{ overscrollBehavior: 'contain' }}
                         >
-                            <Box
-                                component='div'
-                                display='block'
+                            <InfiniteScroll
+                                next={onFetchMore}
+                                hasMore={data ? data.chatMessagesOffset < data.chatMessagesCount : false}
+                                loader={
+                                    <Box
+                                        component='div'
+                                        display='flex'
+                                        flexDirection='row'
+                                        justifyContent='center'
+                                        alignItems='flex-start'
+                                        height='60px'
+                                    >
+                                        <CircularProgress size={30} sx={{ color: '#FFFFFF', mt: 1 }} />
+                                    </Box>
+                                }
+                                dataLength={data?.chatMessages.length ?? 0}
+                                scrollableTarget='scrollableChat'
+                                inverse={true}
+                                style={{ display: 'flex', flexDirection: 'column-reverse' }}
                             >
-                                { messages }
-                            </Box>
+                                <Box
+                                    component='div'
+                                    display='block'
+                                >
+                                    { messages }
+                                </Box>
+                            </InfiniteScroll>
                         </Box>
                     </Box>
                     <Box
