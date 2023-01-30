@@ -8,7 +8,7 @@ export function useAddChatMessage () {
 
     const client = useApolloClient()
 
-    const addChatMessage = (userId: string, message: Message, temporary: boolean = false, updateMessageId: string | null = null) => {
+    const addChatMessage = (userId: string, message: Message, updateMessageId: string | null = null) => {
         client.cache.updateQuery({
             query: GET_LATEST_CHAT_MESSAGES,
             variables: { userId },
@@ -32,7 +32,9 @@ export function useAddChatMessage () {
                         getLatestChatMessages: {
                             ...queryData.getLatestChatMessages,
                             data: [message, ...queryData.getLatestChatMessages.data],
-                            total: temporary ? queryData.getLatestChatMessages.total: queryData.getLatestChatMessages.total + 1,
+                            total: message.temporary ?
+                                queryData.getLatestChatMessages.total :
+                                queryData.getLatestChatMessages.total + 1,
                         }
                     }
                 }

@@ -24,8 +24,9 @@ export function useSendMessage () {
             message,
             photoURL,
             createdAt: moment().valueOf(),
+            temporary: true,
         }
-        addChatMessage(userId, addMessage, true)
+        addChatMessage(userId, addMessage)
         createMessage({
             variables: {
                 message: {
@@ -41,7 +42,8 @@ export function useSendMessage () {
                     ...createMessage,
                     fromUserId: createMessage.fromUser._id,
                     toUserId: createMessage.toUser._id,
-                }, false, addMessage._id)
+                    temporary: false,
+                }, addMessage._id)
                 addLatestMessage({ ...createMessage, temporary: false })
             }
         }).catch(console.log)

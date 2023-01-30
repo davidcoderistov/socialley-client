@@ -56,6 +56,7 @@ export function useReceiveMessage () {
                         ...message,
                         fromUserId: message.fromUser._id,
                         toUserId: message.toUser._id,
+                        temporary: false,
                     })
                 }
             }

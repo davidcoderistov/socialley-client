@@ -31,14 +31,17 @@ export function useLatestChatMessages ({ limit }: { limit: number }) {
                     ...existing,
                     getLatestChatMessages: {
                         ...existing.getLatestChatMessages,
-                        data: [...existing.getLatestChatMessages.data, ...fetchMoreResult.getLatestChatMessages.data]
+                        data: [
+                            ...existing.getLatestChatMessages.data,
+                            ...fetchMoreResult.getLatestChatMessages.data.map(message => ({ ...message, temporary: false }))
+                        ]
                     }
                 }
             }
         }).catch(console.log)
     }
 
-    const getChatMessages = (userId: string): { chatMessages: Message[], chatMessagesCount: number } | null => {
+    const getChatMessages = (userId: string): { chatMessages: Message[], chatMessagesCount: number, chatMessagesOffset: number } | null => {
         const queryData: { getLatestChatMessages: { data: Message[], total: number }} | null = client.cache.readQuery({
             query: GET_LATEST_CHAT_MESSAGES,
             variables: { userId },
@@ -47,6 +50,7 @@ export function useLatestChatMessages ({ limit }: { limit: number }) {
             return {
                 chatMessages: queryData?.getLatestChatMessages?.data ?? [],
                 chatMessagesCount: queryData?.getLatestChatMessages?.total ?? 0,
+                chatMessagesOffset: queryData?.getLatestChatMessages?.data.filter(message => !message.temporary).length ?? 0
             }
         }
         return null
