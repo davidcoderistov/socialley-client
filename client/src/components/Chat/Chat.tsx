@@ -143,8 +143,16 @@ export default function Chat ({ user }: ChatProps) {
     }, [user, data])
 
     const onSendMessage = () => {
-        sendMessage(user._id, message, null)
-        setMessage('')
+        if (message.trim().length > 0) {
+            sendMessage(user._id, message, null)
+            setMessage('')
+        }
+    }
+
+    const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.code === 'Enter') {
+            onSendMessage()
+        }
     }
 
     const onChangeMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -445,6 +453,7 @@ export default function Chat ({ user }: ChatProps) {
                                         placeholder='Message...'
                                         fullWidth
                                         value={message}
+                                        onKeyPress={onKeyPress}
                                         onChange={onChangeMessage}
                                     />
                                 </Box>
