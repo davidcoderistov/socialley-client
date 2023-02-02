@@ -20,6 +20,7 @@ interface Message {
     photoURL: string | null
     timestamp: number
     selected: boolean
+    sent: boolean
     user: MessageUser
 }
 
@@ -61,6 +62,7 @@ export default function MessagesPage (props: MessagesPageProps) {
                     photoURL: message.photoURL,
                     timestamp: message.createdAt,
                     selected: selectedUserId === user._id,
+                    sent: message.fromUser._id === loggedInUser._id,
                     user: {
                         _id: user._id,
                         firstName: user.firstName,

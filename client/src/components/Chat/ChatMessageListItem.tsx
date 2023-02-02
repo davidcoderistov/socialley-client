@@ -33,6 +33,7 @@ type RenderProps = {
     avatarURL: string | null
     photoURL?: string | null
     selected: boolean
+    sent: boolean
     message?: string | null
     timestamp: number
     onClick: (userId: string) => void
@@ -47,6 +48,7 @@ type LoadingProps = {
     avatarURL?: never
     photoURL?: never
     selected?: never
+    sent?: never
     message?: never
     timestamp?: never
     onClick?: never
@@ -58,6 +60,13 @@ type Props = RenderProps | LoadingProps
 export default function ChatMessageListItem (props: Props) {
 
     const ago = useMemo(() => props.timestamp ? getAgo(props.timestamp) : '', [props.timestamp])
+
+    const message = useMemo(() => {
+        if (props.message) {
+            return props.message
+        }
+        return props.sent ? 'You sent an attachment' : 'Sent you an attachment'
+    }, [props.message, props.photoURL])
 
     const handleClick = () => {
         if (!props.selected && props.onClick && props.userId) {
@@ -124,13 +133,13 @@ export default function ChatMessageListItem (props: Props) {
                 >
                     { props.loading ? (
                         <Skeleton sx={{ backgroundColor: '#262626', width: '75%' }} animation='wave' />
-                    ) : props.message === null && props.avatarURL === null ? null : (
+                    ) : (
                         <>
                             <Typography
                                 variant='body2'
                                 color='#8E8E8E'
                                 noWrap
-                            >{ props.message }</Typography>
+                            >{ message }</Typography>
                             <Typography
                                 variant='body2'
                                 color='#8E8E8E'

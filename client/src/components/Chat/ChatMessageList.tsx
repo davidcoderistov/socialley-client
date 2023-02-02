@@ -16,6 +16,7 @@ interface Message {
     photoURL: string | null
     timestamp: number
     selected: boolean
+    sent: boolean
     user: MessageUser
 }
 
@@ -227,6 +228,7 @@ export default function ChatMessageList (props: Props) {
                                                 message={message.message}
                                                 timestamp={message.timestamp}
                                                 selected={message.selected}
+                                                sent={message.sent}
                                                 onClick={(userId) => props.onClickUser(userId)} />
                                         ))}
                                     </Box>
