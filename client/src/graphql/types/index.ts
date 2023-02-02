@@ -25,6 +25,10 @@ export interface LatestChatMessagesQueryData {
     }
 }
 
+export interface ImageQueryData {
+    getImage: string
+}
+
 interface UserBySearchQuery {
     _id: string
     username: string
