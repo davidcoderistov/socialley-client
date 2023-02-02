@@ -1,6 +1,7 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import Message from './Message'
+import Image from '../Image'
 
 
 type MessageType = 'sent' | 'received'
@@ -41,13 +42,11 @@ export default function PhotoMessage (props: Props) {
                 boxSizing='border-box'
                 position='relative'
             >
-                <Box
-                    component='img'
-                    src={props.photoURL}
+                <Image
                     minHeight='100%'
                     minWidth='100%'
                     border={0}
-                />
+                    url={props.photoURL} />
             </Box>
         </Message>
     )
