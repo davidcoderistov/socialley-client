@@ -46,7 +46,8 @@ export default function PhotoMessage (props: Props) {
                     minHeight='100%'
                     minWidth='100%'
                     border={0}
-                    url={props.photoURL} />
+                    url={props.photoURL}
+                    showAlways={false} />
             </Box>
         </Message>
     )

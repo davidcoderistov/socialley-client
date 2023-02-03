@@ -7,9 +7,10 @@ import { ImageQueryData } from '../../graphql/types'
 
 interface ImageProps extends BoxProps {
     url: string
+    showAlways: boolean
 }
 
-export default function Image ({ url, ... props }: ImageProps) {
+export default function Image ({ url, showAlways, ... props }: ImageProps) {
 
     const { data } = useQuery<ImageQueryData>(GET_IMAGE, {
         variables: {
@@ -17,12 +18,12 @@ export default function Image ({ url, ... props }: ImageProps) {
         }
     })
 
-    return (
+    return showAlways || data?.getImage ? (
         <Box
             {...props}
             component='img'
             src={`data:image/jpeg;base64,${data?.getImage}`}
         />
-    )
+    ) : null
 }
 
