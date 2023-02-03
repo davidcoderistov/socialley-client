@@ -16,13 +16,13 @@ export function useSendMessage () {
     const [addChatMessage] = useAddChatMessage()
     const [addLatestMessage] = useAddLatestMessage()
 
-    const sendMessage = (userId: string, message: string | null, photoURL: string | null) => {
+    const sendMessage = (userId: string, message: string | null, photo: File | null) => {
         const addMessage = {
             _id: uuid(),
             fromUserId: loggedInUser._id,
             toUserId: userId,
             message,
-            photoURL,
+            photoURL: null,
             createdAt: moment().valueOf(),
             temporary: true,
         }
@@ -32,8 +32,11 @@ export function useSendMessage () {
                 message: {
                     toUserId: userId,
                     message,
-                    photoURL,
+                    photo,
                 }
+            },
+            context: {
+                hasUpload: !!photo
             }
         }).then(data => {
             const createMessage = data.data?.createMessage

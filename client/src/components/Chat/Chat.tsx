@@ -84,21 +84,21 @@ const getNodeMessages = (user: MessageUser, messages: Message[], messagesCount: 
                     showAvatar = true
                 }
             }
-            if (message.photoURL) {
-                return (
-                    <PhotoMessage
-                        key={message._id}
-                        messageType={messageType}
-                        photoURL={message.photoURL}
-                        showAvatar={showAvatar}
-                        user={{ firstName: user.firstName, lastName: user.lastName }} />
-                )
-            } else if (message.message) {
+            if (message.message) {
                 return (
                     <TextMessage
                         key={message._id}
                         messageType={messageType}
                         message={message.message}
+                        showAvatar={showAvatar}
+                        user={{ firstName: user.firstName, lastName: user.lastName }} />
+                )
+            } else {
+                return (
+                    <PhotoMessage
+                        key={message._id}
+                        messageType={messageType}
+                        photoURL={message.photoURL}
                         showAvatar={showAvatar}
                         user={{ firstName: user.firstName, lastName: user.lastName }} />
                 )
@@ -114,6 +114,7 @@ interface ChatProps {
 export default function Chat ({ user }: ChatProps) {
 
     const [message, setMessage] = useState('')
+    const [uploadKey, setUploadKey] = useState(0)
 
     const [sendMessage] = useSendMessage()
 
@@ -157,6 +158,13 @@ export default function Chat ({ user }: ChatProps) {
 
     const onChangeMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(event.target.value)
+    }
+
+    const onChangeFile = ({ target: { validity, files }}: React.ChangeEvent<HTMLInputElement>) => {
+        if (validity.valid && files && files[0]) {
+            sendMessage(user._id, null, files[0])
+            setUploadKey(uploadKey + 1)
+        }
     }
 
     const onFetchMore = () => {
@@ -419,7 +427,8 @@ export default function Chat ({ user }: ChatProps) {
                                 paddingRight='8px'
                                 position='relative'
                             >
-                                <IconButton sx={{ color: '#FFFFFF' }}>
+                                <IconButton sx={{ color: '#FFFFFF' }} component='label'>
+                                    <input key={uploadKey} hidden accept=".jpg,.jpeg,.png" type="file" onChange={onChangeFile} />
                                     <PhotoOutlined />
                                 </IconButton>
                                 <Box

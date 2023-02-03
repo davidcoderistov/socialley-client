@@ -16,7 +16,7 @@ interface Props {
     messageType: MessageType
     showAvatar?: boolean
     user?: User | null
-    photoURL: string
+    photoURL?: string | null
 }
 
 export default function PhotoMessage (props: Props) {
@@ -42,12 +42,14 @@ export default function PhotoMessage (props: Props) {
                 boxSizing='border-box'
                 position='relative'
             >
-                <Image
-                    minHeight='100%'
-                    minWidth='100%'
-                    border={0}
-                    url={props.photoURL}
-                    showAlways={false} />
+                { props.photoURL && (
+                    <Image
+                        minHeight='100%'
+                        minWidth='100%'
+                        border={0}
+                        url={props.photoURL}
+                        showAlways={false} />
+                )}
             </Box>
         </Message>
     )
