@@ -19,7 +19,7 @@ export default function ViewPost () {
                 position='absolute'
                 boxSizing='border-box'
                 height='100%'
-                width='80%'
+                width='90%'
                 display='block'
             >
                 <Box
@@ -38,7 +38,7 @@ export default function ViewPost () {
                         marginTop='-20px'
                         overflow='hidden'
                         position='absolute'
-                        top='10%'
+                        top='7%'
                         right='0'
                         sx={{ opacity: '1' }}
                     >
@@ -84,7 +84,7 @@ export default function ViewPost () {
             </Box>
             <Box
                 component='div'
-                width='60%'
+                width='80%'
             >
                 <Box
                     component='div'

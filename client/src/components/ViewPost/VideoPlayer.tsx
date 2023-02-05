@@ -32,7 +32,7 @@ export default function VideoPlayer () {
                 <Box
                     component='div'
                     display='block'
-                    paddingBottom='120%'
+                    paddingBottom='89.25%'
                     position='relative'
                 >
                     <Box
@@ -75,8 +75,8 @@ export default function VideoPlayer () {
                                         <ReactPlayer
                                             width='100%'
                                             height='100%'
-                                            url='https://www.youtube.com/watch?v=Nco7qfrPG7I'
-                                            playing={false} />
+                                            url='https://www.youtube.com/watch?v=4WT5cMFySHg'
+                                            playing={true} />
                                     </Box>
                                 </Box>
                             </Box>

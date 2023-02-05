@@ -20,8 +20,8 @@ export default function Comments () {
             flexGrow='1'
             flexShrink='2'
             margin='0'
-            maxWidth='500px'
-            minWidth='435px'
+            maxWidth='800px'
+            minWidth='495px'
             padding='0'
             position='relative'
             sx={{ verticalAlign: 'baseline' }}
