@@ -94,8 +94,8 @@ export default function Comment (props: CommentProps) {
                             width='100% - 28px'
                         >
                             <UserAvatar
-                                size={30}
-                                fontSize={14}
+                                size={40}
+                                fontSize={16}
                                 firstName={props.comment.user.firstName}
                                 lastName={props.comment.user.lastName} />
                             <Box
