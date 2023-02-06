@@ -25,7 +25,7 @@ interface Props {
 
 export default function PostComments (props: Props) {
 
-    return (
+    return props.comments.length > 0 ? (
         <Box
             component='ul'
             border='0'
@@ -46,6 +46,18 @@ export default function PostComments (props: Props) {
                     comment={comment}
                     onLikeComment={props.onLikeComment} />
             ))}
+        </Box>
+    ) : (
+        <Box
+            component='div'
+            display='flex'
+            flexDirection='column'
+            justifyContent='center'
+            alignItems='center'
+            height='100%'
+            color='#A8A8A8'
+        >
+            No comments yet
         </Box>
     )
 }
