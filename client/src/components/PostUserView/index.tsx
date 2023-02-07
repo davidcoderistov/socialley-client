@@ -66,7 +66,7 @@ export default function PostUserView (props: Props) {
                 flexGrow='1'
                 flexShrink='1'
                 maxWidth='calc(100%-48px)'
-                padding={`14px ${props.dense ? 0 : 4}px 14px ${props.dense ? 0 : 16}px`}
+                padding={`14px ${props.dense ? 0 : 4}px ${props.dense ? 8 : 14}px ${props.dense ? 0 : 16}px`}
                 position='relative'
             >
                 <UserAvatar
