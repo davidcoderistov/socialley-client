@@ -6,7 +6,7 @@ import { ReactPlayerProps } from 'react-player/types/lib'
 
 const ReactPlayer = _ReactPlayer as unknown as React.FC<ReactPlayerProps>
 
-export default function PostVideoPlayer () {
+export default function PostVideoPlayer (props: { minHeight?: number }) {
 
     return (
         <Box
@@ -16,7 +16,7 @@ export default function PostVideoPlayer () {
             flexBasis='100%'
             bgcolor='#000000'
             flexGrow='1'
-            minHeight='450px'
+            minHeight={props.minHeight ?? 450}
             overflow='hidden'
             flexShrink='1'
             display='flex'

@@ -2,7 +2,7 @@ import React from 'react'
 import Box from '@mui/material/Box'
 
 
-export default function PostImage () {
+export default function PostImage (props: { minHeight?: number }) {
 
     return (
         <Box
@@ -13,7 +13,7 @@ export default function PostImage () {
             bgcolor='#000000'
             flexGrow='1'
             justifyContent='center'
-            minHeight='450px'
+            minHeight={props.minHeight ?? 450}
             overflow='hidden'
             flexShrink='1'
             display='flex'
