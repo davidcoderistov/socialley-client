@@ -23,6 +23,7 @@ interface Props {
     }
     loading: boolean
     showAgo?: boolean
+    dense?: boolean
     onClickUser: (userId: string) => void
     onFollow: (userId: string) => void
     onClickMore: (userId: string) => void
@@ -65,7 +66,7 @@ export default function PostUserView (props: Props) {
                 flexGrow='1'
                 flexShrink='1'
                 maxWidth='calc(100%-48px)'
-                padding='14px 4px 14px 16px'
+                padding={`14px ${props.dense ? 0 : 4}px 14px ${props.dense ? 0 : 16}px`}
                 position='relative'
             >
                 <UserAvatar
@@ -281,7 +282,7 @@ export default function PostUserView (props: Props) {
             <Box
                 component='div'
                 display='block'
-                paddingRight='8px'
+                {...!props.dense && { paddingRight: '8px' }}
             >
                 <IconButton sx={{ color: '#FFFFFF' }} onClick={handleClickMore}>
                     <MoreHoriz />
