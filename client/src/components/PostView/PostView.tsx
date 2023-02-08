@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Backdrop from '@mui/material/Backdrop'
 import IconButton from '@mui/material/IconButton'
 import { Close } from '@mui/icons-material'
-import PostImage from '../PostImage'
+import ImageDisplay from '../ImageDisplay'
 import PostVideoPlayer from '../PostVideoPlayer'
 import PostDetails from './PostDetails'
 
@@ -134,7 +134,7 @@ export default function PostView () {
                                                 sx={{ pointerEvents: 'none' }}
                                             >
                                                 { isImg ? (
-                                                    <PostImage url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
+                                                    <ImageDisplay url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
                                                 ) : (
                                                     <PostVideoPlayer />
                                                 )}

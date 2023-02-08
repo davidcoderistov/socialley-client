@@ -21,7 +21,7 @@ interface NonClickableProps extends StaticProps {
 
 type Props = ClickableProps | NonClickableProps
 
-export default function PostImage ({ url, minHeight = 450, bordered = false, tile = true, clickable, onClick }: Props) {
+export default function ImageDisplay ({ url, minHeight = 450, bordered = false, tile = true, clickable, onClick }: Props) {
 
     const handleClick = () => {
         if (clickable && onClick) {

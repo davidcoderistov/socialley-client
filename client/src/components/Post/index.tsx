@@ -2,7 +2,7 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import PostUserView from '../PostUserView'
-import PostImage from '../PostImage'
+import ImageDisplay from '../ImageDisplay'
 import PostVideoPlayer from '../PostVideoPlayer'
 import PostLikes from '../PostLikes'
 import { FavoriteBorder } from '@mui/icons-material'
@@ -72,7 +72,7 @@ export default function Post () {
                     position='relative'
                 >
                     { isImg ? (
-                        <PostImage url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
+                        <ImageDisplay url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
                     ) : (
                         <PostVideoPlayer minHeight={300} />
                     )}
