@@ -72,7 +72,7 @@ export default function Post () {
                     position='relative'
                 >
                     { isImg ? (
-                        <PostImage />
+                        <PostImage url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
                     ) : (
                         <PostVideoPlayer minHeight={300} />
                     )}
