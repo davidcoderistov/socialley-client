@@ -6,7 +6,7 @@ type AllowedMimeType = 'image/jpeg' | 'image/png' | 'video/mp4'
 
 interface Props {
     mimeTypes: AllowedMimeType[]
-    onChangeFile: (file: File) => void
+    onChangeFile: (file: File, isVideo: boolean) => void
 }
 
 export default function UploadFile (props: Props) {
@@ -47,13 +47,13 @@ export default function UploadFile (props: Props) {
             const isAllowedMimeType = allowedMimeTypes.some(t => t === file.type)
             const isAllowedExtension = allowedExtensions.some(e => e === file.name.substring(file.name.lastIndexOf('.')))
             if (isAllowedMimeType && isAllowedExtension) {
-                props.onChangeFile(file)
-                setUploadKey(uploadKey + 1)
+                props.onChangeFile(file, file.type === 'video/mp4')
             } else {
                 enqueueSnackbar(acceptVideos ?
                     'You can upload photos and videos only' :
                     'You can upload photos only', { variant: 'error' })
             }
+            setUploadKey(uploadKey + 1)
         }
     }
 
