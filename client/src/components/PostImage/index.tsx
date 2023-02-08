@@ -2,7 +2,32 @@ import React from 'react'
 import Box from '@mui/material/Box'
 
 
-export default function PostImage (props: { minHeight?: number }) {
+interface StaticProps {
+    url: string
+    minHeight?: number
+    bordered?: boolean
+    tile?: boolean
+}
+
+interface ClickableProps extends StaticProps {
+    clickable: true
+    onClick: () => void
+}
+
+interface NonClickableProps extends StaticProps {
+    clickable?: never
+    onClick?: never
+}
+
+type Props = ClickableProps | NonClickableProps
+
+export default function PostImage ({ url, minHeight = 450, bordered = false, tile = true, clickable, onClick }: Props) {
+
+    const handleClick = () => {
+        if (clickable && onClick) {
+            onClick()
+        }
+    }
 
     return (
         <Box
@@ -13,13 +38,18 @@ export default function PostImage (props: { minHeight?: number }) {
             bgcolor='#000000'
             flexGrow='1'
             justifyContent='center'
-            minHeight={props.minHeight ?? 450}
+            minHeight={minHeight}
             overflow='hidden'
             flexShrink='1'
             display='flex'
             flexDirection='column'
             position='relative'
-            sx={{ pointerEvents: 'none' }}
+            border={bordered ? '2px solid #FFFFFF' : '0'}
+            sx={{
+                ...clickable && { cursor: 'pointer' },
+                ...!tile && { borderRadius: '10px' }
+            }}
+            onClick={handleClick}
         >
             <Box
                 component='div'
@@ -63,7 +93,7 @@ export default function PostImage (props: { minHeight?: number }) {
                                 border='0'
                                 overflow='clip'
                                 fontSize='100%'
-                                src='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8'
+                                src={url}
                                 sx={{ objectFit: 'cover', overflowClipMargin: 'content-box' }}
                             />
                         </Box>
