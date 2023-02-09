@@ -21,7 +21,7 @@ interface MediaItem {
 interface Props {
     file: File
     onUploadFile: (file: File, isVideo: boolean) => void
-    onGenerateCoverPhotos: () => void
+    onChooseCoverPhoto: (url: string) => void
 }
 
 export default function ThumbnailPicker (props: Props) {
@@ -37,15 +37,23 @@ export default function ThumbnailPicker (props: Props) {
                 url,
                 selected: index === 0,
             })))
-            props.onGenerateCoverPhotos()
+            if (imgUrls.length > 0) {
+                props.onChooseCoverPhoto(imgUrls[0])
+            }
         })
     }, [props.file])
 
     const handleClickCoverPhoto = (_id: string) => {
-        setCoverPhotos(coverPhotos.map(coverPhoto => ({
-            ...coverPhoto,
-            selected: coverPhoto._id === _id
-        })))
+        setCoverPhotos(coverPhotos.map(coverPhoto => {
+            const selected = coverPhoto._id === _id
+            if (selected) {
+                props.onChooseCoverPhoto(coverPhoto.url)
+            }
+            return {
+                ...coverPhoto,
+                selected
+            }
+        }))
     }
 
     return (
