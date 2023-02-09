@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 
 interface StaticProps {
     url: string
+    backgroundColor?: string
     minHeight?: number
     bordered?: boolean
     tile?: boolean
@@ -21,7 +22,7 @@ interface NonClickableProps extends StaticProps {
 
 type Props = ClickableProps | NonClickableProps
 
-export default function ImageDisplay ({ url, minHeight = 450, bordered = false, tile = true, clickable, onClick }: Props) {
+export default function ImageDisplay ({ url, backgroundColor = '#262626', minHeight = 450, bordered = false, tile = true, clickable, onClick }: Props) {
 
     const handleClick = () => {
         if (clickable && onClick) {
@@ -71,7 +72,7 @@ export default function ImageDisplay ({ url, minHeight = 450, bordered = false, 
                     <Box
                         component='div'
                         maxHeight='inherit'
-                        bgcolor='#262626'
+                        bgcolor={backgroundColor}
                         display='block'
                         width='100%'
                         position='relative'
@@ -83,19 +84,21 @@ export default function ImageDisplay ({ url, minHeight = 450, bordered = false, 
                             overflow='hidden'
                             paddingBottom='125%'
                         >
-                            <Box
-                                component='img'
-                                width='100%'
-                                height='100%'
-                                position='absolute'
-                                top='0'
-                                left='0'
-                                border='0'
-                                overflow='clip'
-                                fontSize='100%'
-                                src={url}
-                                sx={{ objectFit: 'cover', overflowClipMargin: 'content-box' }}
-                            />
+                            { url.trim().length > 0 && (
+                                <Box
+                                    component='img'
+                                    width='100%'
+                                    height='100%'
+                                    position='absolute'
+                                    top='0'
+                                    left='0'
+                                    border='0'
+                                    overflow='clip'
+                                    fontSize='100%'
+                                    src={url}
+                                    sx={{ objectFit: 'cover', overflowClipMargin: 'content-box' }}
+                                />
+                            )}
                         </Box>
                         <Box
                             component='div'
