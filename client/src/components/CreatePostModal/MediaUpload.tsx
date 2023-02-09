@@ -10,7 +10,7 @@ interface Props {
     onChangeFile: (file: File, isVideo: boolean) => void
 }
 
-export default function UploadMedia (props: Props) {
+export default function MediaUpload (props: Props) {
 
     return (
         <Box

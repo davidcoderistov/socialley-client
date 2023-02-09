@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import { Close, ArrowBack } from '@mui/icons-material'
-import UploadMedia from './UploadMedia'
+import MediaUpload from './MediaUpload'
 import PostPreview from './PostPreview'
 
 
@@ -87,7 +87,7 @@ export default function CreatePostModal () {
                     </IconButton>
                 </Box>
                 { step === 0 && (
-                    <UploadMedia onChangeFile={handleChangeFile} />
+                    <MediaUpload onChangeFile={handleChangeFile} />
                 )}
                 { step === 1 && (
                     <PostPreview
