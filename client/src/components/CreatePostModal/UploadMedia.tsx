@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import { SaveAlt } from '@mui/icons-material'
-import UploadFile from '../UploadFile'
+import FileUpload from '../FileUpload'
 
 
 interface Props {
@@ -35,7 +35,7 @@ export default function UploadMedia (props: Props) {
                 sx={{ textTransform: 'none' }}
             >
                 Select from computer
-                <UploadFile mimeTypes={['image/jpeg', 'image/png', 'video/mp4']} onChangeFile={props.onChangeFile} />
+                <FileUpload mimeTypes={['image/jpeg', 'image/png', 'video/mp4']} onChangeFile={props.onChangeFile} />
             </Button>
         </Box>
     )

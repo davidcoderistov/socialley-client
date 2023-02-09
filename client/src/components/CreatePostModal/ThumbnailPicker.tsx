@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-import UploadFile from '../UploadFile'
+import FileUpload from '../FileUpload'
 import MediaDisplay from '../MediaDisplay'
 import { default as _ReactPlayer } from 'react-player/lazy'
 import { ReactPlayerProps } from 'react-player/types/lib'
@@ -190,7 +190,7 @@ export default function ThumbnailPicker (props: Props) {
                                     sx={{ textTransform: 'none', '&:hover': { color: '#FFFFFF', bgcolor: '#262626' } }}
                                 >
                                     Select from computer
-                                    <UploadFile mimeTypes={['image/jpeg', 'image/png']} onChangeFile={props.onUploadFile} />
+                                    <FileUpload mimeTypes={['image/jpeg', 'image/png']} onChangeFile={props.onUploadFile} />
                                 </Button>
                             </Box>
                             <Box

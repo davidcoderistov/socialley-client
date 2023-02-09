@@ -9,7 +9,7 @@ interface Props {
     onChangeFile: (file: File, isVideo: boolean) => void
 }
 
-export default function UploadFile (props: Props) {
+export default function FileUpload (props: Props) {
 
     const [uploadKey, setUploadKey] = useState(0)
 
