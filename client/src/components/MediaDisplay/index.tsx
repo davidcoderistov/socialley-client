@@ -1,27 +1,32 @@
 import React, { useMemo } from 'react'
 import Box from '@mui/material/Box'
-import PostImage from '../PostImage'
+import ImageDisplay from '../ImageDisplay'
 import _range from 'lodash/range'
 
 
 interface MediaItem {
     _id: string
     url: string
+    selected?: boolean
 }
 
 interface Props {
     items: MediaItem[]
+    backgroundColor?: string
+    minHeight?: number
+    tile?: boolean
+    onClick: (_id: string) => void
 }
 
-export default function MediaDisplay (props: Props) {
+export default function MediaDisplay ({ items, backgroundColor = '#262626', minHeight = 450, tile = true, onClick }: Props) {
 
     const chunkedItems = useMemo(() => {
         const chunkedItems: MediaItem[][] = []
-        for (let i = 0; i < props.items.length; i+=3) {
-            chunkedItems.push(props.items.slice(i, i + 3))
+        for (let i = 0; i < items.length; i+=3) {
+            chunkedItems.push(items.slice(i, i + 3))
         }
         return chunkedItems
-    }, [props.items])
+    }, [items])
 
     return (
         <Box
@@ -76,7 +81,14 @@ export default function MediaDisplay (props: Props) {
                                         sx={{ '@media (min-width: 736px)': { marginRight: '28px' } }}
                                     >
                                         { itemIndex < itemsChunk.length && (
-                                            <PostImage minHeight={100} />
+                                            <ImageDisplay
+                                                url={itemsChunk[itemIndex].url}
+                                                minHeight={minHeight}
+                                                backgroundColor={backgroundColor}
+                                                bordered={itemsChunk[itemIndex].selected}
+                                                tile={tile}
+                                                clickable
+                                                onClick={() => onClick(itemsChunk[itemIndex]._id)} />
                                         )}
                                     </Box>
                                 ))}
