@@ -44,11 +44,11 @@ export default function PhotoMessage (props: Props) {
             >
                 { props.photoURL && (
                     <Image
+                        url={props.photoURL}
+                        remote={true}
                         minHeight='100%'
                         minWidth='100%'
-                        border={0}
-                        url={props.photoURL}
-                        showAlways={false} />
+                        border={0} />
                 )}
             </Box>
         </Message>

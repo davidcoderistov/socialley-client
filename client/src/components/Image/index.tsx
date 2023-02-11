@@ -1,29 +1,59 @@
-import React from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { GET_IMAGE } from '../../graphql/queries/files'
 import { ImageQueryData } from '../../graphql/types'
 
 
-interface ImageProps extends BoxProps {
+interface Props extends BoxProps {
     url: string
-    showAlways: boolean
+    remote: boolean
 }
 
-export default function Image ({ url, showAlways, ... props }: ImageProps) {
+export default function Image ({url, remote, ...boxProps}: Props) {
 
-    const { data } = useQuery<ImageQueryData>(GET_IMAGE, {
+    const [fetchImage, data] = useLazyQuery<ImageQueryData>(GET_IMAGE, {
         variables: {
             url
         }
     })
+    const [loading, setLoading] = useState(false)
 
-    return showAlways || data?.getImage ? (
+    const imgUrl = useMemo(() => {
+        if (remote && !data.loading && data.data?.getImage) {
+            return `data:image/jpeg;base64,${data.data.getImage}`
+        }
+        if (!remote && !loading) {
+            return url
+        }
+        return null
+    }, [remote, data, loading])
+
+    useEffect(() => {
+        setLoading(true)
+        if (remote) {
+            fetchImage()
+        } else {
+            const image = new window.Image()
+            image.src = url
+            image.addEventListener('load', () => {
+                setLoading(false)
+            })
+            image.addEventListener('error', () => {
+                setLoading(false)
+            })
+
+            return () => {
+                image.removeEventListener('load', () => {})
+                image.removeEventListener('error', () => {})
+            }
+        }
+    }, [url])
+
+    return imgUrl ? (
         <Box
-            {...props}
             component='img'
-            src={`data:image/jpeg;base64,${data?.getImage}`}
-        />
+            src={imgUrl}
+            {...boxProps} />
     ) : null
 }
-
