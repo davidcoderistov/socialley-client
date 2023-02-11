@@ -3,9 +3,10 @@ import Box, { BoxProps } from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import InputBase from '@mui/material/InputBase'
 import UserAvatar from '../UserAvatar'
+import Image from '../Image'
 
 
-export default function PostPreview (props: { url: string, containerProps?: BoxProps }) {
+export default function PostPreview (props: { url: string | null, containerProps?: BoxProps }) {
 
     return (
         <Box
@@ -79,16 +80,17 @@ export default function PostPreview (props: { url: string, containerProps?: BoxP
                                 position='relative'
                                 sx={{ verticalAlign: 'baseline' }}
                             >
-                                <Box
-                                    component='img'
-                                    src={props.url}
-                                    width='100%'
-                                    height='100%'
-                                    border='0'
-                                    margin='0'
-                                    padding='0'
-                                    sx={{ verticalAlign: 'baseline' }}
-                                />
+                                { props.url && (
+                                    <Image
+                                        url={props.url}
+                                        remote={false}
+                                        width='100%'
+                                        height='100%'
+                                        border='0'
+                                        margin='0'
+                                        padding='0'
+                                        sx={{ verticalAlign: 'baseline' }} />
+                                )}
                             </Box>
                         </Box>
                     </Box>
