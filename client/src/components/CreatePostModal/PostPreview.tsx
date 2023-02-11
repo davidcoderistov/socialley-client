@@ -1,11 +1,11 @@
 import React from 'react'
-import Box from '@mui/material/Box'
+import Box, { BoxProps } from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import InputBase from '@mui/material/InputBase'
 import UserAvatar from '../UserAvatar'
 
 
-export default function PostPreview (props: { url: string }) {
+export default function PostPreview (props: { url: string, containerProps?: BoxProps }) {
 
     return (
         <Box
@@ -13,6 +13,7 @@ export default function PostPreview (props: { url: string }) {
             display='flex'
             flex='1 1 auto'
             margin='15px'
+            {...props.containerProps || {}}
         >
             <Box
                 component='div'
@@ -98,7 +99,7 @@ export default function PostPreview (props: { url: string }) {
                 display='flex'
                 position='relative'
                 boxSizing='border-box'
-                width='340px'
+                width='100%'
                 borderLeft='1px solid #363636'
             >
                 <Box

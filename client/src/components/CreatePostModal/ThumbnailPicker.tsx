@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Box from '@mui/material/Box'
+import Box, { BoxProps } from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import FileUpload from '../FileUpload'
@@ -19,9 +19,10 @@ interface MediaItem {
 }
 
 interface Props {
-    file: File
+    file: File | null
     onUploadFile: (file: File, isVideo: boolean) => void
     onChooseCoverPhoto: (url: string) => void
+    containerProps?: BoxProps
 }
 
 export default function ThumbnailPicker (props: Props) {
@@ -31,16 +32,18 @@ export default function ThumbnailPicker (props: Props) {
     )
 
     useEffect(() => {
-        generateVideoThumbnails(props.file, 6, 'base64').then(imgUrls => {
-            setCoverPhotos(imgUrls.map((url, index) => ({
-                _id: index.toString(),
-                url,
-                selected: index === 0,
-            })))
-            if (imgUrls.length > 0) {
-                props.onChooseCoverPhoto(imgUrls[0])
-            }
-        })
+        if (props.file) {
+            generateVideoThumbnails(props.file, 6, 'base64').then(imgUrls => {
+                setCoverPhotos(imgUrls.map((url, index) => ({
+                    _id: index.toString(),
+                    url,
+                    selected: index === 0,
+                })))
+                if (imgUrls.length > 0) {
+                    props.onChooseCoverPhoto(imgUrls[0])
+                }
+            })
+        }
     }, [props.file])
 
     const handleClickCoverPhoto = (_id: string) => {
@@ -62,6 +65,7 @@ export default function ThumbnailPicker (props: Props) {
             display='flex'
             flex='1 1 auto'
             margin='15px'
+            {...props.containerProps || {}}
         >
             <Box
                 component='div'
