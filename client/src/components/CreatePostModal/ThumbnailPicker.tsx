@@ -126,11 +126,13 @@ const ThumbnailPicker = React.forwardRef( (props: Props, ref) => {
                                 position='relative'
                                 sx={{ verticalAlign: 'baseline' }}
                             >
-                                <ReactPlayer
-                                    width='100%'
-                                    height='100%'
-                                    url='https://www.youtube.com/watch?v=4WT5cMFySHg'
-                                    playing={false} />
+                                { props.file && (
+                                    <ReactPlayer
+                                        width='100%'
+                                        height='100%'
+                                        url={URL.createObjectURL(props.file)}
+                                        playing={false} />
+                                )}
                             </Box>
                         </Box>
                     </Box>
