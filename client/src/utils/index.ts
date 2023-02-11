@@ -56,3 +56,26 @@ export const getTimeElapsed = (timestamp: number) => {
         return `${now.diff(ago, 'weeks')}w`
     }
 }
+
+export const createFileFromBase64 = (base64Image: string, defaultFilename: string) => {
+    const decodedData = atob(base64Image.split(',')[1])
+    const mimeType = base64Image.split(',')[0].split(':')[1].split('')[0]
+    const byteArray = new Uint8Array(decodedData.length)
+    for (let i = 0; i < decodedData.length; i++) {
+        byteArray[i] = decodedData.charCodeAt(i)
+    }
+    const blob = new Blob([byteArray], { type: mimeType })
+
+    let filename = defaultFilename
+
+    // Extract the file name from the URL, if present
+    const contentDispositionHeader = base64Image.split('')[1]
+    if (contentDispositionHeader) {
+        const matches = contentDispositionHeader.match(/filename="(.+)"/)
+        if (matches && matches.length > 1) {
+            filename = matches[1]
+        }
+    }
+
+    return new File([blob], filename, { type: mimeType })
+}
