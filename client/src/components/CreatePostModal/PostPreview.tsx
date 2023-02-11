@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import InputBase from '@mui/material/InputBase'
@@ -6,7 +6,13 @@ import UserAvatar from '../UserAvatar'
 import Image from '../Image'
 
 
-export default function PostPreview (props: { url: string | null, containerProps?: BoxProps }) {
+const PostPreview = React.forwardRef((props: { url: string | null, containerProps?: BoxProps }, ref) => {
+
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    React.useImperativeHandle(ref, () => ({
+        getPostText: () => inputRef?.current?.value ?? ''
+    }))
 
     return (
         <Box
@@ -172,6 +178,7 @@ export default function PostPreview (props: { url: string | null, containerProps
                                 height='100%'
                             >
                                 <InputBase
+                                    inputRef={inputRef}
                                     sx={{
                                         '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
                                             display: 'none',
@@ -198,4 +205,6 @@ export default function PostPreview (props: { url: string | null, containerProps
             </Box>
         </Box>
     )
-}
+})
+
+export default PostPreview
