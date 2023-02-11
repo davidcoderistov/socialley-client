@@ -21,11 +21,11 @@ interface MediaItem {
 interface Props {
     file: File | null
     onUploadFile: (file: File, isVideo: boolean) => void
-    onChooseCoverPhoto: (url: string) => void
+    onCoverPhotosGenerated: () => void
     containerProps?: BoxProps
 }
 
-export default function ThumbnailPicker (props: Props) {
+const ThumbnailPicker = React.forwardRef( (props: Props, ref) => {
 
     const [coverPhotos, setCoverPhotos] = useState<MediaItem[]>(
         _range(6).map(index => ({ _id: index.toString(), url: '', selected: false }))
@@ -39,25 +39,20 @@ export default function ThumbnailPicker (props: Props) {
                     url,
                     selected: index === 0,
                 })))
-                if (imgUrls.length > 0) {
-                    props.onChooseCoverPhoto(imgUrls[0])
-                }
-            })
+            }).finally(() => props.onCoverPhotosGenerated())
         }
     }, [props.file])
 
     const handleClickCoverPhoto = (_id: string) => {
-        setCoverPhotos(coverPhotos.map(coverPhoto => {
-            const selected = coverPhoto._id === _id
-            if (selected) {
-                props.onChooseCoverPhoto(coverPhoto.url)
-            }
-            return {
+        setCoverPhotos(coverPhotos.map(coverPhoto => ({
                 ...coverPhoto,
-                selected
-            }
-        }))
+                selected: coverPhoto._id === _id,
+        })))
     }
+
+    React.useImperativeHandle(ref, () => ({
+        getSelectedCoverPhotoUrl: () => coverPhotos.find(coverPhoto => coverPhoto.selected)?.url ?? null
+    }))
 
     return (
         <Box
@@ -253,4 +248,6 @@ export default function ThumbnailPicker (props: Props) {
             </Box>
         </Box>
     )
-}
+})
+
+export default ThumbnailPicker
