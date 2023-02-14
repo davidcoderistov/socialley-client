@@ -65,3 +65,7 @@ export interface FollowedUserPost {
     commentsCount: number
     createdAt: number
 }
+
+export interface LikingUser extends PublicUser {
+    following: boolean
+}

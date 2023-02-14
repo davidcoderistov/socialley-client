@@ -28,3 +28,19 @@ export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
         }
     }
 `
+
+export const GET_USERS_WHO_LIKED_POST = gql`
+    query getUsersWhoLikedPost ($postId: String!, $offset: Int!, $limit: Int!) {
+        getUsersWhoLikedPost (postId: $postId, offset: $offset, limit: $limit) {
+            data {
+                _id
+                username
+                firstName
+                lastName
+                avatarURL
+                following
+            }
+            total
+        }
+    }
+`
