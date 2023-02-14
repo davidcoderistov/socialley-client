@@ -1,7 +1,5 @@
 import React from 'react'
 import {
-    Container,
-    Grid,
     Box,
     List,
     Drawer as MuiDrawer,
@@ -12,6 +10,7 @@ import {
 } from '@mui/material'
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles'
 import NavLink from './NavLink'
+import { useLocation } from 'react-router-dom'
 
 
 const drawerWidth: number = 265
@@ -53,6 +52,10 @@ interface Props {
 }
 
 export default function Dashboard (props: Props) {
+
+    const location = useLocation()
+
+    const backgroundColor = location.pathname === '/' ? '#000000' : '#121212'
 
     return (
         <ThemeProvider theme={mdTheme}>
@@ -105,7 +108,7 @@ export default function Dashboard (props: Props) {
                                 display='flex'
                                 flexDirection='column'
                                 flexGrow='1'
-                                bgcolor='rgb(18,18,18)'
+                                bgcolor={backgroundColor}
                                 maxHeight='100%'
                             >
                                 <Box
