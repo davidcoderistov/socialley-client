@@ -70,6 +70,7 @@ export default function PostDetails () {
                                 username: 'jelena_braun',
                                 avatarURL: null,
                                 following: false,
+                                pendingFollow: false,
                             }}
                             loading={false}
                             onClickUser={() => {}}

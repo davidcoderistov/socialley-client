@@ -78,7 +78,7 @@ export default function PostUserView (props: Props) {
                         variant='circular'
                         width='40px'
                         height='40px'
-                        sx={{ backgroundColor: '#2C3539' }} />
+                        sx={{ backgroundColor: '#262626' }} />
                 ) : (
                     <UserAvatar
                         size={40}
@@ -157,7 +157,7 @@ export default function PostUserView (props: Props) {
                                                 onClick={handleClickUser}
                                             >
                                                 { props.loading ? (
-                                                    <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='180px' />
+                                                    <Skeleton sx={{ backgroundColor: '#262626' }} animation='wave' width='180px' />
                                                 ) : props.user.username }
                                             </Box>
                                         </Box>
@@ -292,7 +292,7 @@ export default function PostUserView (props: Props) {
                                 sx={{ textOverflow: 'ellipsis', whiteSpace: 'no-wrap' }}
                             >
                                 { props.loading ? (
-                                    <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='100px' />
+                                    <Skeleton sx={{ backgroundColor: '#262626' }} animation='wave' width='100px' />
                                 ) : props.post.title }
                             </Box>
                         </Box>
@@ -304,9 +304,11 @@ export default function PostUserView (props: Props) {
                 display='block'
                 {...!props.dense && { paddingRight: '8px' }}
             >
-                <IconButton sx={{ color: '#FFFFFF' }} onClick={handleClickMore}>
-                    <MoreHoriz />
-                </IconButton>
+                { !props.loading && (
+                    <IconButton sx={{ color: '#FFFFFF' }} onClick={handleClickMore}>
+                        <MoreHoriz />
+                    </IconButton>
+                )}
             </Box>
         </Box>
     )
