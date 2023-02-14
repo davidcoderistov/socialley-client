@@ -44,3 +44,22 @@ export interface FullMessage {
     createdAt: number
     temporary: boolean
 }
+
+export interface FollowedUserPost {
+    _id: string
+    title: string | null
+    photoURL: string
+    videoURL: string | null
+    user: {
+        _id: string
+        username: string
+        avatarURL: string | null
+    }
+    firstLikeUser: {
+        _id: string
+        username: string
+    } | null
+    likesCount: number
+    commentsCount: number
+    createdAt: number
+}

@@ -1,4 +1,4 @@
-import { FullMessage, Message } from '../../types'
+import { FullMessage, Message, FollowedUserPost } from '../../types'
 
 
 export interface LatestMessageQueryData {
@@ -39,4 +39,11 @@ interface UserBySearchQuery {
 
 export interface UsersBySearchQueryData {
     getUsersBySearchQuery: UserBySearchQuery[]
+}
+
+export interface FollowedUsersPostsQueryData {
+    getFollowedUsersPostsPaginated: {
+        data: FollowedUserPost[]
+        total: number
+    }
 }
