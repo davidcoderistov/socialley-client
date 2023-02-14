@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
+import Skeleton from '@mui/material/Skeleton'
 import UserAvatar from '../UserAvatar'
 import { MoreHoriz } from '@mui/icons-material'
 import { getTimeElapsed } from '../../utils'
@@ -20,6 +21,7 @@ interface Props {
         username: string
         avatarURL: string | null
         following: boolean
+        pendingFollow: boolean
     }
     loading: boolean
     showAgo?: boolean
@@ -69,11 +71,21 @@ export default function PostUserView (props: Props) {
                 padding={`14px ${props.dense ? 0 : 4}px ${props.dense ? 8 : 14}px ${props.dense ? 0 : 16}px`}
                 position='relative'
             >
-                <UserAvatar
-                    size={40}
-                    fontSize={16}
-                    firstName={props.user.firstName}
-                    lastName={props.user.lastName} />
+                { props.loading ? (
+                    <Skeleton
+                        component='div'
+                        animation='wave'
+                        variant='circular'
+                        width='40px'
+                        height='40px'
+                        sx={{ backgroundColor: '#2C3539' }} />
+                ) : (
+                    <UserAvatar
+                        size={40}
+                        fontSize={16}
+                        firstName={props.user.firstName}
+                        lastName={props.user.lastName} />
+                )}
                 <Box
                     component='div'
                     marginLeft='14px'
@@ -144,7 +156,9 @@ export default function PostUserView (props: Props) {
                                                 sx={{ cursor: 'pointer', '&:hover': { color: '#A8A8A8' }}}
                                                 onClick={handleClickUser}
                                             >
-                                                { props.user.username }
+                                                { props.loading ? (
+                                                    <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='180px' />
+                                                ) : props.user.username }
                                             </Box>
                                         </Box>
                                     </Box>
@@ -166,7 +180,7 @@ export default function PostUserView (props: Props) {
                             top='1px'
                             sx={{ verticalAlign: 'baseline' }}
                         >
-                            { props.showAgo && (
+                            { props.showAgo && !props.loading && (
                                 <>
                                     <Box
                                         component='div'
@@ -216,7 +230,7 @@ export default function PostUserView (props: Props) {
                                 position='relative'
                                 sx={{ verticalAlign: 'baseline' }}
                             >
-                                { !props.user.following && (
+                                { !props.user.following && !props.loading && (
                                     <Box
                                         component='span'
                                         marginLeft='4px'
@@ -228,21 +242,25 @@ export default function PostUserView (props: Props) {
                                     </Box>
                                 )}
                             </Box>
-                            { props.loading ? (
-                                <CircularProgress size={14} />
-                            ) : (
-                                <Button
-                                    color='primary'
-                                    variant='text'
-                                    sx={{
-                                        textTransform: 'none',
-                                        minHeight: 0,
-                                        minWidth: 0,
-                                        padding: 0,
-                                        ...props.user.following && { display: 'none' }
-                                    }}
-                                    onClick={handleFollow}
-                                >Follow</Button>
+                            { !props.loading && (
+                                <>
+                                    { props.user.pendingFollow && !props.user.following ? (
+                                        <CircularProgress size={14} />
+                                    ) : (
+                                        <Button
+                                            color='primary'
+                                            variant='text'
+                                            sx={{
+                                                textTransform: 'none',
+                                                minHeight: 0,
+                                                minWidth: 0,
+                                                padding: 0,
+                                                ...props.user.following && { display: 'none' }
+                                            }}
+                                            onClick={handleFollow}
+                                        >Follow</Button>
+                                    )}
+                                </>
                             )}
                         </Box>
                     </Box>
@@ -273,7 +291,9 @@ export default function PostUserView (props: Props) {
                                 lineHeight='16px'
                                 sx={{ textOverflow: 'ellipsis', whiteSpace: 'no-wrap' }}
                             >
-                                { props.post.title }
+                                { props.loading ? (
+                                    <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='100px' />
+                                ) : props.post.title }
                             </Box>
                         </Box>
                     </Box>
