@@ -72,7 +72,9 @@ export default function Post () {
                     position='relative'
                 >
                     { isImg ? (
-                        <ImageDisplay url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
+                        <ImageDisplay
+                            aspectRatioPercentage={100}
+                            url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
                     ) : (
                         <PostVideoPlayer minHeight={300} />
                     )}
@@ -103,7 +105,7 @@ export default function Post () {
                             boxSizing='border-box'
                             display='flex'
                             flexDirection='column'
-                            minWidth='335px'
+                            minWidth='495px'
                             position='relative'
                             width='100%'
                         >

@@ -8,6 +8,7 @@ interface StaticProps {
     minHeight?: number
     bordered?: boolean
     tile?: boolean
+    aspectRatioPercentage?: number
 }
 
 interface ClickableProps extends StaticProps {
@@ -22,7 +23,7 @@ interface NonClickableProps extends StaticProps {
 
 type Props = ClickableProps | NonClickableProps
 
-export default function ImageDisplay ({ url, backgroundColor = '#262626', minHeight = 450, bordered = false, tile = true, clickable, onClick }: Props) {
+export default function ImageDisplay ({ url, backgroundColor = '#262626', minHeight = 450, aspectRatioPercentage = 125, bordered = false, tile = true, clickable, onClick }: Props) {
 
     const handleClick = () => {
         if (clickable && onClick) {
@@ -82,7 +83,7 @@ export default function ImageDisplay ({ url, backgroundColor = '#262626', minHei
                             display='block'
                             position='relative'
                             overflow='hidden'
-                            paddingBottom='125%'
+                            paddingBottom={`${aspectRatioPercentage}%`}
                         >
                             { url.trim().length > 0 && (
                                 <Box
