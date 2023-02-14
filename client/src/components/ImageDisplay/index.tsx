@@ -1,5 +1,6 @@
 import React from 'react'
 import Box from '@mui/material/Box'
+import Image from '../Image'
 
 
 interface StaticProps {
@@ -85,21 +86,18 @@ export default function ImageDisplay ({ url, backgroundColor = '#262626', minHei
                             overflow='hidden'
                             paddingBottom={`${aspectRatioPercentage}%`}
                         >
-                            { url.trim().length > 0 && (
-                                <Box
-                                    component='img'
-                                    width='100%'
-                                    height='100%'
-                                    position='absolute'
-                                    top='0'
-                                    left='0'
-                                    border='0'
-                                    overflow='clip'
-                                    fontSize='100%'
-                                    src={url}
-                                    sx={{ objectFit: 'cover', overflowClipMargin: 'content-box' }}
-                                />
-                            )}
+                            <Image
+                                url={url}
+                                remote={true}
+                                width='100%'
+                                height='100%'
+                                position='absolute'
+                                top='0'
+                                left='0'
+                                border='0'
+                                overflow='clip'
+                                fontSize='100%'
+                                sx={{ objectFit: 'cover', overflowClipMargin: 'content-box' }} />
                         </Box>
                         <Box
                             component='div'
