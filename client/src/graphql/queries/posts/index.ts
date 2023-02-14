@@ -11,6 +11,8 @@ export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
                 videoURL
                 user {
                     _id
+                    firstName
+                    lastName
                     username
                     avatarURL
                 }

@@ -52,6 +52,8 @@ export interface FollowedUserPost {
     videoURL: string | null
     user: {
         _id: string
+        firstName: string
+        lastName: string
         username: string
         avatarURL: string | null
     }
