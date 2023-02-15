@@ -39,6 +39,7 @@ export const GET_USERS_WHO_LIKED_POST = gql`
                 lastName
                 avatarURL
                 following
+                isFollowingLoading @client
             }
             total
         }

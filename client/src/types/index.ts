@@ -68,4 +68,5 @@ export interface FollowedUserPost {
 
 export interface LikingUser extends PublicUser {
     following: boolean
+    isFollowingLoading: boolean
 }

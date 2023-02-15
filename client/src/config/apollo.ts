@@ -82,6 +82,15 @@ const cache = new InMemoryCache({
                     }
                 }
             },
+        },
+        LikingUser: {
+            fields: {
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
+                }
+            }
         }
     }
 })
