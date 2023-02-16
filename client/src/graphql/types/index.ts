@@ -54,3 +54,9 @@ export interface UsersWhoLikedPostQueryData {
         total: number
     }
 }
+
+export interface UnfollowUserMutationData {
+    unfollowUser: {
+        _id: string
+    } | null
+}
