@@ -1,9 +1,8 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
-import { FavoriteBorder } from '@mui/icons-material'
 import PostUserView from '../PostUserView'
 import PostComments from '../PostView/PostComments'
+import PostActions from '../PostActions'
 import PostLikes from '../PostLikes'
 import PostAddComment from '../PostView/PostAddComment'
 
@@ -89,7 +88,7 @@ export default function PostDetails () {
                         position='relative'
                         width='100%'
                     >
-                        <Box
+                        <PostActions
                             component='section'
                             marginTop='4px'
                             display='flex'
@@ -101,17 +100,10 @@ export default function PostDetails () {
                             order='3'
                             paddingBottom='8px'
                             paddingTop='6px'
-                        >
-                            <Box
-                                component='span'
-                                display='inline-block'
-                                marginLeft='-8px'
-                            >
-                                <IconButton sx={{ color: '#FFFFFF' }}>
-                                    <FavoriteBorder />
-                                </IconButton>
-                            </Box>
-                        </Box>
+                            post={{ _id: '1', liked: false, favorite: false }}
+                            onLikePost={() => {}}
+                            onViewPost={() => {}}
+                            onBookmarkPost={() => {}} />
                         <Box
                             component='section'
                             paddingLeft='16px'

@@ -1,11 +1,10 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
 import PostUserView from '../PostUserView'
 import ImageDisplay from '../ImageDisplay'
 import PostVideoPlayer from '../PostVideoPlayer'
+import PostActions from '../PostActions'
 import PostLikes from '../PostLikes'
-import { FavoriteBorder } from '@mui/icons-material'
 import { FollowedUserPost } from '../../types'
 
 
@@ -127,7 +126,7 @@ export default function Post (props: Props) {
                             position='relative'
                             width='100%'
                         >
-                            <Box
+                            <PostActions
                                 component='section'
                                 marginTop='4px'
                                 display='flex'
@@ -136,17 +135,10 @@ export default function Post (props: Props) {
                                 margin='0'
                                 paddingBottom='8px'
                                 paddingTop='6px'
-                            >
-                                <Box
-                                    component='span'
-                                    display='inline-block'
-                                    marginLeft='-8px'
-                                >
-                                    <IconButton sx={{ color: '#FFFFFF' }}>
-                                        <FavoriteBorder />
-                                    </IconButton>
-                                </Box>
-                            </Box>
+                                post={{ _id: '1', liked: false, favorite: false }}
+                                onLikePost={() => {}}
+                                onViewPost={() => {}}
+                                onBookmarkPost={() => {}} />
                             { !props.loading && props.post.likesCount > 0 && props.post.firstLikeUser && (
                                 <Box
                                     component='section'
