@@ -6,12 +6,26 @@ import ImageDisplay from '../ImageDisplay'
 import PostVideoPlayer from '../PostVideoPlayer'
 import PostLikes from '../PostLikes'
 import { FavoriteBorder } from '@mui/icons-material'
+import { FollowedUserPost } from '../../types'
 
 
+interface StaticProps {
+    post: FollowedUserPost
+    loading?: never
+    onClickUser: (userId: string) => void
+    onFollowUser: (userId: string) => void
+}
 
-const isImg = true
+interface LoadingProps {
+    post?: never
+    loading: true
+    onClickUser?: never
+    onFollowUser?: never
+}
 
-export default function Post () {
+type Props = StaticProps | LoadingProps
+
+export default function Post (props: Props) {
 
     return (
         <Box
@@ -40,26 +54,30 @@ export default function Post () {
                     component='div'
                     display='block'
                 >
-                    <PostUserView
-                        post={{
-                            title: 'Leeds',
-                            createdAt: 1,
-                        }}
-                        user={{
-                            _id: '1',
-                            firstName: 'Jelena',
-                            lastName: 'Braun',
-                            username: 'jelena_braun',
-                            avatarURL: null,
-                            following: false,
-                        }}
-                        loading={false}
-                        showAgo
-                        dense
-                        onClickUser={() => {}}
-                        onFollow={() => {}}
-                        onClickMore={() => {}}
-                    />
+                    { props.loading ? (
+                        <PostUserView loading />
+                    ) : (
+                        <PostUserView
+                            post={{
+                                title: props.post.title,
+                                createdAt: props.post.createdAt,
+                            }}
+                            user={{
+                                _id: props.post.user._id,
+                                firstName: props.post.user.firstName,
+                                lastName: props.post.user.lastName,
+                                username: props.post.user.username,
+                                avatarURL: props.post.user.avatarURL,
+                                following: true,
+                                pendingFollow: false,
+                            }}
+                            showAgo
+                            dense
+                            onClickUser={props.onClickUser}
+                            onFollow={props.onFollowUser}
+                            onClickMore={() => {}}
+                        />
+                    )}
                 </Box>
                 <Box
                     component='div'
@@ -71,13 +89,13 @@ export default function Post () {
                     flexDirection='column'
                     position='relative'
                 >
-                    { isImg ? (
-                        <ImageDisplay
-                            aspectRatioPercentage={100}
-                            url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
-                    ) : (
+                    { !props.loading ? props.post.videoURL ? (
                         <PostVideoPlayer minHeight={300} />
-                    )}
+                    ) : (
+                        <ImageDisplay
+                            url={props.post.photoURL}
+                            aspectRatioPercentage={100} />
+                    ) : null }
                 </Box>
                 <Box
                     component='div'
@@ -129,13 +147,18 @@ export default function Post () {
                                     </IconButton>
                                 </Box>
                             </Box>
-                            <Box
-                                component='section'
-                                marginBottom='8px'
-                                display='block'
-                            >
-                                <PostLikes user={{_id: '1', username: 'random8273' }} />
-                            </Box>
+                            { !props.loading && props.post.likesCount > 0 && props.post.firstLikeUser && (
+                                <Box
+                                    component='section'
+                                    marginBottom='8px'
+                                    display='block'
+                                >
+                                    <PostLikes
+                                        postId={props.post._id}
+                                        user={props.post.firstLikeUser}
+                                        likesCount={props.post.likesCount} />
+                                </Box>
+                            )}
                             <Box
                                 component='div'
                                 margin='0 0 auto'
@@ -158,29 +181,32 @@ export default function Post () {
                                     boxSizing='border-box'
                                     position='relative'
                                 >
-                                    <Box
-                                        component='div'
-                                        marginBottom='8px'
-                                        flex='0 0 auto'
-                                        justifyContent='flex-start'
-                                        flexDirection='column'
-                                        alignItems='stretch'
-                                        alignContent='stretch'
-                                        display='flex'
-                                        boxSizing='border-box'
-                                        position='relative'
-                                    >
+                                    { !props.loading && props.post.commentsCount > 0 && (
                                         <Box
-                                            component='span'
-                                            color='#A8A8A8'
-                                            fontWeight='400'
-                                            fontSize='14px'
-                                            lineHeight='18px'
-                                            sx={{ cursor: 'pointer' }}
+                                            component='div'
+                                            marginBottom='8px'
+                                            flex='0 0 auto'
+                                            justifyContent='flex-start'
+                                            flexDirection='column'
+                                            alignItems='stretch'
+                                            alignContent='stretch'
+                                            display='flex'
+                                            boxSizing='border-box'
+                                            position='relative'
                                         >
-                                            View all 111 comments
+                                            <Box
+                                                component='span'
+                                                color='#A8A8A8'
+                                                fontWeight='400'
+                                                fontSize='14px'
+                                                lineHeight='18px'
+                                                sx={{ cursor: 'pointer' }}
+                                            >
+                                                { props.post.commentsCount > 1 ?
+                                                    `View all ${props.post.commentsCount} comments` : 'View 1 comment' }
+                                            </Box>
                                         </Box>
-                                    </Box>
+                                    )}
                                 </Box>
                             </Box>
                         </Box>
