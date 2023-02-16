@@ -72,7 +72,6 @@ export default function PostDetails () {
                                 following: false,
                                 pendingFollow: false,
                             }}
-                            loading={false}
                             onClickUser={() => {}}
                             onFollow={() => {}}
                             onClickMore={() => {}}
@@ -121,7 +120,7 @@ export default function PostDetails () {
                             display='block'
                             order='4'
                         >
-                            <PostLikes user={{ _id: '1', username: 'random8723' }}/>
+                            <PostLikes user={{ _id: '1', username: 'random8723' }} likesCount={2} postId='asd' />
                         </Box>
                         <Box
                             component='div'
