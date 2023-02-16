@@ -38,3 +38,41 @@ export function updateFollowingLoadingStatus (options: UpdateFollowingLoadingSta
         success,
     }
 }
+
+interface ToggleFollowingStatusOptions {
+    usersWhoLikedPost: UsersWhoLikedPostQueryData
+    userId: string
+}
+
+interface ToggleFollowingStatusReturnValue {
+    usersWhoLikedPost: UsersWhoLikedPostQueryData
+    success: boolean
+}
+
+export function toggleFollowingStatus (options: ToggleFollowingStatusOptions): ToggleFollowingStatusReturnValue {
+    const { usersWhoLikedPost, userId } = options
+
+    let success = false
+    const usersWhoLikedPostResult = {
+        ...usersWhoLikedPost,
+        getUsersWhoLikedPost: {
+            ...usersWhoLikedPost.getUsersWhoLikedPost,
+            data: usersWhoLikedPost.getUsersWhoLikedPost.data.map(user => {
+                if (user._id === userId) {
+                    success = true
+                    return {
+                        ...user,
+                        following: !user.following,
+                        isFollowingLoading: false,
+                    }
+                }
+                return user
+            })
+        }
+    }
+
+    return {
+        usersWhoLikedPost: usersWhoLikedPostResult,
+        success,
+    }
+}
