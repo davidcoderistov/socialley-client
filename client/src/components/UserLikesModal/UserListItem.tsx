@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLoggedInUser } from '../../hooks/misc'
 import { Box, Typography, Skeleton } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import UserAvatar from '../UserAvatar'
@@ -31,6 +32,8 @@ interface UserState {
 type Props = LoadingState | UserState
 
 export default function UserListItem ({ user, isUserLoading, onFollowUser, onUnfollowUser }: Props) {
+
+    const [loggedInUser] = useLoggedInUser()
 
     const handleFollowUser = () => {
         if (!isUserLoading && user) {
@@ -114,7 +117,7 @@ export default function UserListItem ({ user, isUserLoading, onFollowUser, onUnf
                     )}
                 </Box>
             </Box>
-            { !isUserLoading && user ? user.following ? (
+            { !isUserLoading && user && user._id !== loggedInUser._id ? user.following ? (
                 <LoadingButton
                     variant='contained'
                     sx={{
