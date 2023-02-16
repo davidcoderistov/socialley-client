@@ -18,3 +18,13 @@ export const CREATE_POST = gql`
         }
     }
 `
+
+export const MARK_USER_POST_AS_FAVORITE = gql`
+    mutation markUserPostAsFavorite($postId: String!) {
+        markUserPostAsFavorite(postId: $postId) {
+            _id
+            postId
+            userId
+        }
+    }
+`
