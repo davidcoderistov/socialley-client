@@ -61,6 +61,7 @@ export interface FollowedUserPost {
         _id: string
         username: string
     } | null
+    liked: boolean
     likesCount: number
     commentsCount: number
     createdAt: number

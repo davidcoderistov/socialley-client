@@ -20,6 +20,7 @@ export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
                     _id
                     username
                 }
+                liked
                 likesCount
                 commentsCount
                 createdAt
