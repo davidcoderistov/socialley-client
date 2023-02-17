@@ -13,6 +13,10 @@ interface StaticProps {
     loading?: never
     onClickUser: (userId: string) => void
     onFollowUser: (userId: string) => void
+    onLikePost: (postId: string) => void
+    onViewPost: (postId: string) => void
+    onBookmarkPost: (postId: string) => void
+    onViewComments: (postId: string) => void
 }
 
 interface LoadingProps {
@@ -20,11 +24,21 @@ interface LoadingProps {
     loading: true
     onClickUser?: never
     onFollowUser?: never
+    onLikePost?: never
+    onViewPost?: never
+    onBookmarkPost?: never
+    onViewComments?: never
 }
 
 type Props = StaticProps | LoadingProps
 
 export default function Post (props: Props) {
+
+    const handleClickViewComments = () => {
+        if (!props.loading) {
+            props.onViewComments(props.post._id)
+        }
+    }
 
     return (
         <Box
@@ -126,19 +140,21 @@ export default function Post (props: Props) {
                             position='relative'
                             width='100%'
                         >
-                            <PostActions
-                                component='section'
-                                marginTop='4px'
-                                display='flex'
-                                flexDirection='row'
-                                borderTop='1px solid #262626'
-                                margin='0'
-                                paddingBottom='8px'
-                                paddingTop='6px'
-                                post={{ _id: '1', liked: false, favorite: false }}
-                                onLikePost={() => {}}
-                                onViewPost={() => {}}
-                                onBookmarkPost={() => {}} />
+                            { !props.loading && (
+                                <PostActions
+                                    component='section'
+                                    marginTop='4px'
+                                    display='flex'
+                                    flexDirection='row'
+                                    borderTop='1px solid #262626'
+                                    margin='0'
+                                    paddingBottom='8px'
+                                    paddingTop='6px'
+                                    post={props.post}
+                                    onLikePost={props.onLikePost}
+                                    onViewPost={props.onViewPost}
+                                    onBookmarkPost={props.onBookmarkPost} />
+                            )}
                             { !props.loading && props.post.likesCount > 0 && props.post.firstLikeUser && (
                                 <Box
                                     component='section'
@@ -193,6 +209,7 @@ export default function Post (props: Props) {
                                                 fontSize='14px'
                                                 lineHeight='18px'
                                                 sx={{ cursor: 'pointer' }}
+                                                onClick={handleClickViewComments}
                                             >
                                                 { props.post.commentsCount > 1 ?
                                                     `View all ${props.post.commentsCount} comments` : 'View 1 comment' }
