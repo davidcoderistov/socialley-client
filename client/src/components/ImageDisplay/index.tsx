@@ -86,18 +86,20 @@ export default function ImageDisplay ({ url, backgroundColor = '#262626', minHei
                             overflow='hidden'
                             paddingBottom={`${aspectRatioPercentage}%`}
                         >
-                            <Image
-                                url={url}
-                                remote={true}
-                                width='100%'
-                                height='100%'
-                                position='absolute'
-                                top='0'
-                                left='0'
-                                border='0'
-                                overflow='clip'
-                                fontSize='100%'
-                                sx={{ objectFit: 'cover', overflowClipMargin: 'content-box' }} />
+                            { url.trim().length > 0 && (
+                                <Image
+                                    url={url}
+                                    remote={true}
+                                    width='100%'
+                                    height='100%'
+                                    position='absolute'
+                                    top='0'
+                                    left='0'
+                                    border='0'
+                                    overflow='clip'
+                                    fontSize='100%'
+                                    sx={{ objectFit: 'cover', overflowClipMargin: 'content-box' }} />
+                            )}
                         </Box>
                         <Box
                             component='div'
