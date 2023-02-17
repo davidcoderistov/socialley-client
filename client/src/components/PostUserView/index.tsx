@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react'
+import React from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
@@ -9,9 +9,9 @@ import { MoreHoriz } from '@mui/icons-material'
 import { getTimeElapsed } from '../../utils'
 
 
-interface Props {
+interface StaticProps {
     post: {
-        title: string
+        title: string | null
         createdAt: number
     }
     user: {
@@ -23,7 +23,7 @@ interface Props {
         following: boolean
         pendingFollow: boolean
     }
-    loading: boolean
+    loading?: never
     showAgo?: boolean
     dense?: boolean
     onClickUser: (userId: string) => void
@@ -31,20 +31,39 @@ interface Props {
     onClickMore: (userId: string) => void
 }
 
+interface LoadingProps {
+    post?: never
+    user?: never
+    loading: true
+    showAgo?: never
+    dense?: boolean
+    onClickUser?: never
+    onFollow?: never
+    onClickMore?: never
+}
+
+type Props = StaticProps | LoadingProps
+
 export default function PostUserView (props: Props) {
 
-    const ago = useMemo(() => getTimeElapsed(props.post.createdAt), [props.post.createdAt])
+    const ago = !props.loading ? getTimeElapsed(props.post.createdAt) : ''
 
     const handleClickUser = () => {
-        props.onClickUser(props.user._id)
+        if (!props.loading) {
+            props.onClickUser(props.user._id)
+        }
     }
 
     const handleFollow = () => {
-        props.onFollow(props.user._id)
+        if (!props.loading) {
+            props.onFollow(props.user._id)
+        }
     }
 
     const handleClickMore = () => {
-        props.onClickMore(props.user._id)
+        if (!props.loading) {
+            props.onClickMore(props.user._id)
+        }
     }
 
     return (
@@ -230,7 +249,7 @@ export default function PostUserView (props: Props) {
                                 position='relative'
                                 sx={{ verticalAlign: 'baseline' }}
                             >
-                                { !props.user.following && !props.loading && (
+                                { !props.loading && !props.user.following && (
                                     <Box
                                         component='span'
                                         marginLeft='4px'
