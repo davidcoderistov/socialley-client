@@ -7,7 +7,7 @@ import { GET_USERS_WHO_LIKED_POST } from '../../graphql/queries/posts'
 import { useMutation } from '@apollo/client'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
 import { UsersWhoLikedPostQueryData, UnfollowUserMutationData } from '../../graphql/types'
-import { updateFollowingLoadingStatus, toggleFollowingStatus } from '../../apollo/mutations/posts/usersWhoLikedPost'
+import { updateFollowingLoadingStatus, updateFollowingStatus } from '../../apollo/mutations/posts/usersWhoLikedPost'
 
 
 interface Props {
@@ -66,11 +66,12 @@ export default function PostLikes (props: Props) {
         })
     }
 
-    const updateQueryToggleFollowingStatus = (userId: string) => {
+    const updateQueryToggleFollowingStatus = (userId: string, following: boolean) => {
         usersWhoLikedPost.updateQuery((prevUsersWhoLikedPost) => {
-            return toggleFollowingStatus({
+            return updateFollowingStatus({
                 usersWhoLikedPost: prevUsersWhoLikedPost,
                 userId,
+                following,
             }).usersWhoLikedPost
         })
     }
@@ -82,7 +83,7 @@ export default function PostLikes (props: Props) {
                 followedUserId: userId
             }
         }).then(() => {
-            updateQueryToggleFollowingStatus(userId)
+            updateQueryToggleFollowingStatus(userId, true)
         }).catch(() => {
             updateQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
@@ -103,7 +104,7 @@ export default function PostLikes (props: Props) {
             }
         }).then((data) => {
             if (data.data?.unfollowUser) {
-                updateQueryToggleFollowingStatus(userId)
+                updateQueryToggleFollowingStatus(userId, false)
             } else {
                 showErrorAndToggleFollowingLoadingStatus()
             }
