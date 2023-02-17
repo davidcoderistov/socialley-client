@@ -68,7 +68,9 @@ export default function Post (props: Props) {
                     display='block'
                 >
                     { props.loading ? (
-                        <PostUserView loading />
+                        <PostUserView
+                            loading
+                            dense />
                     ) : (
                         <PostUserView
                             post={{
@@ -108,7 +110,11 @@ export default function Post (props: Props) {
                         <ImageDisplay
                             url={props.post.photoURL}
                             aspectRatioPercentage={100} />
-                    ) : null }
+                    ) : (
+                        <ImageDisplay
+                            url={''}
+                            aspectRatioPercentage={100} />
+                    ) }
                 </Box>
                 <Box
                     component='div'
