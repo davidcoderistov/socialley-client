@@ -28,3 +28,13 @@ export const MARK_USER_POST_AS_FAVORITE = gql`
         }
     }
 `
+
+export const UNMARK_USER_POST_AS_FAVORITE = gql`
+    mutation unmarkUserPostAsFavorite($postId: String!) {
+        unmarkUserPostAsFavorite(postId: $postId) {
+            _id
+            postId
+            userId
+        }
+    }
+`
