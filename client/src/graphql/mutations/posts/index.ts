@@ -20,8 +20,8 @@ export const CREATE_POST = gql`
 `
 
 export const LIKE_POST = gql`
-    mutation likePost($postLike: LikePostInput) {
-        likePost(postLike: $postLike) {
+    mutation likePost($postId: String!) {
+        likePost(postId: $postId) {
             _id
             postId
             userId
