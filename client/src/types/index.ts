@@ -62,7 +62,9 @@ export interface FollowedUserPost {
         username: string
     } | null
     liked: boolean
+    isLikedLoading: boolean
     favorite: boolean
+    isFavoriteLoading: boolean
     likesCount: number
     commentsCount: number
     createdAt: number

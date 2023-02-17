@@ -4,6 +4,7 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { createUploadLink } from 'apollo-upload-client'
 import { createClient } from 'graphql-ws'
 import { getStorageLoggedInUser } from '../localStorage'
+import {FollowedUserPost} from "../types";
 
 
 const httpLink = createHttpLink({
@@ -88,6 +89,20 @@ const cache = new InMemoryCache({
                 isFollowingLoading: {
                     read (isFollowingLoading = false) {
                         return isFollowingLoading
+                    }
+                }
+            }
+        },
+        FollowedUserPost: {
+            fields: {
+                isLikedLoading: {
+                    read (isLikedLoading = false) {
+                        return isLikedLoading
+                    }
+                },
+                isFavoriteLoading: {
+                    read (isFavoriteLoading = false) {
+                        return isFavoriteLoading
                     }
                 }
             }

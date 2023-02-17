@@ -21,7 +21,9 @@ export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
                     username
                 }
                 liked
+                isLikedLoading @client
                 favorite
+                isFavoriteLoading @client
                 likesCount
                 commentsCount
                 createdAt
