@@ -13,9 +13,9 @@ interface StaticProps {
     loading?: never
     onClickUser: (userId: string) => void
     onFollowUser: (userId: string) => void
-    onLikePost: (postId: string) => void
+    onLikePost: (postId: string, liked: boolean) => void
     onViewPost: (postId: string) => void
-    onBookmarkPost: (postId: string) => void
+    onBookmarkPost: (postId: string, favorite: boolean) => void
     onViewComments: (postId: string) => void
 }
 

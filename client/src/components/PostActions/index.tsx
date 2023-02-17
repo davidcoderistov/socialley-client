@@ -12,15 +12,15 @@ interface Props extends BoxProps {
         liked: boolean
         favorite: boolean
     }
-    onLikePost: (postId: string) => void
+    onLikePost: (postId: string, liked: boolean) => void
     onViewPost: (postId: string) => void
-    onBookmarkPost: (postId: string) => void
+    onBookmarkPost: (postId: string, favorite: boolean) => void
 }
 
 export default function PostActions ({ post, onLikePost, onViewPost, onBookmarkPost, ...boxProps }: Props) {
 
     const handleLikePost = () => {
-        onLikePost(post._id)
+        onLikePost(post._id, !post.liked)
     }
 
     const handleViewPost = () => {
@@ -28,7 +28,7 @@ export default function PostActions ({ post, onLikePost, onViewPost, onBookmarkP
     }
 
     const handleBookmarkPost = () => {
-        onBookmarkPost(post._id)
+        onBookmarkPost(post._id, !post.favorite)
     }
 
     return (
