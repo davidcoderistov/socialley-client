@@ -19,6 +19,26 @@ export const CREATE_POST = gql`
     }
 `
 
+export const LIKE_POST = gql`
+    mutation likePost($postLike: LikePostInput) {
+        likePost(postLike: $postLike) {
+            _id
+            postId
+            userId
+        }
+    }
+`
+
+export const UNLIKE_POST = gql`
+    mutation unlikePost($postId: String!) {
+        unlikePost(postId: $postId) {
+            _id
+            postId
+            userId
+        }
+    }
+`
+
 export const MARK_USER_POST_AS_FAVORITE = gql`
     mutation markUserPostAsFavorite($postId: String!) {
         markUserPostAsFavorite(postId: $postId) {
