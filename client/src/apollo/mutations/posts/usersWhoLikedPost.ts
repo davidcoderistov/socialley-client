@@ -1,4 +1,5 @@
 import { UsersWhoLikedPostQueryData } from '../../../graphql/types'
+import { updateLikingUserByUserId } from '../../utils'
 
 
 interface UpdateFollowingLoadingStatusOptions {
@@ -13,35 +14,17 @@ interface UpdateFollowingLoadingStatusReturnValue {
 }
 
 export function updateFollowingLoadingStatus (options: UpdateFollowingLoadingStatusOptions): UpdateFollowingLoadingStatusReturnValue {
-    const { usersWhoLikedPost, userId, isFollowingLoading } = options
-
-    let success = false
-    const usersWhoLikedPostResult = {
-        ...usersWhoLikedPost,
-        getUsersWhoLikedPost: {
-            ...usersWhoLikedPost.getUsersWhoLikedPost,
-            data: usersWhoLikedPost.getUsersWhoLikedPost.data.map(user => {
-                if (user._id === userId) {
-                    success = true
-                    return {
-                        ...user,
-                        isFollowingLoading,
-                    }
-                }
-                return user
-            })
-        }
-    }
-
-    return {
-        usersWhoLikedPost: usersWhoLikedPostResult,
-        success,
-    }
+    return updateLikingUserByUserId({
+        usersWhoLikedPost: options.usersWhoLikedPost,
+        userId: options.userId,
+        likingUser: { isFollowingLoading: options.isFollowingLoading }
+    })
 }
 
 interface ToggleFollowingStatusOptions {
     usersWhoLikedPost: UsersWhoLikedPostQueryData
     userId: string
+    following: boolean
 }
 
 interface ToggleFollowingStatusReturnValue {
@@ -49,30 +32,13 @@ interface ToggleFollowingStatusReturnValue {
     success: boolean
 }
 
-export function toggleFollowingStatus (options: ToggleFollowingStatusOptions): ToggleFollowingStatusReturnValue {
-    const { usersWhoLikedPost, userId } = options
-
-    let success = false
-    const usersWhoLikedPostResult = {
-        ...usersWhoLikedPost,
-        getUsersWhoLikedPost: {
-            ...usersWhoLikedPost.getUsersWhoLikedPost,
-            data: usersWhoLikedPost.getUsersWhoLikedPost.data.map(user => {
-                if (user._id === userId) {
-                    success = true
-                    return {
-                        ...user,
-                        following: !user.following,
-                        isFollowingLoading: false,
-                    }
-                }
-                return user
-            })
+export function updateFollowingStatus (options: ToggleFollowingStatusOptions): ToggleFollowingStatusReturnValue {
+    return updateLikingUserByUserId({
+        usersWhoLikedPost: options.usersWhoLikedPost,
+        userId: options.userId,
+        likingUser: {
+            following: options.following,
+            isFollowingLoading: false
         }
-    }
-
-    return {
-        usersWhoLikedPost: usersWhoLikedPostResult,
-        success,
-    }
+    })
 }
