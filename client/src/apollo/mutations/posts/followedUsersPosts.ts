@@ -1,4 +1,5 @@
 import { FollowedUsersPostsQueryData } from '../../../graphql/types'
+import { updateFollowedUserPostByPostId } from '../../utils'
 
 
 interface UpdateFollowedUserPostLikedStatus {
@@ -13,30 +14,11 @@ interface UpdateFollowedUserPostLikedStatusReturnValue {
 }
 
 export function updateFollowedUserPostLikedStatus (options: UpdateFollowedUserPostLikedStatus): UpdateFollowedUserPostLikedStatusReturnValue {
-    const { followedUsersPosts, postId, liked } = options
-
-    let success = false
-    const followedUsersPostsResult = {
-        ...followedUsersPosts,
-        getFollowedUsersPostsPaginated: {
-            ...followedUsersPosts.getFollowedUsersPostsPaginated,
-            data: followedUsersPosts.getFollowedUsersPostsPaginated.data.map(post => {
-                if (post._id === postId) {
-                    success = true
-                    return {
-                        ...post,
-                        liked,
-                    }
-                }
-                return post
-            })
-        }
-    }
-
-    return {
-        followedUsersPosts: followedUsersPostsResult,
-        success,
-    }
+    return updateFollowedUserPostByPostId({
+        followedUsersPosts: options.followedUsersPosts,
+        postId: options.postId,
+        post: { liked: options.liked }
+    })
 }
 
 interface UpdateFollowedUserPostFavoriteStatus {
@@ -51,28 +33,9 @@ interface UpdateFollowedUserPostFavoriteStatusReturnValue {
 }
 
 export function updateFollowedUserPostFavoriteStatus (options: UpdateFollowedUserPostFavoriteStatus): UpdateFollowedUserPostFavoriteStatusReturnValue {
-    const { followedUsersPosts, postId, favorite } = options
-
-    let success = false
-    const followedUsersPostsResult = {
-        ...followedUsersPosts,
-        getFollowedUsersPostsPaginated: {
-            ...followedUsersPosts.getFollowedUsersPostsPaginated,
-            data: followedUsersPosts.getFollowedUsersPostsPaginated.data.map(post => {
-                if (post._id === postId) {
-                    success = true
-                    return {
-                        ...post,
-                        favorite,
-                    }
-                }
-                return post
-            })
-        }
-    }
-
-    return {
-        followedUsersPosts: followedUsersPostsResult,
-        success,
-    }
+    return updateFollowedUserPostByPostId({
+        followedUsersPosts: options.followedUsersPosts,
+        postId: options.postId,
+        post: { favorite: options.favorite }
+    })
 }
