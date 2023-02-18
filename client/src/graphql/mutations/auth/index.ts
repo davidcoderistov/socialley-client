@@ -22,6 +22,7 @@ export const LOGIN = gql`
             lastName
             username
             email
+            avatarURL
             accessToken
         }
     }
@@ -35,6 +36,7 @@ export const REFRESH = gql`
             lastName
             username
             email
+            avatarURL
             accessToken
         }
     }
