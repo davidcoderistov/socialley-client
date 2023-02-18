@@ -32,7 +32,7 @@ export default function PostAddComment (props: Props) {
         >
             <Box
                 component='div'
-                padding='20px'
+                paddingLeft='24px'
                 flex='0 0 auto'
                 justifyContent='flex-start'
                 flexDirection='column'
@@ -45,8 +45,6 @@ export default function PostAddComment (props: Props) {
                 <Box
                     component='div'
                     alignItems='center'
-                    border='1px solid #363636'
-                    borderRadius='22px'
                     boxSizing='border-box'
                     display='flex'
                     flexDirection='row'
@@ -54,8 +52,6 @@ export default function PostAddComment (props: Props) {
                     margin='0'
                     padding='0'
                     minHeight='44px'
-                    paddingLeft='11px'
-                    paddingRight='8px'
                     position='relative'
                 >
                     <Box
@@ -93,11 +89,16 @@ export default function PostAddComment (props: Props) {
                         />
                     </Box>
                     { props.postingComment ? (
-                        <CircularProgress size={16} sx={{ marginRight: '26px' }}/>
+                        <CircularProgress size={16} sx={{ marginRight: '14px' }}/>
                     ) : (
                         <Button
                             variant='text'
-                            sx={{ textTransform: 'none', '&.Mui-disabled': { color: '#A8A8A8' } }}
+                            sx={{
+                                textTransform: 'none',
+                                paddingX: 0,
+                                minWidth: 0,
+                                '&.Mui-disabled': { color: '#A8A8A8' }
+                            }}
                             onClick={props.onPostComment}
                             disabled={props.comment.trim().length <= 0}
                         >
