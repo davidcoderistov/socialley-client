@@ -100,7 +100,7 @@ export default function PostDetails () {
                             order='3'
                             paddingBottom='8px'
                             paddingTop='6px'
-                            post={{ _id: '1', liked: false, favorite: false }}
+                            post={{ _id: '1', liked: false, favorite: false, isLikedLoading: false, isFavoriteLoading: false }}
                             onLikePost={() => {}}
                             onViewPost={() => {}}
                             onBookmarkPost={() => {}} />
