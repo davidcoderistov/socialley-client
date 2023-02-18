@@ -1,7 +1,8 @@
 import React from 'react'
-import { useQuery, useMutation } from '@apollo/client'
-import { GET_FOLLOWED_USERS_POSTS_PAGINATED } from '../../graphql/queries/posts'
-import { FollowedUsersPostsQueryData } from '../../graphql/types'
+import { useLoggedInUser } from '../../hooks/misc'
+import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
+import { GET_FOLLOWED_USERS_POSTS_PAGINATED, GET_USERS_WHO_LIKED_POST, GET_FIRST_LIKING_USER_FOR_POST } from '../../graphql/queries/posts'
+import { FollowedUsersPostsQueryData, UsersWhoLikedPostQueryData, FirstLikingUserForPostQueryData } from '../../graphql/types'
 import Box, { BoxProps } from '@mui/material/Box'
 import Post from '../Post'
 import AllCaughtUp from './AllCaughtUp'
@@ -17,10 +18,18 @@ import {
     updateFollowedUserPostFavoriteStatus,
     updateFollowedUserPostFavoriteLoadingStatus,
 } from '../../apollo/mutations/posts/followedUsersPosts'
+import {
+    addLikingUser,
+    removeLikingUser,
+} from '../../apollo/mutations/posts/usersWhoLikedPost'
 import { useSnackbar } from 'notistack'
 
 
 export default function FollowedUsersPosts (props: BoxProps) {
+
+    const [loggedInUser] = useLoggedInUser()
+
+    const client = useApolloClient()
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -30,6 +39,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
             limit: 10,
         }
     })
+
+    const [getFirstLikingUser] = useLazyQuery<FirstLikingUserForPostQueryData>(GET_FIRST_LIKING_USER_FOR_POST)
 
     const [likePost] = useMutation(LIKE_POST)
     const [unlikePost] = useMutation(UNLIKE_POST)
@@ -41,11 +52,12 @@ export default function FollowedUsersPosts (props: BoxProps) {
             isLikedLoading,
         }).followedUsersPosts)
 
-    const updateQueryFollowedUserPostLikedStatus = (postId: string, liked: boolean) =>
+    const updateQueryFollowedUserPostLikedStatus = (postId: string, liked: boolean, firstLikeUser: { _id: string, username: string } | null) =>
         updateQuery(followedUsersPosts => updateFollowedUserPostLikedStatus({
             followedUsersPosts,
             postId,
             liked,
+            firstLikeUser,
         }).followedUsersPosts)
 
     const handleLikePost = (postId: string, liked: boolean) => {
@@ -56,7 +68,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     postId
                 }
             }).then(() => {
-                updateQueryFollowedUserPostLikedStatus(postId, liked)
+                updateQueryAddLikingUser(postId)
+                updateQueryFollowedUserPostLikedStatus(postId, liked, loggedInUser)
             }).catch(() => {
                 updateQueryFollowedUserPostLikedLoadingStatus(postId, false)
                 enqueueSnackbar(`Could not like this post`, { variant: 'error' })
@@ -67,7 +80,28 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     postId
                 }
             }).then(() => {
-                updateQueryFollowedUserPostLikedStatus(postId, liked)
+                const usersWhoLikedPost = updateQueryRemoveLikingUser(postId)
+                if (usersWhoLikedPost) {
+                    updateQueryFollowedUserPostLikedStatus(
+                        postId,
+                        liked,
+                        usersWhoLikedPost.getUsersWhoLikedPost.data.length > 0 ?
+                            usersWhoLikedPost.getUsersWhoLikedPost.data[0] : null
+                    )
+                } else {
+                    const post = data?.getFollowedUsersPostsPaginated.data.find(post => post._id === postId)
+                    if (post) {
+                        if (post.likesCount > 1) {
+                            return getFirstLikingUser({ variables: { postId }}).then(({ data }) => {
+                                const firstLikingUser = data?.getFirstLikingUserForPost ?? null
+                                updateQueryFollowedUserPostLikedStatus(postId, liked, firstLikingUser)
+                            }).catch(() => {
+                                updateQueryFollowedUserPostLikedStatus(postId, liked, null)
+                            })
+                        }
+                    }
+                    updateQueryFollowedUserPostLikedStatus(postId, liked, null)
+                }
             }).catch(() => {
                 updateQueryFollowedUserPostLikedLoadingStatus(postId, false)
                 enqueueSnackbar(`Could not unlike this post`, { variant: 'error' })
@@ -117,6 +151,45 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 enqueueSnackbar(`Could not unmark this post as favorite`, { variant: 'error' })
             })
         }
+    }
+
+    const updateQueryAddLikingUser = (postId: string) => {
+        client.cache.updateQuery({
+            query: GET_USERS_WHO_LIKED_POST,
+            variables: { postId }
+        }, (usersWhoLikedPost: UsersWhoLikedPostQueryData | null) => {
+            if (usersWhoLikedPost) {
+                return addLikingUser({
+                    usersWhoLikedPost,
+                    likingUser: {
+                        ...loggedInUser,
+                        following: true,
+                        isFollowingLoading: false,
+                    }
+                }).usersWhoLikedPost
+            }
+        })
+    }
+
+    const updateQueryRemoveLikingUser = (postId: string): UsersWhoLikedPostQueryData | null => {
+        let usersWhoLikedPostResult = null
+        client.cache.updateQuery({
+            query: GET_USERS_WHO_LIKED_POST,
+            variables: { postId }
+        }, (usersWhoLikedPost: UsersWhoLikedPostQueryData | null) => {
+            if (usersWhoLikedPost) {
+                usersWhoLikedPostResult = usersWhoLikedPost
+                const result = removeLikingUser({
+                    usersWhoLikedPost,
+                    userId: loggedInUser._id
+                })
+                if (result.success) {
+                    usersWhoLikedPostResult = result.usersWhoLikedPost
+                    return result.usersWhoLikedPost
+                }
+            }
+        })
+        return usersWhoLikedPostResult
     }
 
     const handleViewPost = (postId: string) => {
