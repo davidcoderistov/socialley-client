@@ -49,3 +49,12 @@ export const GET_USERS_WHO_LIKED_POST = gql`
         }
     }
 `
+
+export const GET_FIRST_LIKING_USER_FOR_POST = gql`
+   query getFirstLikingUserForPost($postId: String!) {
+       getFirstLikingUserForPost(postId: $postId) {
+           _id
+           username
+       }
+   }
+`

@@ -60,3 +60,10 @@ export interface UnfollowUserMutationData {
         _id: string
     } | null
 }
+
+export interface FirstLikingUserForPostQueryData {
+    getFirstLikingUserForPost: {
+        _id: string
+        username: string
+    } | null
+}
