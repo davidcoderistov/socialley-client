@@ -25,6 +25,10 @@ interface UpdateFollowedUserPostLikedStatusOptions {
     followedUsersPosts: FollowedUsersPostsQueryData
     postId: string
     liked: boolean
+    firstLikeUser: {
+        _id: string
+        username: string
+    } | null
 }
 
 interface UpdateFollowedUserPostLikedStatusReturnValue {
@@ -33,11 +37,33 @@ interface UpdateFollowedUserPostLikedStatusReturnValue {
 }
 
 export function updateFollowedUserPostLikedStatus (options: UpdateFollowedUserPostLikedStatusOptions): UpdateFollowedUserPostLikedStatusReturnValue {
-    return updateFollowedUserPostByPostId({
-        followedUsersPosts: options.followedUsersPosts,
-        postId: options.postId,
-        post: { liked: options.liked, isLikedLoading: false }
-    })
+    const { followedUsersPosts, postId, liked, firstLikeUser } = options
+
+    let success = false
+    const followedUsersPostsResult = {
+        ...followedUsersPosts,
+        getFollowedUsersPostsPaginated: {
+            ...followedUsersPosts.getFollowedUsersPostsPaginated,
+            data: followedUsersPosts.getFollowedUsersPostsPaginated.data.map(post => {
+                if (post._id === postId) {
+                    success = true
+                    return {
+                        ...post,
+                        liked,
+                        firstLikeUser,
+                        likesCount: liked ? post.likesCount + 1 : post.likesCount - 1,
+                        isLikedLoading: false,
+                    }
+                }
+                return post
+            })
+        }
+    }
+
+    return {
+        followedUsersPosts: followedUsersPostsResult,
+        success,
+    }
 }
 
 interface UpdateFollowedUserPostFavoriteLoadingStatusOptions {
