@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
 import UserAvatar from '../UserAvatar'
+import LoadingIconButton from '../LoadingIconButton'
 import { FavoriteBorder, Favorite } from '@mui/icons-material'
 import { getTimeElapsed } from '../../utils'
 import { Comment as CommentI } from '../../types'
@@ -211,13 +211,14 @@ export default function Comment (props: CommentProps) {
                                 border='none'
                                 padding='0'
                             >
-                                <IconButton sx={{ color: '#FFFFFF' }} onClick={handleLikeComment}>
-                                    { props.comment.liked ? (
-                                        <Favorite sx={{ fontSize: '16px' }} color='error' />
-                                    ) : (
-                                        <FavoriteBorder sx={{ fontSize: '16px' }} />
-                                    )}
-                                </IconButton>
+                                <LoadingIconButton
+                                    color={props.comment.liked ? '#ED4956' : '#FFFFFF'}
+                                    loading={props.comment.isLikedLoading}
+                                    iconComponent={props.comment.liked ?
+                                        <Favorite sx={{ fontSize: 16 }}/> :
+                                        <FavoriteBorder sx={{ fontSize: 16 }}/>
+                                    }
+                                    onClick={handleLikeComment} />
                             </Box>
                         </Box>
                     </Box>
