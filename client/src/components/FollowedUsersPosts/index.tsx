@@ -22,7 +22,9 @@ import {
     LIKE_POST,
     UNLIKE_POST,
     MARK_USER_POST_AS_FAVORITE,
-    UNMARK_USER_POST_AS_FAVORITE
+    UNMARK_USER_POST_AS_FAVORITE,
+    LIKE_COMMENT,
+    UNLIKE_COMMENT,
 } from '../../graphql/mutations/posts'
 import {
     updateFollowedUserPostLikedStatus,
@@ -34,6 +36,10 @@ import {
     addLikingUser,
     removeLikingUser,
 } from '../../apollo/mutations/posts/usersWhoLikedPost'
+import {
+    updateCommentLikedStatus,
+    updateCommentLikedLoadingStatus,
+} from '../../apollo/mutations/posts/commentsForPost'
 import { useSnackbar } from 'notistack'
 
 
@@ -227,6 +233,62 @@ export default function FollowedUsersPosts (props: BoxProps) {
         return data?.getFollowedUsersPostsPaginated.data.find(post => post._id === viewingPostId) ?? null
     }, [data, viewingPostId])
 
+    const [likeComment] = useMutation(LIKE_COMMENT)
+    const [unlikeComment] = useMutation(UNLIKE_COMMENT)
+
+    const updateQueryCommentLikedLoadingStatus = (commentId: string, postId: string, isLikedLoading: boolean) => {
+        client.cache.updateQuery({
+            query: GET_COMMENTS_FOR_POST,
+            variables: { postId }
+        }, (commentsForPost: CommentsForPostQueryData | null) => {
+            if (commentsForPost) {
+                return updateCommentLikedLoadingStatus({
+                    commentsForPost,
+                    commentId,
+                    isLikedLoading,
+                }).commentsForPost
+            }
+        })
+    }
+
+    const updateQueryCommentLikedStatus = (commentId: string, postId: string, liked: boolean) => {
+        client.cache.updateQuery({
+            query: GET_COMMENTS_FOR_POST,
+            variables: { postId }
+        }, (commentsForPost: CommentsForPostQueryData | null) => {
+            if (commentsForPost) {
+                return updateCommentLikedStatus({
+                    commentsForPost,
+                    commentId,
+                    liked,
+                }).commentsForPost
+            }
+        })
+    }
+
+    const handleLikeComment = (commentId: string, postId: string, liked: boolean) => {
+        updateQueryCommentLikedLoadingStatus(commentId, postId, true)
+        if (liked) {
+            likeComment({
+                variables: { commentId }
+            }).then(() => {
+                updateQueryCommentLikedStatus(commentId, postId, liked)
+            }).catch(() => {
+                updateQueryCommentLikedLoadingStatus(commentId, postId, false)
+                enqueueSnackbar(`Could not like this comment`, { variant: 'error' })
+            })
+        } else {
+            unlikeComment({
+                variables: { commentId }
+            }).then(() => {
+                updateQueryCommentLikedStatus(commentId, postId, liked)
+            }).catch(() => {
+                updateQueryCommentLikedLoadingStatus(commentId, postId, false)
+                enqueueSnackbar(`Could not unlike this comment`, { variant: 'error' })
+            })
+        }
+    }
+
     return (
         <Box {...props}>
             { loading ? (
@@ -258,7 +320,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     onBookmarkPost={handleBookmarkPost}
                     comments={commentsForPost.data?.getCommentsForPost.data ?? []}
                     commentsLoading={commentsForPost.loading}
-                    onLikeComment={() => {}}
+                    onLikeComment={handleLikeComment}
                     onClose={handleCloseViewPost} />
             )}
         </Box>
