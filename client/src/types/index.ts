@@ -45,7 +45,7 @@ export interface FullMessage {
     temporary: boolean
 }
 
-export interface FollowedUserPost {
+export interface PostDetails {
     _id: string
     title: string | null
     photoURL: string
@@ -56,6 +56,8 @@ export interface FollowedUserPost {
         lastName: string
         username: string
         avatarURL: string | null
+        following: boolean
+        isFollowingLoading: boolean
     }
     firstLikeUser: {
         _id: string
@@ -66,8 +68,11 @@ export interface FollowedUserPost {
     favorite: boolean
     isFavoriteLoading: boolean
     likesCount: number
-    commentsCount: number
     createdAt: number
+}
+
+export interface FollowedUserPost extends PostDetails {
+    commentsCount: number
 }
 
 export interface LikingUser extends PublicUser {
