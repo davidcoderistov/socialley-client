@@ -22,7 +22,7 @@ interface Props {
     onBookmarkPost: (postId: string, favorite: boolean) => void
     commentsLoading: boolean
     comments: Comment[]
-    onLikeComment: (commentId: string) => void
+    onLikeComment: (commentId: string, postId: string, liked: boolean) => void
     onClose: () => void
 }
 

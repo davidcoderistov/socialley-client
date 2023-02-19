@@ -6,7 +6,7 @@ import { Comment as CommentI } from '../../types'
 
 interface Props {
     comments: CommentI[]
-    onLikeComment: (commentId: string) => void
+    onLikeComment: (commentId: string, postId: string, liked: boolean) => void
 }
 
 export default function PostComments (props: Props) {

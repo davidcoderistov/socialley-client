@@ -9,7 +9,7 @@ import { Comment as CommentI } from '../../types'
 
 interface CommentProps {
     comment: CommentI
-    onLikeComment: (commentId: string) => void
+    onLikeComment: (commentId: string, postId: string, liked: boolean) => void
 }
 
 export default function Comment (props: CommentProps) {
@@ -17,7 +17,7 @@ export default function Comment (props: CommentProps) {
     const ago = useMemo(() => getTimeElapsed(props.comment.createdAt), [props.comment.createdAt])
 
     const handleLikeComment = () => {
-        props.onLikeComment(props.comment._id)
+        props.onLikeComment(props.comment._id, props.comment.postId, !props.comment.liked)
     }
 
     return (
