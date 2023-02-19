@@ -5,9 +5,32 @@ import PostComments from '../PostView/PostComments'
 import PostActions from '../PostActions'
 import PostLikes from '../PostLikes'
 import PostAddComment from '../PostView/PostAddComment'
+import { PostDetails as PostDetailsI } from '../../types'
 
 
-export default function PostDetails () {
+interface StaticProps {
+    postDetails: PostDetailsI
+    isPostDetailsLoading?: never
+    onClickUser: (userId: string) => void
+    onFollowUser: (userId: string) => void
+    onLikePost: (postId: string, liked: boolean) => void
+    onViewPost: (postId: string) => void
+    onBookmarkPost: (postId: string, favorite: boolean) => void
+}
+
+interface LoadingProps {
+    postDetails?: never
+    isPostDetailsLoading: true
+    onClickUser?: never
+    onFollowUser?: never
+    onLikePost?: never
+    onViewPost?: never
+    onBookmarkPost?: never
+}
+
+type Props = StaticProps | LoadingProps
+
+export default function PostDetails (props: Props) {
 
     return (
         <Box
@@ -57,24 +80,17 @@ export default function PostDetails () {
                         borderRadius='4px'
                         display='block'
                     >
-                        <PostUserView
-                            post={{
-                                title: 'Leeds',
-                                createdAt: 1,
-                            }}
-                            user={{
-                                _id: '1',
-                                firstName: 'Jelena',
-                                lastName: 'Braun',
-                                username: 'jelena_braun',
-                                avatarURL: null,
-                                following: false,
-                                pendingFollow: false,
-                            }}
-                            onClickUser={() => {}}
-                            onFollow={() => {}}
-                            onClickMore={() => {}}
-                        />
+                        { props.isPostDetailsLoading ? (
+                            <PostUserView loading={true} />
+                        ) : (
+                            <PostUserView
+                                post={props.postDetails}
+                                user={props.postDetails.user}
+                                onClickUser={props.onClickUser}
+                                onFollow={props.onFollowUser}
+                                onClickMore={() => {}}
+                            />
+                        )}
                     </Box>
                     <Box
                         component='div'
@@ -88,32 +104,39 @@ export default function PostDetails () {
                         position='relative'
                         width='100%'
                     >
-                        <PostActions
-                            component='section'
-                            marginTop='4px'
-                            display='flex'
-                            flexDirection='row'
-                            paddingLeft='16px'
-                            paddingRight='16px'
-                            borderTop='1px solid #262626'
-                            margin='0'
-                            order='3'
-                            paddingBottom='8px'
-                            paddingTop='6px'
-                            post={{ _id: '1', liked: false, favorite: false, isLikedLoading: false, isFavoriteLoading: false }}
-                            onLikePost={() => {}}
-                            onViewPost={() => {}}
-                            onBookmarkPost={() => {}} />
-                        <Box
-                            component='section'
-                            paddingLeft='16px'
-                            paddingRight='16px'
-                            marginBottom='4px'
-                            display='block'
-                            order='4'
-                        >
-                            <PostLikes user={{ _id: '1', username: 'random8723' }} likesCount={2} postId='asd' />
-                        </Box>
+                        { !props.isPostDetailsLoading && (
+                            <PostActions
+                                component='section'
+                                marginTop='4px'
+                                display='flex'
+                                flexDirection='row'
+                                paddingLeft='16px'
+                                paddingRight='16px'
+                                borderTop='1px solid #262626'
+                                margin='0'
+                                order='3'
+                                paddingBottom='8px'
+                                paddingTop='6px'
+                                post={props.postDetails}
+                                onLikePost={props.onLikePost}
+                                onViewPost={props.onViewPost}
+                                onBookmarkPost={props.onBookmarkPost} />
+                        )}
+                        { !props.isPostDetailsLoading && props.postDetails.likesCount > 0 && props.postDetails.firstLikeUser && (
+                            <Box
+                                component='section'
+                                paddingLeft='16px'
+                                paddingRight='16px'
+                                marginBottom='4px'
+                                display='block'
+                                order='4'
+                            >
+                                <PostLikes
+                                    postId={props.postDetails._id}
+                                    user={props.postDetails.firstLikeUser}
+                                    likesCount={props.postDetails.likesCount} />
+                            </Box>
+                        )}
                         <Box
                             component='div'
                             margin='0 0 auto'

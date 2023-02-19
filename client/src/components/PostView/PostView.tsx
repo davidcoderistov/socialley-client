@@ -6,18 +6,39 @@ import { Close } from '@mui/icons-material'
 import ImageDisplay from '../ImageDisplay'
 import PostVideoPlayer from '../PostVideoPlayer'
 import PostDetails from './PostDetails'
+import { PostDetails as PostDetailsI } from '../../types'
 
 
-const IMAGE_CONTAINER_WIDTH = 75
-const VIDEO_CONTAINER_WIDTH = 90
-
-const IMAGE_POST_CONTAINER_WIDTH = 60
+const IMAGE_POST_CONTAINER_WIDTH = 66
 const VIDEO_POST_CONTAINER_WIDTH = 75
 
-// TODO: Substitute with file check
-const isImg = true
+interface StaticProps {
+    postDetails: PostDetailsI
+    isPostDetailsLoading?: never
+    onClickUser: (userId: string) => void
+    onFollowUser: (userId: string) => void
+    onLikePost: (postId: string, liked: boolean) => void
+    onViewPost: (postId: string) => void
+    onBookmarkPost: (postId: string, favorite: boolean) => void
+    onClose: () => void
+}
 
-export default function PostView () {
+interface LoadingProps {
+    postDetails?: never
+    isPostDetailsLoading: true
+    onClickUser?: never
+    onFollowUser?: never
+    onLikePost?: never
+    onViewPost?: never
+    onBookmarkPost?: never
+    onClose?: never
+}
+
+type Props = StaticProps | LoadingProps
+
+export default function PostView (props: Props) {
+
+    const isImg = !props.postDetails?.videoURL
 
     return (
         <Backdrop
@@ -29,7 +50,7 @@ export default function PostView () {
                 position='absolute'
                 boxSizing='border-box'
                 height='100%'
-                width={`${isImg ? IMAGE_CONTAINER_WIDTH : VIDEO_CONTAINER_WIDTH}%`}
+                width='90%'
                 display='block'
             >
                 <Box
@@ -52,7 +73,7 @@ export default function PostView () {
                         right='0'
                         sx={{ opacity: '1' }}
                     >
-                        <IconButton sx={{ color: '#FFFFFF' }}>
+                        <IconButton sx={{ color: '#FFFFFF' }} onClick={props.onClose}>
                             <Close />
                         </IconButton>
                     </Box>
@@ -133,12 +154,27 @@ export default function PostView () {
                                                 position='relative'
                                                 sx={{ pointerEvents: 'none' }}
                                             >
-                                                { isImg ? (
-                                                    <ImageDisplay url='https://media.licdn.com/dms/image/C4E05AQFICc_xz7x_iA/feedshare-thumbnail_720_1280/0/1665680607798?e=2147483647&v=beta&t=uoEANNkcoYgIGueDpxdzfh-iF5Rg625ERQ8gqkbfkc8' />
+                                                { !props.isPostDetailsLoading ? props.postDetails.videoURL ? (
+                                                    <PostVideoPlayer minHeight={300} />
                                                 ) : (
-                                                    <PostVideoPlayer />
+                                                    <ImageDisplay
+                                                        url={props.postDetails.photoURL} />
+                                                ) : (
+                                                    <ImageDisplay
+                                                        url={''}
+                                                        aspectRatioPercentage={100} />
+                                                ) }
+                                                { props.isPostDetailsLoading ? (
+                                                    <PostDetails isPostDetailsLoading={true} />
+                                                ) : (
+                                                    <PostDetails
+                                                        postDetails={props.postDetails}
+                                                        onClickUser={props.onClickUser}
+                                                        onFollowUser={props.onFollowUser}
+                                                        onLikePost={props.onLikePost}
+                                                        onViewPost={props.onViewPost}
+                                                        onBookmarkPost={props.onBookmarkPost} />
                                                 )}
-                                                <PostDetails />
                                             </Box>
                                         </Box>
                                     </Box>
