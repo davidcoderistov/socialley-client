@@ -193,7 +193,7 @@ export default function Comment (props: CommentProps) {
                                                     display='inline-block'
                                                     marginRight='4px'
                                                 >
-                                                    { props.comment.likesCount } likes
+                                                    { props.comment.likesCount } { props.comment.likesCount > 1 ? 'likes' : 'like' }
                                                 </Box>
                                             </>
                                         )}
