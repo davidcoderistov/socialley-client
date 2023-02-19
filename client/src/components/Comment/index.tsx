@@ -4,26 +4,12 @@ import IconButton from '@mui/material/IconButton'
 import UserAvatar from '../UserAvatar'
 import { FavoriteBorder, Favorite } from '@mui/icons-material'
 import { getTimeElapsed } from '../../utils'
+import { Comment as CommentI } from '../../types'
 
-
-interface CommentI {
-    _id: string
-    user: {
-        _id: string
-        firstName: string
-        lastName: string
-        username: string
-        avatarURL?: string | null
-    }
-    text: string
-    likes: number
-    liked: boolean
-    createdAt: number
-}
 
 interface CommentProps {
     comment: CommentI
-    onLikeComment: (comment: CommentI) => void
+    onLikeComment: (commentId: string) => void
 }
 
 export default function Comment (props: CommentProps) {
@@ -31,7 +17,7 @@ export default function Comment (props: CommentProps) {
     const ago = useMemo(() => getTimeElapsed(props.comment.createdAt), [props.comment.createdAt])
 
     const handleLikeComment = () => {
-        props.onLikeComment(props.comment)
+        props.onLikeComment(props.comment._id)
     }
 
     return (
@@ -205,7 +191,7 @@ export default function Comment (props: CommentProps) {
                                             display='inline-block'
                                             marginRight='4px'
                                         >
-                                            { props.comment.likes } likes
+                                            { props.comment.likesCount } likes
                                         </Box>
                                     </Box>
                                 </Box>
