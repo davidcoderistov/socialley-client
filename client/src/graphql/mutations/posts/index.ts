@@ -58,3 +58,23 @@ export const UNMARK_USER_POST_AS_FAVORITE = gql`
         }
     }
 `
+
+export const LIKE_COMMENT = gql`
+    mutation likeComment($commentId: String!) {
+        likeComment(commentId: $commentId) {
+            _id
+            commentId
+            userId
+        }
+    }
+`
+
+export const UNLIKE_COMMENT = gql`
+    mutation unlikeComment($commentId: String!) {
+        unlikeComment(commentId: $commentId) {
+            _id
+            commentId
+            userId
+        }
+    }
+`
