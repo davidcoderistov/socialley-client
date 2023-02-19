@@ -84,7 +84,7 @@ export default function Post (props: Props) {
                                 username: props.post.user.username,
                                 avatarURL: props.post.user.avatarURL,
                                 following: true,
-                                pendingFollow: false,
+                                isFollowingLoading: false,
                             }}
                             showAgo
                             dense
