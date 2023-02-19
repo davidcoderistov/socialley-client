@@ -5,31 +5,22 @@ import PostComments from '../PostView/PostComments'
 import PostActions from '../PostActions'
 import PostLikes from '../PostLikes'
 import PostAddComment from '../PostView/PostAddComment'
-import { PostDetails as PostDetailsI } from '../../types'
+import { PostDetails as PostDetailsI, Comment } from '../../types'
 import moment from 'moment'
 
 
-interface StaticProps {
-    postDetails: PostDetailsI
-    isPostDetailsLoading?: never
+interface Props {
+    postDetails: PostDetailsI | null
+    isPostDetailsLoading: boolean
     onClickUser: (userId: string) => void
     onFollowUser: (userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
     onViewPost: (postId: string) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
+    commentsLoading: boolean
+    comments: Comment[]
+    onLikeComment: (commentId: string) => void
 }
-
-interface LoadingProps {
-    postDetails?: never
-    isPostDetailsLoading: true
-    onClickUser?: never
-    onFollowUser?: never
-    onLikePost?: never
-    onViewPost?: never
-    onBookmarkPost?: never
-}
-
-type Props = StaticProps | LoadingProps
 
 export default function PostDetails (props: Props) {
 
@@ -83,7 +74,7 @@ export default function PostDetails (props: Props) {
                     >
                         { props.isPostDetailsLoading ? (
                             <PostUserView loading={true} />
-                        ) : (
+                        ) : props.postDetails ? (
                             <PostUserView
                                 post={props.postDetails}
                                 user={props.postDetails.user}
@@ -91,7 +82,7 @@ export default function PostDetails (props: Props) {
                                 onFollow={props.onFollowUser}
                                 onClickMore={() => {}}
                             />
-                        )}
+                        ) : null}
                     </Box>
                     <Box
                         component='div'
@@ -105,7 +96,7 @@ export default function PostDetails (props: Props) {
                         position='relative'
                         width='100%'
                     >
-                        { !props.isPostDetailsLoading && (
+                        { !props.isPostDetailsLoading && props.postDetails && (
                             <PostActions
                                 component='section'
                                 marginTop='4px'
@@ -123,7 +114,7 @@ export default function PostDetails (props: Props) {
                                 onViewPost={props.onViewPost}
                                 onBookmarkPost={props.onBookmarkPost} />
                         )}
-                        { !props.isPostDetailsLoading && props.postDetails.likesCount > 0 && props.postDetails.firstLikeUser && (
+                        { !props.isPostDetailsLoading && props.postDetails && props.postDetails.likesCount > 0 && props.postDetails.firstLikeUser && (
                             <Box
                                 component='section'
                                 paddingLeft='16px'
@@ -152,8 +143,8 @@ export default function PostDetails (props: Props) {
                             sx={{ overflowX: 'hidden', overflowY: 'auto' }}
                         >
                             <PostComments
-                                comments={[]}
-                                onLikeComment={() => {}} />
+                                comments={props.comments}
+                                onLikeComment={props.onLikeComment} />
                         </Box>
                         <Box
                             component='div'
@@ -195,7 +186,8 @@ export default function PostDetails (props: Props) {
                                             component='time'
                                             letterSpacing='.2px'
                                         >
-                                            { !props.isPostDetailsLoading && moment(props.postDetails.createdAt).format('MMMM D, YYYY')}
+                                            { !props.isPostDetailsLoading && props.postDetails &&
+                                                moment(props.postDetails.createdAt).format('MMMM D, YYYY')}
                                         </Box>
                                     </Box>
                                 </Box>
