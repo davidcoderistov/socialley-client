@@ -22,18 +22,18 @@ export function updateFollowingLoadingStatus (options: UpdateFollowingLoadingSta
     })
 }
 
-interface ToggleFollowingStatusOptions {
+interface UpdateFollowingStatusOptions {
     usersWhoLikedPost: UsersWhoLikedPostQueryData
     userId: string
     following: boolean
 }
 
-interface ToggleFollowingStatusReturnValue {
+interface UpdateFollowingStatusReturnValue {
     usersWhoLikedPost: UsersWhoLikedPostQueryData
     success: boolean
 }
 
-export function updateFollowingStatus (options: ToggleFollowingStatusOptions): ToggleFollowingStatusReturnValue {
+export function updateFollowingStatus (options: UpdateFollowingStatusOptions): UpdateFollowingStatusReturnValue {
     return updateLikingUserByUserId({
         usersWhoLikedPost: options.usersWhoLikedPost,
         userId: options.userId,
