@@ -6,35 +6,25 @@ import { Close } from '@mui/icons-material'
 import ImageDisplay from '../ImageDisplay'
 import PostVideoPlayer from '../PostVideoPlayer'
 import PostDetails from './PostDetails'
-import { PostDetails as PostDetailsI } from '../../types'
+import { PostDetails as PostDetailsI, Comment } from '../../types'
 
 
 const IMAGE_POST_CONTAINER_WIDTH = 66
 const VIDEO_POST_CONTAINER_WIDTH = 75
 
-interface StaticProps {
-    postDetails: PostDetailsI
-    isPostDetailsLoading?: never
+interface Props {
+    postDetails: PostDetailsI | null
+    isPostDetailsLoading: boolean
     onClickUser: (userId: string) => void
     onFollowUser: (userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
     onViewPost: (postId: string) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
+    commentsLoading: boolean
+    comments: Comment[]
+    onLikeComment: (commentId: string) => void
     onClose: () => void
 }
-
-interface LoadingProps {
-    postDetails?: never
-    isPostDetailsLoading: true
-    onClickUser?: never
-    onFollowUser?: never
-    onLikePost?: never
-    onViewPost?: never
-    onBookmarkPost?: never
-    onClose?: never
-}
-
-type Props = StaticProps | LoadingProps
 
 export default function PostView (props: Props) {
 
@@ -154,7 +144,7 @@ export default function PostView (props: Props) {
                                                 position='relative'
                                                 sx={{ pointerEvents: 'none' }}
                                             >
-                                                { !props.isPostDetailsLoading ? props.postDetails.videoURL ? (
+                                                { !props.isPostDetailsLoading && props.postDetails ? props.postDetails.videoURL ? (
                                                     <PostVideoPlayer minHeight={300} />
                                                 ) : (
                                                     <ImageDisplay
@@ -164,17 +154,17 @@ export default function PostView (props: Props) {
                                                         url={''}
                                                         aspectRatioPercentage={100} />
                                                 ) }
-                                                { props.isPostDetailsLoading ? (
-                                                    <PostDetails isPostDetailsLoading={true} />
-                                                ) : (
-                                                    <PostDetails
-                                                        postDetails={props.postDetails}
-                                                        onClickUser={props.onClickUser}
-                                                        onFollowUser={props.onFollowUser}
-                                                        onLikePost={props.onLikePost}
-                                                        onViewPost={props.onViewPost}
-                                                        onBookmarkPost={props.onBookmarkPost} />
-                                                )}
+                                                <PostDetails
+                                                    postDetails={props.postDetails ?? null}
+                                                    isPostDetailsLoading={props.isPostDetailsLoading}
+                                                    onClickUser={props.onClickUser}
+                                                    onFollowUser={props.onFollowUser}
+                                                    onLikePost={props.onLikePost}
+                                                    onViewPost={props.onViewPost}
+                                                    onBookmarkPost={props.onBookmarkPost}
+                                                    comments={props.comments}
+                                                    commentsLoading={props.commentsLoading}
+                                                    onLikeComment={props.onLikeComment} />
                                             </Box>
                                         </Box>
                                     </Box>
