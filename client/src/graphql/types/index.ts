@@ -1,4 +1,4 @@
-import { FullMessage, Message, FollowedUserPost, LikingUser } from '../../types'
+import { FullMessage, Message, FollowedUserPost, LikingUser, Comment } from '../../types'
 
 
 export interface LatestMessageQueryData {
@@ -66,4 +66,11 @@ export interface FirstLikingUserForPostQueryData {
         _id: string
         username: string
     } | null
+}
+
+export interface CommentsForPostQueryData {
+    getCommentsForPost: {
+        data: Comment[]
+        total: number
+    }
 }

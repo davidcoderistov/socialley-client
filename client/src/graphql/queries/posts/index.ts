@@ -60,3 +60,26 @@ export const GET_FIRST_LIKING_USER_FOR_POST = gql`
        }
    }
 `
+
+export const GET_COMMENTS_FOR_POST = gql`
+    query getCommentsForPost($postId: String!, $offset: Int!, $limit: Int!) {
+        getCommentsForPost(postId: $postId, offset: $offset, limit: $limit) {
+            data {
+                _id
+                text
+                postId
+                user {
+                    _id
+                    firstName
+                    lastName
+                    username
+                    avatarURL
+                }
+                liked
+                likesCount
+                createdAt
+            }
+            total
+        }
+    }
+`

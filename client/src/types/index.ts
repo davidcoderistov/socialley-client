@@ -79,3 +79,19 @@ export interface LikingUser extends PublicUser {
     following: boolean
     isFollowingLoading: boolean
 }
+
+export interface Comment {
+    _id: string
+    text: string
+    postId: string
+    user: {
+        _id: string
+        firstName: string
+        lastName: string
+        username: string
+        avatarURL: string | null
+    }
+    liked: boolean
+    likesCount: number
+    createdAt: number
+}
