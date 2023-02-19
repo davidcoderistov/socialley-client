@@ -1,26 +1,12 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import Comment from '../Comment'
+import { Comment as CommentI } from '../../types'
 
-
-interface CommentI {
-    _id: string
-    user: {
-        _id: string
-        firstName: string
-        lastName: string
-        username: string
-        avatarURL?: string | null
-    }
-    text: string
-    likes: number
-    liked: boolean
-    createdAt: number
-}
 
 interface Props {
     comments: CommentI[]
-    onLikeComment: (comment: CommentI) => void
+    onLikeComment: (commentId: string) => void
 }
 
 export default function PostComments (props: Props) {
