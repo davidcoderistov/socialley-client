@@ -18,8 +18,7 @@ export default function LoadingIconButton ({ color, loading, iconComponent, onCl
     return loading ? (
         <Button
             sx={{
-                paddingX: '8px',
-                paddingY: '11px',
+                padding: '11px',
                 margin: 0,
                 minWidth: 0,
             }}
