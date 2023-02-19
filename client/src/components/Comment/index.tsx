@@ -179,20 +179,24 @@ export default function Comment (props: CommentProps) {
                                         >
                                             { ago }
                                         </Box>
-                                        <Box
-                                            component='span'
-                                            display='inline-block'
-                                            marginRight='4px'
-                                        >
-                                            &middot;
-                                        </Box>
-                                        <Box
-                                            component='span'
-                                            display='inline-block'
-                                            marginRight='4px'
-                                        >
-                                            { props.comment.likesCount } likes
-                                        </Box>
+                                        { props.comment.likesCount > 0 && (
+                                            <>
+                                                <Box
+                                                    component='span'
+                                                    display='inline-block'
+                                                    marginRight='4px'
+                                                >
+                                                    &middot;
+                                                </Box>
+                                                <Box
+                                                    component='span'
+                                                    display='inline-block'
+                                                    marginRight='4px'
+                                                >
+                                                    { props.comment.likesCount } likes
+                                                </Box>
+                                            </>
+                                        )}
                                     </Box>
                                 </Box>
                             </Box>

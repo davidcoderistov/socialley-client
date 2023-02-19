@@ -15,7 +15,6 @@ export default function PostComments (props: Props) {
         <Box
             component='ul'
             border='0'
-            boxSizing='content-box'
             flexGrow='1'
             fontSize='100%'
             height='calc(100%-32px)'
@@ -23,7 +22,7 @@ export default function PostComments (props: Props) {
             margin='0'
             padding='16px'
             position='absolute'
-            width='calc(100%-32px)'
+            width='100%'
             sx={{ overflowX: 'hidden', overflowY: 'auto', verticalAlign: 'baseline' }}
         >
             { props.comments.map(comment => (
