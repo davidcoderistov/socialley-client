@@ -76,6 +76,7 @@ export const GET_COMMENTS_FOR_POST = gql`
                     avatarURL
                 }
                 liked
+                isLikedLoading @client
                 likesCount
                 createdAt
             }

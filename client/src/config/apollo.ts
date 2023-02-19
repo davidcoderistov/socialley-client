@@ -125,6 +125,15 @@ const cache = new InMemoryCache({
                     }
                 }
             }
+        },
+        CommentWithLike: {
+            fields: {
+                isLikedLoading: {
+                    read (isLikedLoading = false) {
+                        return isLikedLoading
+                    }
+                }
+            }
         }
     }
 })

@@ -92,6 +92,7 @@ export interface Comment {
         avatarURL: string | null
     }
     liked: boolean
+    isLikedLoading: boolean
     likesCount: number
     createdAt: number
 }
