@@ -62,6 +62,9 @@ const cache = new InMemoryCache({
                 },
                 getLatestChatMessages: {
                     keyArgs: ['userId']
+                },
+                getUsersWhoLikedPost: {
+                    keyArgs: ['postId']
                 }
             }
         },
@@ -85,6 +88,20 @@ const cache = new InMemoryCache({
         },
         LikingUser: {
             fields: {
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
+                }
+            }
+        },
+        FollowedUser: {
+            fields: {
+                following: {
+                    read (following = true) {
+                        return following
+                    }
+                },
                 isFollowingLoading: {
                     read (isFollowingLoading = false) {
                         return isFollowingLoading

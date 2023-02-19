@@ -15,6 +15,8 @@ export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
                     lastName
                     username
                     avatarURL
+                    following @client
+                    isFollowingLoading @client
                 }
                 firstLikeUser {
                     _id
