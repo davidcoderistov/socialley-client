@@ -21,7 +21,7 @@ interface StaticProps {
         username: string
         avatarURL: string | null
         following: boolean
-        pendingFollow: boolean
+        isFollowingLoading: boolean
     }
     loading?: never
     showAgo?: boolean
@@ -263,7 +263,7 @@ export default function PostUserView (props: Props) {
                             </Box>
                             { !props.loading && (
                                 <>
-                                    { props.user.pendingFollow && !props.user.following ? (
+                                    { props.user.isFollowingLoading && !props.user.following ? (
                                         <CircularProgress size={14} />
                                     ) : (
                                         <Button
