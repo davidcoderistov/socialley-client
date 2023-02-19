@@ -1,8 +1,18 @@
 import React, { useState, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
-import { GET_FOLLOWED_USERS_POSTS_PAGINATED, GET_USERS_WHO_LIKED_POST, GET_FIRST_LIKING_USER_FOR_POST } from '../../graphql/queries/posts'
-import { FollowedUsersPostsQueryData, UsersWhoLikedPostQueryData, FirstLikingUserForPostQueryData } from '../../graphql/types'
+import {
+    GET_FOLLOWED_USERS_POSTS_PAGINATED,
+    GET_USERS_WHO_LIKED_POST,
+    GET_FIRST_LIKING_USER_FOR_POST,
+    GET_COMMENTS_FOR_POST,
+} from '../../graphql/queries/posts'
+import {
+    FollowedUsersPostsQueryData,
+    UsersWhoLikedPostQueryData,
+    FirstLikingUserForPostQueryData,
+    CommentsForPostQueryData,
+} from '../../graphql/types'
 import { FollowedUserPost } from '../../types'
 import Box, { BoxProps } from '@mui/material/Box'
 import Post from '../Post'
@@ -45,6 +55,15 @@ export default function FollowedUsersPosts (props: BoxProps) {
     })
 
     const [getFirstLikingUser] = useLazyQuery<FirstLikingUserForPostQueryData>(GET_FIRST_LIKING_USER_FOR_POST)
+
+    const commentsForPost = useQuery<CommentsForPostQueryData>(GET_COMMENTS_FOR_POST, {
+        variables: {
+            postId: viewingPostId,
+            offset: 0,
+            limit: 10,
+        },
+        skip: !viewingPostId
+    })
 
     const [likePost] = useMutation(LIKE_POST)
     const [unlikePost] = useMutation(UNLIKE_POST)
@@ -231,11 +250,15 @@ export default function FollowedUsersPosts (props: BoxProps) {
             { viewingPost && (
                 <PostView
                     postDetails={viewingPost}
+                    isPostDetailsLoading={false}
                     onClickUser={() => {}}
                     onFollowUser={() => {}}
                     onLikePost={handleLikePost}
                     onViewPost={() => {}}
                     onBookmarkPost={handleBookmarkPost}
+                    comments={commentsForPost.data?.getCommentsForPost.data ?? []}
+                    commentsLoading={commentsForPost.loading}
+                    onLikeComment={() => {}}
                     onClose={handleCloseViewPost} />
             )}
         </Box>
