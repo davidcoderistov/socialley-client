@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
 import { GET_FOLLOWED_USERS_POSTS_PAGINATED, GET_USERS_WHO_LIKED_POST, GET_FIRST_LIKING_USER_FOR_POST } from '../../graphql/queries/posts'
 import { FollowedUsersPostsQueryData, UsersWhoLikedPostQueryData, FirstLikingUserForPostQueryData } from '../../graphql/types'
+import { FollowedUserPost } from '../../types'
 import Box, { BoxProps } from '@mui/material/Box'
 import Post from '../Post'
+import PostView from '../PostView/PostView'
 import AllCaughtUp from './AllCaughtUp'
 import {
     LIKE_POST,
@@ -33,7 +35,9 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     const { enqueueSnackbar } = useSnackbar()
 
-    const { data, loading, fetchMore, updateQuery } = useQuery<FollowedUsersPostsQueryData>(GET_FOLLOWED_USERS_POSTS_PAGINATED, {
+    const [viewingPostId, setViewingPostId] = useState<string | null>(null)
+
+    const { data, loading, updateQuery } = useQuery<FollowedUsersPostsQueryData>(GET_FOLLOWED_USERS_POSTS_PAGINATED, {
         variables: {
             offset: 0,
             limit: 10,
@@ -193,8 +197,16 @@ export default function FollowedUsersPosts (props: BoxProps) {
     }
 
     const handleViewPost = (postId: string) => {
-
+        setViewingPostId(postId)
     }
+
+    const handleCloseViewPost = () => {
+        setViewingPostId(null)
+    }
+
+    const viewingPost: FollowedUserPost | null = useMemo(() => {
+        return data?.getFollowedUsersPostsPaginated.data.find(post => post._id === viewingPostId) ?? null
+    }, [data, viewingPostId])
 
     return (
         <Box {...props}>
@@ -215,6 +227,16 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     ))}
                     <AllCaughtUp />
                 </>
+            )}
+            { viewingPost && (
+                <PostView
+                    postDetails={viewingPost}
+                    onClickUser={() => {}}
+                    onFollowUser={() => {}}
+                    onLikePost={handleLikePost}
+                    onViewPost={() => {}}
+                    onBookmarkPost={handleBookmarkPost}
+                    onClose={handleCloseViewPost} />
             )}
         </Box>
     )
