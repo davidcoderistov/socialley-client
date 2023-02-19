@@ -6,6 +6,7 @@ import PostActions from '../PostActions'
 import PostLikes from '../PostLikes'
 import PostAddComment from '../PostView/PostAddComment'
 import { PostDetails as PostDetailsI } from '../../types'
+import moment from 'moment'
 
 
 interface StaticProps {
@@ -194,7 +195,7 @@ export default function PostDetails (props: Props) {
                                             component='time'
                                             letterSpacing='.2px'
                                         >
-                                            November 3, 2022
+                                            { !props.isPostDetailsLoading && moment(props.postDetails.createdAt).format('MMMM D, YYYY')}
                                         </Box>
                                     </Box>
                                 </Box>
