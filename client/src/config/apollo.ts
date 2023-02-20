@@ -68,6 +68,9 @@ const cache = new InMemoryCache({
                 },
                 getCommentsForPost: {
                     keyArgs: ['postId']
+                },
+                getUsersWhoLikedComment: {
+                    keyArgs: ['commentId']
                 }
             }
         },
