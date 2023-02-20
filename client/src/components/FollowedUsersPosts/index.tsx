@@ -6,12 +6,14 @@ import {
     GET_USERS_WHO_LIKED_POST,
     GET_FIRST_LIKING_USER_FOR_POST,
     GET_COMMENTS_FOR_POST,
+    GET_USERS_WHO_LIKED_COMMENT,
 } from '../../graphql/queries/posts'
 import {
     FollowedUsersPostsQueryData,
     UsersWhoLikedPostQueryData,
     FirstLikingUserForPostQueryData,
     CommentsForPostQueryData,
+    UsersWhoLikedCommentQueryData,
 } from '../../graphql/types'
 import { FollowedUserPost } from '../../types'
 import Box, { BoxProps } from '@mui/material/Box'
@@ -37,6 +39,7 @@ import {
     updateCommentLikedLoadingStatus,
 } from '../../apollo/mutations/posts/commentsForPost'
 import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
+import usersWhoLikedCommentMutations from '../../apollo/mutations/posts/usersWhoLikedComment'
 import { useSnackbar } from 'notistack'
 
 
@@ -263,12 +266,45 @@ export default function FollowedUsersPosts (props: BoxProps) {
         })
     }
 
+    const updateCommentQueryAddLikingUser = (commentId: string) => {
+        client.cache.updateQuery({
+            query: GET_USERS_WHO_LIKED_COMMENT,
+            variables: { commentId }
+        }, (usersWhoLikedComment: UsersWhoLikedCommentQueryData | null) => {
+            if (usersWhoLikedComment) {
+                return usersWhoLikedCommentMutations.addLikingUser({
+                    usersWhoLikedComment,
+                    likingUser: {
+                        ...loggedInUser,
+                        following: true,
+                        isFollowingLoading: false,
+                    }
+                }).usersWhoLikedComment
+            }
+        })
+    }
+
+    const updateCommentQueryRemoveLikingUser = (commentId: string) => {
+        client.cache.updateQuery({
+            query: GET_USERS_WHO_LIKED_COMMENT,
+            variables: { commentId }
+        }, (usersWhoLikedComment: UsersWhoLikedCommentQueryData | null) => {
+            if (usersWhoLikedComment) {
+                return usersWhoLikedCommentMutations.removeLikingUser({
+                    usersWhoLikedComment,
+                    userId: loggedInUser._id
+                }).usersWhoLikedComment
+            }
+        })
+    }
+
     const handleLikeComment = (commentId: string, postId: string, liked: boolean) => {
         updateQueryCommentLikedLoadingStatus(commentId, postId, true)
         if (liked) {
             likeComment({
                 variables: { commentId }
             }).then(() => {
+                updateCommentQueryAddLikingUser(commentId)
                 updateQueryCommentLikedStatus(commentId, postId, liked)
             }).catch(() => {
                 updateQueryCommentLikedLoadingStatus(commentId, postId, false)
@@ -278,6 +314,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
             unlikeComment({
                 variables: { commentId }
             }).then(() => {
+                updateCommentQueryRemoveLikingUser(commentId)
                 updateQueryCommentLikedStatus(commentId, postId, liked)
             }).catch(() => {
                 updateQueryCommentLikedLoadingStatus(commentId, postId, false)
