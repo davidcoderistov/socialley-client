@@ -1,10 +1,20 @@
-import React, { useMemo } from 'react'
+import React, {useState, useMemo, useEffect} from 'react'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import { useSnackbar } from 'notistack'
 import Box from '@mui/material/Box'
 import UserAvatar from '../UserAvatar'
+import UserLikesModal from '../UserLikesModal'
 import LoadingIconButton from '../LoadingIconButton'
 import { FavoriteBorder, Favorite } from '@mui/icons-material'
 import { getTimeElapsed } from '../../utils'
 import { Comment as CommentI } from '../../types'
+import { GET_USERS_WHO_LIKED_COMMENT } from '../../graphql/queries/posts'
+import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
+import { UsersWhoLikedCommentQueryData, UnfollowUserMutationData } from '../../graphql/types'
+import {
+    updateFollowingLoadingStatus,
+    updateFollowingStatus,
+} from '../../apollo/mutations/posts/usersWhoLikedComment'
 
 
 interface CommentProps {
@@ -19,6 +29,106 @@ export default function Comment (props: CommentProps) {
     const handleLikeComment = () => {
         props.onLikeComment(props.comment._id, props.comment.postId, !props.comment.liked)
     }
+
+    const { enqueueSnackbar } = useSnackbar()
+
+    const [isUserLikesModalOpen, setIsUserLikesModalOpen] = useState(false)
+    const [isInitialLoading, setIsInitialLoading] = useState(false)
+
+    const [getUsersWhoLikedComment, usersWhoLikedComment] = useLazyQuery<UsersWhoLikedCommentQueryData>(GET_USERS_WHO_LIKED_COMMENT)
+
+    const [followUser] = useMutation(FOLLOW_USER)
+    const [unfollowUser] = useMutation<UnfollowUserMutationData>(UNFOLLOW_USER)
+
+    const handleViewLikingUsers = () => {
+        setIsUserLikesModalOpen(true)
+        if (!usersWhoLikedComment.called) {
+            setIsInitialLoading(true)
+            getUsersWhoLikedComment({
+                variables: {
+                    commentId: props.comment._id,
+                    offset: 0,
+                    limit: 10,
+                }
+            }).finally(() => setIsInitialLoading(false))
+        }
+    }
+
+    const handleFetchMoreUsers = () => {
+        if (usersWhoLikedComment.data) {
+            usersWhoLikedComment.fetchMore({
+                variables: {
+                    offset: usersWhoLikedComment.data.getUsersWhoLikedComment.data.length,
+                    limit: 10,
+                }
+            })
+        }
+    }
+
+    const updateQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
+        usersWhoLikedComment.updateQuery((prevUsersWhoLikedComment) => {
+            return updateFollowingLoadingStatus({
+                usersWhoLikedComment: prevUsersWhoLikedComment,
+                userId,
+                isFollowingLoading,
+            }).usersWhoLikedComment
+        })
+    }
+
+    const updateQueryToggleFollowingStatus = (userId: string, following: boolean) => {
+        usersWhoLikedComment.updateQuery((prevUsersWhoLikedComment) => {
+            return updateFollowingStatus({
+                usersWhoLikedComment: prevUsersWhoLikedComment,
+                userId,
+                following,
+            }).usersWhoLikedComment
+        })
+    }
+
+    const handleFollowUser = (userId: string) => {
+        updateQueryFollowingLoadingStatus(userId, true)
+        followUser({
+            variables: {
+                followedUserId: userId
+            }
+        }).then(() => {
+            updateQueryToggleFollowingStatus(userId, true)
+        }).catch(() => {
+            updateQueryFollowingLoadingStatus(userId, false)
+            enqueueSnackbar('Could not follow user', { variant: 'error' })
+        })
+    }
+
+    const handleUnfollowUser = (userId: string) => {
+        updateQueryFollowingLoadingStatus(userId, true)
+
+        const showErrorAndToggleFollowingLoadingStatus = () => {
+            updateQueryFollowingLoadingStatus(userId, false)
+            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
+        }
+
+        unfollowUser({
+            variables: {
+                followedUserId: userId
+            }
+        }).then((data) => {
+            if (data.data?.unfollowUser) {
+                updateQueryToggleFollowingStatus(userId, false)
+            } else {
+                showErrorAndToggleFollowingLoadingStatus()
+            }
+        }).catch(() => {
+            showErrorAndToggleFollowingLoadingStatus()
+        })
+    }
+
+    useEffect(() => {
+        if (usersWhoLikedComment.error) {
+            enqueueSnackbar('Comment likes could not be retrieved', { variant: 'error' })
+        }
+    }, [usersWhoLikedComment.error])
+
+    const handleCloseUserLikesModal = () => setIsUserLikesModalOpen(false)
 
     return (
         <Box
@@ -192,6 +302,8 @@ export default function Comment (props: CommentProps) {
                                                     component='span'
                                                     display='inline-block'
                                                     marginRight='4px'
+                                                    onClick={handleViewLikingUsers}
+                                                    sx={{ cursor: 'pointer' }}
                                                 >
                                                     { props.comment.likesCount } { props.comment.likesCount > 1 ? 'likes' : 'like' }
                                                 </Box>
@@ -224,6 +336,17 @@ export default function Comment (props: CommentProps) {
                     </Box>
                 </Box>
             </Box>
+            <UserLikesModal
+                open={isUserLikesModalOpen}
+                onCloseModal={handleCloseUserLikesModal}
+                users={usersWhoLikedComment.data?.getUsersWhoLikedComment.data ?? []}
+                isInitialLoading={isInitialLoading}
+                isMoreLoading={usersWhoLikedComment.loading}
+                hasMoreUsers={usersWhoLikedComment.data ?
+                    usersWhoLikedComment.data.getUsersWhoLikedComment.data.length < usersWhoLikedComment.data.getUsersWhoLikedComment.total : false}
+                onFetchMoreUsers={handleFetchMoreUsers}
+                onFollowUser={handleFollowUser}
+                onUnfollowUser={handleUnfollowUser} />
         </Box>
     )
 }
