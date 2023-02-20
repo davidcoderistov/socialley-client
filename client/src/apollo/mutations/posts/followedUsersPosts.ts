@@ -103,3 +103,40 @@ export function updateFollowedUserPostFavoriteStatus (options: UpdateFollowedUse
         post: { favorite: options.favorite, isFavoriteLoading: false }
     })
 }
+
+interface IncrementFollowedUserPostCommentsCountOptions {
+    followedUsersPosts: FollowedUsersPostsQueryData
+    postId: string
+}
+
+interface IncrementFollowedUserPostCommentsCountReturnValue {
+    followedUsersPosts: FollowedUsersPostsQueryData
+    success: boolean
+}
+
+export function incrementFollowedUserPostCommentsCount (options: IncrementFollowedUserPostCommentsCountOptions): IncrementFollowedUserPostCommentsCountReturnValue {
+    const { followedUsersPosts, postId } = options
+
+    let success = false
+    const followedUsersPostsResult = {
+        ...followedUsersPosts,
+        getFollowedUsersPostsPaginated: {
+            ...followedUsersPosts.getFollowedUsersPostsPaginated,
+            data: followedUsersPosts.getFollowedUsersPostsPaginated.data.map(post => {
+                if (post._id === postId) {
+                    success = true
+                    return {
+                        ...post,
+                        commentsCount: post.commentsCount + 1
+                    }
+                }
+                return post
+            })
+        }
+    }
+
+    return {
+        followedUsersPosts: followedUsersPostsResult,
+        success,
+    }
+}
