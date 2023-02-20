@@ -1,4 +1,5 @@
 import { CommentsForPostQueryData } from '../../../graphql/types'
+import { Comment } from '../../../types'
 
 
 interface UpdateCommentLikedLoadingStatusOptions {
@@ -76,5 +77,31 @@ export function updateCommentLikedStatus (options: UpdateCommentLikedStatusOptio
     return {
         commentsForPost: commentsForPostResult,
         success,
+    }
+}
+
+interface AddCommentForPostOptions {
+    commentsForPost: CommentsForPostQueryData
+    comment: Comment
+}
+
+interface AddCommentForPostReturnValue {
+    commentsForPost: CommentsForPostQueryData
+    success: boolean
+}
+
+export function addCommentForPost (options: AddCommentForPostOptions): AddCommentForPostReturnValue {
+    const { commentsForPost, comment } = options
+
+    return {
+        commentsForPost: {
+            ...commentsForPost,
+            getCommentsForPost: {
+                ...commentsForPost.getCommentsForPost,
+                data: [...commentsForPost.getCommentsForPost.data, comment],
+                total: commentsForPost.getCommentsForPost.total + 1
+            }
+        },
+        success: true,
     }
 }
