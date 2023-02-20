@@ -74,3 +74,10 @@ export interface CommentsForPostQueryData {
         total: number
     }
 }
+
+export interface UsersWhoLikedCommentQueryData {
+    getUsersWhoLikedComment: {
+        data: LikingUser[]
+        total: number
+    }
+}

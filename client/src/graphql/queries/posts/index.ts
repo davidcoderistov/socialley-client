@@ -84,3 +84,20 @@ export const GET_COMMENTS_FOR_POST = gql`
         }
     }
 `
+
+export const GET_USERS_WHO_LIKED_COMMENT = gql`
+    query getUsersWhoLikedComment ($commentId: String!, $offset: Int!, $limit: Int!) {
+        getUsersWhoLikedComment (commentId: $commentId, offset: $offset, limit: $limit) {
+            data {
+                _id
+                username
+                firstName
+                lastName
+                avatarURL
+                following
+                isFollowingLoading @client
+            }
+            total
+        }
+    }
+`
