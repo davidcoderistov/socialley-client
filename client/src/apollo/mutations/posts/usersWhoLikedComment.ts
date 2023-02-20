@@ -107,3 +107,10 @@ export function removeLikingUser (options: RemoveLikingUserOptions): RemoveLikin
         success: false,
     }
 }
+
+export default {
+    updateFollowingLoadingStatus,
+    updateFollowingStatus,
+    addLikingUser,
+    removeLikingUser
+}
