@@ -86,6 +86,7 @@ export default function PostAddComment (props: Props) {
                                         color: '#EEEEFF'
                                     },
                                 },
+                                fontSize: '14px',
                                 color: '#FFFFFF',
                             }}
                             placeholder='Add a comment...'
