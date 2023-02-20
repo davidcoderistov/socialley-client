@@ -11,10 +11,7 @@ import { Comment as CommentI } from '../../types'
 import { GET_USERS_WHO_LIKED_COMMENT } from '../../graphql/queries/posts'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
 import { UsersWhoLikedCommentQueryData, UnfollowUserMutationData } from '../../graphql/types'
-import {
-    updateFollowingLoadingStatus,
-    updateFollowingStatus,
-} from '../../apollo/mutations/posts/usersWhoLikedComment'
+import usersWhoLikedCommentMutations from '../../apollo/mutations/posts/usersWhoLikedComment'
 
 
 interface CommentProps {
@@ -65,9 +62,9 @@ export default function Comment (props: CommentProps) {
         }
     }
 
-    const updateQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
+    const updateCommentQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         usersWhoLikedComment.updateQuery((prevUsersWhoLikedComment) => {
-            return updateFollowingLoadingStatus({
+            return usersWhoLikedCommentMutations.updateFollowingLoadingStatus({
                 usersWhoLikedComment: prevUsersWhoLikedComment,
                 userId,
                 isFollowingLoading,
@@ -75,9 +72,9 @@ export default function Comment (props: CommentProps) {
         })
     }
 
-    const updateQueryToggleFollowingStatus = (userId: string, following: boolean) => {
+    const updateCommentQueryFollowingStatus = (userId: string, following: boolean) => {
         usersWhoLikedComment.updateQuery((prevUsersWhoLikedComment) => {
-            return updateFollowingStatus({
+            return usersWhoLikedCommentMutations.updateFollowingStatus({
                 usersWhoLikedComment: prevUsersWhoLikedComment,
                 userId,
                 following,
@@ -86,24 +83,24 @@ export default function Comment (props: CommentProps) {
     }
 
     const handleFollowUser = (userId: string) => {
-        updateQueryFollowingLoadingStatus(userId, true)
+        updateCommentQueryFollowingLoadingStatus(userId, true)
         followUser({
             variables: {
                 followedUserId: userId
             }
         }).then(() => {
-            updateQueryToggleFollowingStatus(userId, true)
+            updateCommentQueryFollowingStatus(userId, true)
         }).catch(() => {
-            updateQueryFollowingLoadingStatus(userId, false)
+            updateCommentQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
         })
     }
 
     const handleUnfollowUser = (userId: string) => {
-        updateQueryFollowingLoadingStatus(userId, true)
+        updateCommentQueryFollowingLoadingStatus(userId, true)
 
         const showErrorAndToggleFollowingLoadingStatus = () => {
-            updateQueryFollowingLoadingStatus(userId, false)
+            updateCommentQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         }
 
@@ -113,7 +110,7 @@ export default function Comment (props: CommentProps) {
             }
         }).then((data) => {
             if (data.data?.unfollowUser) {
-                updateQueryToggleFollowingStatus(userId, false)
+                updateCommentQueryFollowingStatus(userId, false)
             } else {
                 showErrorAndToggleFollowingLoadingStatus()
             }
