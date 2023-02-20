@@ -405,7 +405,6 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     onClickUser={() => {}}
                     onFollowUser={() => {}}
                     onLikePost={handleLikePost}
-                    onViewPost={() => {}}
                     onBookmarkPost={handleBookmarkPost}
                     comments={commentsForPost.data?.getCommentsForPost.data ?? []}
                     commentsLoading={commentsForPost.loading}

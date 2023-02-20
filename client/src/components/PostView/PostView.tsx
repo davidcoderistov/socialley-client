@@ -18,7 +18,6 @@ interface Props {
     onClickUser: (userId: string) => void
     onFollowUser: (userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
-    onViewPost: (postId: string) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
     commentsLoading: boolean
     comments: Comment[]
@@ -162,7 +161,6 @@ export default function PostView (props: Props) {
                                                     onClickUser={props.onClickUser}
                                                     onFollowUser={props.onFollowUser}
                                                     onLikePost={props.onLikePost}
-                                                    onViewPost={props.onViewPost}
                                                     onBookmarkPost={props.onBookmarkPost}
                                                     comments={props.comments}
                                                     commentsLoading={props.commentsLoading}

@@ -11,7 +11,7 @@ interface Props {
     onPostComment: (comment: string) => void
 }
 
-export default function PostAddComment (props: Props) {
+const PostAddComment = React.forwardRef((props: Props, ref) => {
 
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -22,6 +22,10 @@ export default function PostAddComment (props: Props) {
             inputRef.current.value = ''
         }
     }
+
+    React.useImperativeHandle(ref, () => ({
+        focusInput: () => inputRef?.current?.focus()
+    }))
 
     return (
         <Box
@@ -114,4 +118,6 @@ export default function PostAddComment (props: Props) {
             </Box>
         </Box>
     )
-}
+})
+
+export default PostAddComment

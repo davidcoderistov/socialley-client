@@ -15,7 +15,6 @@ interface Props {
     onClickUser: (userId: string) => void
     onFollowUser: (userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
-    onViewPost: (postId: string) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
     commentsLoading: boolean
     comments: Comment[]
@@ -25,6 +24,12 @@ interface Props {
 }
 
 export default function PostDetails (props: Props) {
+
+    const postAddCommentRef = React.createRef<{ focusInput: () => void }>()
+
+    const handleViewPost = () => {
+        postAddCommentRef?.current?.focusInput()
+    }
 
     return (
         <Box
@@ -113,7 +118,7 @@ export default function PostDetails (props: Props) {
                                 paddingTop='6px'
                                 post={props.postDetails}
                                 onLikePost={props.onLikePost}
-                                onViewPost={props.onViewPost}
+                                onViewPost={handleViewPost}
                                 onBookmarkPost={props.onBookmarkPost} />
                         )}
                         { !props.isPostDetailsLoading && props.postDetails && props.postDetails.likesCount > 0 && props.postDetails.firstLikeUser && (
@@ -206,6 +211,7 @@ export default function PostDetails (props: Props) {
                             flexShrink='0'
                         >
                             <PostAddComment
+                                ref={postAddCommentRef}
                                 postingComment={props.isCommentPosting}
                                 onPostComment={props.onPostComment}
                             />
