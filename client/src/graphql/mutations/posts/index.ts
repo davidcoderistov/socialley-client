@@ -59,6 +59,18 @@ export const UNMARK_USER_POST_AS_FAVORITE = gql`
     }
 `
 
+export const CREATE_COMMENT = gql`
+    mutation createComment($comment: CreateCommentInput) {
+        createComment(comment: $comment) {
+            _id
+            text
+            postId
+            userId
+            createdAt
+        }
+    }
+`
+
 export const LIKE_COMMENT = gql`
     mutation likeComment($commentId: String!) {
         likeComment(commentId: $commentId) {
