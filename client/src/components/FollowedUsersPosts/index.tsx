@@ -33,13 +33,10 @@ import {
     updateFollowedUserPostFavoriteLoadingStatus,
 } from '../../apollo/mutations/posts/followedUsersPosts'
 import {
-    addLikingUser,
-    removeLikingUser,
-} from '../../apollo/mutations/posts/usersWhoLikedPost'
-import {
     updateCommentLikedStatus,
     updateCommentLikedLoadingStatus,
 } from '../../apollo/mutations/posts/commentsForPost'
+import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
 import { useSnackbar } from 'notistack'
 
 
@@ -97,7 +94,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     postId
                 }
             }).then(() => {
-                updateQueryAddLikingUser(postId)
+                updatePostQueryAddLikingUser(postId)
                 updateQueryFollowedUserPostLikedStatus(postId, liked, loggedInUser)
             }).catch(() => {
                 updateQueryFollowedUserPostLikedLoadingStatus(postId, false)
@@ -109,7 +106,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     postId
                 }
             }).then(() => {
-                const usersWhoLikedPost = updateQueryRemoveLikingUser(postId)
+                const usersWhoLikedPost = updatePostQueryRemoveLikingUser(postId)
                 if (usersWhoLikedPost) {
                     updateQueryFollowedUserPostLikedStatus(
                         postId,
@@ -182,13 +179,13 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }
     }
 
-    const updateQueryAddLikingUser = (postId: string) => {
+    const updatePostQueryAddLikingUser = (postId: string) => {
         client.cache.updateQuery({
             query: GET_USERS_WHO_LIKED_POST,
             variables: { postId }
         }, (usersWhoLikedPost: UsersWhoLikedPostQueryData | null) => {
             if (usersWhoLikedPost) {
-                return addLikingUser({
+                return usersWhoLikedPostMutations.addLikingUser({
                     usersWhoLikedPost,
                     likingUser: {
                         ...loggedInUser,
@@ -200,7 +197,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         })
     }
 
-    const updateQueryRemoveLikingUser = (postId: string): UsersWhoLikedPostQueryData | null => {
+    const updatePostQueryRemoveLikingUser = (postId: string): UsersWhoLikedPostQueryData | null => {
         let usersWhoLikedPostResult = null
         client.cache.updateQuery({
             query: GET_USERS_WHO_LIKED_POST,
@@ -208,7 +205,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }, (usersWhoLikedPost: UsersWhoLikedPostQueryData | null) => {
             if (usersWhoLikedPost) {
                 usersWhoLikedPostResult = usersWhoLikedPost
-                const result = removeLikingUser({
+                const result = usersWhoLikedPostMutations.removeLikingUser({
                     usersWhoLikedPost,
                     userId: loggedInUser._id
                 })
