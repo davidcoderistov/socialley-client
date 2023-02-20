@@ -14,7 +14,9 @@ import {
     FirstLikingUserForPostQueryData,
     CommentsForPostQueryData,
     UsersWhoLikedCommentQueryData,
+    CreateCommentMutationData,
 } from '../../graphql/types'
+import { Comment } from '../../types'
 import { FollowedUserPost } from '../../types'
 import Box, { BoxProps } from '@mui/material/Box'
 import Post from '../Post'
@@ -25,6 +27,7 @@ import {
     UNLIKE_POST,
     MARK_USER_POST_AS_FAVORITE,
     UNMARK_USER_POST_AS_FAVORITE,
+    CREATE_COMMENT,
     LIKE_COMMENT,
     UNLIKE_COMMENT,
 } from '../../graphql/mutations/posts'
@@ -37,6 +40,7 @@ import {
 import {
     updateCommentLikedStatus,
     updateCommentLikedLoadingStatus,
+    addCommentForPost,
 } from '../../apollo/mutations/posts/commentsForPost'
 import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
 import usersWhoLikedCommentMutations from '../../apollo/mutations/posts/usersWhoLikedComment'
@@ -323,6 +327,60 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }
     }
 
+    const [createComment, createCommentData] = useMutation<CreateCommentMutationData>(CREATE_COMMENT)
+
+    const [addComment, setAddComment] = useState('')
+
+    const handleChangeAddComment = (comment: string) => {
+        setAddComment(comment)
+    }
+
+    const updateCommentsForPostAddComment = (postId: string, comment: Comment) => {
+        client.cache.updateQuery({
+            query: GET_COMMENTS_FOR_POST,
+            variables: { postId }
+        }, (commentsForPost: CommentsForPostQueryData | null) => {
+            if (commentsForPost) {
+                return addCommentForPost({
+                    commentsForPost,
+                    comment,
+                }).commentsForPost
+            }
+        })
+    }
+
+    const handlePostComment = () => {
+        const postId = viewingPostId as string
+        createComment({
+            variables: {
+                comment: {
+                    postId,
+                    text: addComment,
+                }
+            }
+        }).then(data => {
+            const createComment = data.data?.createComment
+            if (createComment) {
+                updateCommentsForPostAddComment(
+                    postId,
+                    {
+                        ...createComment,
+                        user: {...loggedInUser},
+                        liked: false,
+                        isLikedLoading: false,
+                        likesCount: 0,
+                    }
+                )
+            } else {
+                enqueueSnackbar(`Comment could not be posted`, { variant: 'error' })
+            }
+        }).catch(() => {
+            enqueueSnackbar(`Comment could not be posted`, { variant: 'error' })
+        }).finally(() => {
+            setAddComment('')
+        })
+    }
+
     return (
         <Box {...props}>
             { loading ? (
@@ -355,6 +413,10 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     comments={commentsForPost.data?.getCommentsForPost.data ?? []}
                     commentsLoading={commentsForPost.loading}
                     onLikeComment={handleLikeComment}
+                    addComment={addComment}
+                    isCommentPosting={createCommentData.loading}
+                    onChangeAddComment={handleChangeAddComment}
+                    onPostComment={handlePostComment}
                     onClose={handleCloseViewPost} />
             )}
         </Box>
