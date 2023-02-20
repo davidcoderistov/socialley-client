@@ -32,7 +32,7 @@ export default function PostAddComment (props: Props) {
         >
             <Box
                 component='div'
-                paddingLeft='24px'
+                paddingLeft='32px'
                 flex='0 0 auto'
                 justifyContent='flex-start'
                 flexDirection='column'
