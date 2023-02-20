@@ -40,18 +40,18 @@ export function updateFollowedUserPostByPostId (options: UpdateFollowedUserPostB
     }
 }
 
-interface UpdateLikingUserByUserIdOptions {
+interface UpdatePostLikingUserByUserIdOptions {
     usersWhoLikedPost: UsersWhoLikedPostQueryData
     userId: string
     likingUser: Partial<LikingUser>
 }
 
-interface UpdateLikingUserByUserIdReturnValue {
+interface UpdatePostLikingUserByUserIdReturnValue {
     usersWhoLikedPost: UsersWhoLikedPostQueryData
     success: boolean
 }
 
-export function updateLikingUserByUserId (options: UpdateLikingUserByUserIdOptions): UpdateLikingUserByUserIdReturnValue {
+export function updatePostLikingUserByUserId (options: UpdatePostLikingUserByUserIdOptions): UpdatePostLikingUserByUserIdReturnValue {
     const { usersWhoLikedPost, userId, likingUser } = options
 
     let success = false

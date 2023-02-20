@@ -1,6 +1,6 @@
 import { UsersWhoLikedPostQueryData } from '../../../graphql/types'
 import { LikingUser } from '../../../types'
-import { updateLikingUserByUserId } from '../../utils'
+import { updatePostLikingUserByUserId } from '../../utils'
 
 
 interface UpdateFollowingLoadingStatusOptions {
@@ -15,7 +15,7 @@ interface UpdateFollowingLoadingStatusReturnValue {
 }
 
 export function updateFollowingLoadingStatus (options: UpdateFollowingLoadingStatusOptions): UpdateFollowingLoadingStatusReturnValue {
-    return updateLikingUserByUserId({
+    return updatePostLikingUserByUserId({
         usersWhoLikedPost: options.usersWhoLikedPost,
         userId: options.userId,
         likingUser: { isFollowingLoading: options.isFollowingLoading }
@@ -34,7 +34,7 @@ interface UpdateFollowingStatusReturnValue {
 }
 
 export function updateFollowingStatus (options: UpdateFollowingStatusOptions): UpdateFollowingStatusReturnValue {
-    return updateLikingUserByUserId({
+    return updatePostLikingUserByUserId({
         usersWhoLikedPost: options.usersWhoLikedPost,
         userId: options.userId,
         likingUser: {
