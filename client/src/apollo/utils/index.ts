@@ -95,7 +95,7 @@ export function updateCommentLikingUserByUserId (options: UpdateCommentLikingUse
     let success = false
     const usersWhoLikedCommentResult = {
         ...usersWhoLikedComment,
-        getUsersWhoLikedPost: {
+        getUsersWhoLikedComment: {
             ...usersWhoLikedComment.getUsersWhoLikedComment,
             data: usersWhoLikedComment.getUsersWhoLikedComment.data.map(user => {
                 if (user._id === userId) {
