@@ -36,6 +36,7 @@ import {
     updateFollowedUserPostLikedLoadingStatus,
     updateFollowedUserPostFavoriteStatus,
     updateFollowedUserPostFavoriteLoadingStatus,
+    incrementFollowedUserPostCommentsCount,
 } from '../../apollo/mutations/posts/followedUsersPosts'
 import {
     updateCommentLikedStatus,
@@ -365,6 +366,10 @@ export default function FollowedUsersPosts (props: BoxProps) {
                         likesCount: 0,
                     }
                 )
+                updateQuery(followedUsersPosts => incrementFollowedUserPostCommentsCount({
+                    followedUsersPosts,
+                    postId,
+                }).followedUsersPosts)
             } else {
                 enqueueSnackbar(`Comment could not be posted`, { variant: 'error' })
             }
