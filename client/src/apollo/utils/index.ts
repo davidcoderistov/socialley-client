@@ -1,5 +1,5 @@
 import { FollowedUserPost, LikingUser } from '../../types'
-import { FollowedUsersPostsQueryData, UsersWhoLikedPostQueryData } from '../../graphql/types'
+import { FollowedUsersPostsQueryData, UsersWhoLikedPostQueryData, UsersWhoLikedCommentQueryData } from '../../graphql/types'
 
 
 interface UpdateFollowedUserPostByPostIdOptions {
@@ -74,6 +74,44 @@ export function updatePostLikingUserByUserId (options: UpdatePostLikingUserByUse
 
     return {
         usersWhoLikedPost: usersWhoLikedPostResult,
+        success,
+    }
+}
+
+interface UpdateCommentLikingUserByUserIdOptions {
+    usersWhoLikedComment: UsersWhoLikedCommentQueryData
+    userId: string
+    likingUser: Partial<LikingUser>
+}
+
+interface UpdateCommentLikingUserByUserIdReturnValue {
+    usersWhoLikedComment: UsersWhoLikedCommentQueryData
+    success: boolean
+}
+
+export function updateCommentLikingUserByUserId (options: UpdateCommentLikingUserByUserIdOptions): UpdateCommentLikingUserByUserIdReturnValue {
+    const { usersWhoLikedComment, userId, likingUser } = options
+
+    let success = false
+    const usersWhoLikedCommentResult = {
+        ...usersWhoLikedComment,
+        getUsersWhoLikedPost: {
+            ...usersWhoLikedComment.getUsersWhoLikedComment,
+            data: usersWhoLikedComment.getUsersWhoLikedComment.data.map(user => {
+                if (user._id === userId) {
+                    success = true
+                    return {
+                        ...user,
+                        ...likingUser,
+                    }
+                }
+                return user
+            })
+        }
+    }
+
+    return {
+        usersWhoLikedComment: usersWhoLikedCommentResult,
         success,
     }
 }
