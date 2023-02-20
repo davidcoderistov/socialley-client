@@ -20,6 +20,10 @@ interface Props {
     commentsLoading: boolean
     comments: Comment[]
     onLikeComment: (commentId: string, postId: string, liked: boolean) => void
+    addComment: string
+    onChangeAddComment: (comment: string) => void
+    onPostComment: () => void
+    isCommentPosting: boolean
 }
 
 export default function PostDetails (props: Props) {
@@ -204,10 +208,10 @@ export default function PostDetails (props: Props) {
                             flexShrink='0'
                         >
                             <PostAddComment
-                                comment={''}
-                                postingComment={false}
-                                onChangeComment={() => {}}
-                                onPostComment={() => {}}
+                                comment={props.addComment}
+                                postingComment={props.isCommentPosting}
+                                onChangeComment={props.onChangeAddComment}
+                                onPostComment={props.onPostComment}
                             />
                         </Box>
                     </Box>
