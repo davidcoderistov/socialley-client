@@ -7,7 +7,7 @@ import { GET_USERS_WHO_LIKED_POST } from '../../graphql/queries/posts'
 import { useMutation } from '@apollo/client'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
 import { UsersWhoLikedPostQueryData, UnfollowUserMutationData } from '../../graphql/types'
-import { updateFollowingLoadingStatus, updateFollowingStatus } from '../../apollo/mutations/posts/usersWhoLikedPost'
+import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
 
 
 interface Props {
@@ -56,9 +56,9 @@ export default function PostLikes (props: Props) {
         }
     }
 
-    const updateQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
+    const updatePostQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         usersWhoLikedPost.updateQuery((prevUsersWhoLikedPost) => {
-            return updateFollowingLoadingStatus({
+            return usersWhoLikedPostMutations.updateFollowingLoadingStatus({
                 usersWhoLikedPost: prevUsersWhoLikedPost,
                 userId,
                 isFollowingLoading,
@@ -66,9 +66,9 @@ export default function PostLikes (props: Props) {
         })
     }
 
-    const updateQueryToggleFollowingStatus = (userId: string, following: boolean) => {
+    const updatePostQueryFollowingStatus = (userId: string, following: boolean) => {
         usersWhoLikedPost.updateQuery((prevUsersWhoLikedPost) => {
-            return updateFollowingStatus({
+            return usersWhoLikedPostMutations.updateFollowingStatus({
                 usersWhoLikedPost: prevUsersWhoLikedPost,
                 userId,
                 following,
@@ -77,24 +77,24 @@ export default function PostLikes (props: Props) {
     }
 
     const handleFollowUser = (userId: string) => {
-        updateQueryFollowingLoadingStatus(userId, true)
+        updatePostQueryFollowingLoadingStatus(userId, true)
         followUser({
             variables: {
                 followedUserId: userId
             }
         }).then(() => {
-            updateQueryToggleFollowingStatus(userId, true)
+            updatePostQueryFollowingStatus(userId, true)
         }).catch(() => {
-            updateQueryFollowingLoadingStatus(userId, false)
+            updatePostQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
         })
     }
 
     const handleUnfollowUser = (userId: string) => {
-        updateQueryFollowingLoadingStatus(userId, true)
+        updatePostQueryFollowingLoadingStatus(userId, true)
 
         const showErrorAndToggleFollowingLoadingStatus = () => {
-            updateQueryFollowingLoadingStatus(userId, false)
+            updatePostQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         }
 
@@ -104,7 +104,7 @@ export default function PostLikes (props: Props) {
             }
         }).then((data) => {
             if (data.data?.unfollowUser) {
-                updateQueryToggleFollowingStatus(userId, false)
+                updatePostQueryFollowingStatus(userId, false)
             } else {
                 showErrorAndToggleFollowingLoadingStatus()
             }
