@@ -81,3 +81,13 @@ export interface UsersWhoLikedCommentQueryData {
         total: number
     }
 }
+
+export interface CreateCommentMutationData {
+    createComment: {
+        _id: string
+        text: string
+        postId: string
+        userId: string
+        createdAt: number
+    }
+}
