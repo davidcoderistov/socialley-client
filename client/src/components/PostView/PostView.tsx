@@ -23,9 +23,7 @@ interface Props {
     commentsLoading: boolean
     comments: Comment[]
     onLikeComment: (commentId: string, postId: string, liked: boolean) => void
-    addComment: string
-    onChangeAddComment: (comment: string) => void
-    onPostComment: () => void
+    onPostComment: (comment: string) => void
     isCommentPosting: boolean
     onClose: () => void
 }
@@ -169,9 +167,7 @@ export default function PostView (props: Props) {
                                                     comments={props.comments}
                                                     commentsLoading={props.commentsLoading}
                                                     onLikeComment={props.onLikeComment}
-                                                    addComment={props.addComment}
                                                     isCommentPosting={props.isCommentPosting}
-                                                    onChangeAddComment={props.onChangeAddComment}
                                                     onPostComment={props.onPostComment} />
                                             </Box>
                                         </Box>

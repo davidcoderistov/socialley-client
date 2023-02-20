@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -7,16 +7,20 @@ import { CreateOutlined } from '@mui/icons-material'
 
 
 interface Props {
-    comment: string
     postingComment: boolean
-    onChangeComment: (comment: string) => void
-    onPostComment: () => void
+    onPostComment: (comment: string) => void
 }
 
 export default function PostAddComment (props: Props) {
 
-    const handleChangeComment = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.onChangeComment(event.target.value)
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const handlePostComment = () => {
+        const comment = inputRef?.current?.value
+        if (comment && comment.trim().length > 0) {
+            props.onPostComment(comment)
+            inputRef.current.value = ''
+        }
     }
 
     return (
@@ -70,8 +74,7 @@ export default function PostAddComment (props: Props) {
                         position='relative'
                     >
                         <InputBase
-                            value={props.comment}
-                            onChange={handleChangeComment}
+                            inputRef={inputRef}
                             sx={{
                                 '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
                                     display: 'none',
@@ -86,7 +89,7 @@ export default function PostAddComment (props: Props) {
                                 color: '#FFFFFF',
                             }}
                             placeholder='Add a comment...'
-                            startAdornment={<CreateOutlined sx={{ marginRight: '4px' }}/>}
+                            startAdornment={<CreateOutlined sx={{ marginRight: '4px' }} />}
                             fullWidth
                         />
                     </Box>
@@ -101,8 +104,7 @@ export default function PostAddComment (props: Props) {
                                 minWidth: 0,
                                 '&.Mui-disabled': { color: '#A8A8A8' }
                             }}
-                            onClick={props.onPostComment}
-                            disabled={props.comment.trim().length <= 0}
+                            onClick={handlePostComment}
                         >
                             Post
                         </Button>

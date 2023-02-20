@@ -329,12 +329,6 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     const [createComment, createCommentData] = useMutation<CreateCommentMutationData>(CREATE_COMMENT)
 
-    const [addComment, setAddComment] = useState('')
-
-    const handleChangeAddComment = (comment: string) => {
-        setAddComment(comment)
-    }
-
     const updateCommentsForPostAddComment = (postId: string, comment: Comment) => {
         client.cache.updateQuery({
             query: GET_COMMENTS_FOR_POST,
@@ -349,13 +343,13 @@ export default function FollowedUsersPosts (props: BoxProps) {
         })
     }
 
-    const handlePostComment = () => {
+    const handlePostComment = (comment: string) => {
         const postId = viewingPostId as string
         createComment({
             variables: {
                 comment: {
                     postId,
-                    text: addComment,
+                    text: comment,
                 }
             }
         }).then(data => {
@@ -376,8 +370,6 @@ export default function FollowedUsersPosts (props: BoxProps) {
             }
         }).catch(() => {
             enqueueSnackbar(`Comment could not be posted`, { variant: 'error' })
-        }).finally(() => {
-            setAddComment('')
         })
     }
 
@@ -413,9 +405,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     comments={commentsForPost.data?.getCommentsForPost.data ?? []}
                     commentsLoading={commentsForPost.loading}
                     onLikeComment={handleLikeComment}
-                    addComment={addComment}
                     isCommentPosting={createCommentData.loading}
-                    onChangeAddComment={handleChangeAddComment}
                     onPostComment={handlePostComment}
                     onClose={handleCloseViewPost} />
             )}
