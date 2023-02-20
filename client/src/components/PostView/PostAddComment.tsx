@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import InputBase from '@mui/material/InputBase'
+import { CreateOutlined } from '@mui/icons-material'
 
 
 interface Props {
@@ -32,7 +33,7 @@ export default function PostAddComment (props: Props) {
         >
             <Box
                 component='div'
-                paddingLeft='32px'
+                paddingLeft='16px'
                 flex='0 0 auto'
                 justifyContent='flex-start'
                 flexDirection='column'
@@ -85,6 +86,7 @@ export default function PostAddComment (props: Props) {
                                 color: '#FFFFFF',
                             }}
                             placeholder='Add a comment...'
+                            startAdornment={<CreateOutlined sx={{ marginRight: '4px' }}/>}
                             fullWidth
                         />
                     </Box>
