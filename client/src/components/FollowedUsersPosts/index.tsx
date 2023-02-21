@@ -357,16 +357,18 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }).then(data => {
             const createComment = data.data?.createComment
             if (createComment) {
-                updateCommentsForPostAddComment(
-                    postId,
-                    {
-                        ...createComment,
-                        user: {...loggedInUser},
-                        liked: false,
-                        isLikedLoading: false,
-                        likesCount: 0,
-                    }
-                )
+                if (!hasMoreComments) {
+                    updateCommentsForPostAddComment(
+                        postId,
+                        {
+                            ...createComment,
+                            user: {...loggedInUser},
+                            liked: false,
+                            isLikedLoading: false,
+                            likesCount: 0,
+                        }
+                    )
+                }
                 updateQuery(followedUsersPosts => incrementFollowedUserPostCommentsCount({
                     followedUsersPosts,
                     postId,
@@ -399,6 +401,9 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }).catch(console.log)
     }
 
+    const hasMoreComments = commentsForPost.data ?
+        commentsForPost.data.getCommentsForPost.data.length < commentsForPost.data.getCommentsForPost.total : false
+
     return (
         <Box {...props}>
             { loading ? (
@@ -428,7 +433,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     onLikePost={handleLikePost}
                     onBookmarkPost={handleBookmarkPost}
                     comments={commentsForPost.data?.getCommentsForPost.data ?? []}
-                    hasMoreComments={commentsForPost.data ? commentsForPost.data.getCommentsForPost.data.length < commentsForPost.data.getCommentsForPost.total : false}
+                    hasMoreComments={hasMoreComments}
                     commentsLoading={commentsForPost.loading}
                     onFetchMoreComments={handleFetchMoreComments}
                     onLikeComment={handleLikeComment}
