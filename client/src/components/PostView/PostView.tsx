@@ -19,8 +19,10 @@ interface Props {
     onFollowUser: (userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
-    commentsLoading: boolean
     comments: Comment[]
+    hasMoreComments: boolean
+    commentsLoading: boolean
+    onFetchMoreComments: () => void
     onLikeComment: (commentId: string, postId: string, liked: boolean) => void
     onPostComment: (comment: string) => void
     isCommentPosting: boolean
@@ -163,7 +165,9 @@ export default function PostView (props: Props) {
                                                     onLikePost={props.onLikePost}
                                                     onBookmarkPost={props.onBookmarkPost}
                                                     comments={props.comments}
+                                                    hasMoreComments={props.hasMoreComments}
                                                     commentsLoading={props.commentsLoading}
+                                                    onFetchMoreComments={props.onFetchMoreComments}
                                                     onLikeComment={props.onLikeComment}
                                                     isCommentPosting={props.isCommentPosting}
                                                     onPostComment={props.onPostComment} />

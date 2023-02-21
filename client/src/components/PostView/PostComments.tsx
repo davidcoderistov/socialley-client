@@ -10,7 +10,7 @@ import _range from 'lodash/range'
 interface Props {
     comments: CommentI[]
     hasMoreComments: boolean
-    moreCommentsLoading: boolean
+    commentsLoading: boolean
     onFetchMoreComments: () => void
     onLikeComment: (commentId: string, postId: string, liked: boolean) => void
 }
@@ -18,7 +18,7 @@ interface Props {
 export default function PostComments (props: Props) {
 
     const commentsInitialLoading = useMemo(() =>
-        props.moreCommentsLoading && props.comments.length < 1, [props.moreCommentsLoading, props.comments])
+        props.commentsLoading && props.comments.length < 1, [props.commentsLoading, props.comments])
 
     return commentsInitialLoading || props.comments.length > 0 ? (
         <Box
@@ -63,7 +63,7 @@ export default function PostComments (props: Props) {
                     >
                         <LoadingIconButton
                             color='#FFFFFF'
-                            loading={props.moreCommentsLoading}
+                            loading={props.commentsLoading}
                             iconComponent={<AddCircleOutline />}
                             onClick={props.onFetchMoreComments} />
                     </Box>

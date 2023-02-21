@@ -73,7 +73,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
             offset: 0,
             limit: 10,
         },
-        skip: !viewingPostId
+        skip: !viewingPostId,
+        notifyOnNetworkStatusChange: true,
     })
 
     const [likePost] = useMutation(LIKE_POST)
@@ -378,6 +379,26 @@ export default function FollowedUsersPosts (props: BoxProps) {
         })
     }
 
+    const handleFetchMoreComments = () => {
+        const postId = viewingPostId as string
+        const commentsForPostData = commentsForPost.data as CommentsForPostQueryData
+        commentsForPost.fetchMore({
+            variables: { postId, offset: commentsForPostData.getCommentsForPost.data.length },
+            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: CommentsForPostQueryData }) {
+                return {
+                    ...existing,
+                    getCommentsForPost: {
+                        ...existing.getCommentsForPost,
+                        data: [
+                            ...existing.getCommentsForPost.data,
+                            ...fetchMoreResult.getCommentsForPost.data,
+                        ]
+                    }
+                }
+            }
+        }).catch(console.log)
+    }
+
     return (
         <Box {...props}>
             { loading ? (
@@ -407,7 +428,9 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     onLikePost={handleLikePost}
                     onBookmarkPost={handleBookmarkPost}
                     comments={commentsForPost.data?.getCommentsForPost.data ?? []}
+                    hasMoreComments={commentsForPost.data ? commentsForPost.data.getCommentsForPost.data.length < commentsForPost.data.getCommentsForPost.total : false}
                     commentsLoading={commentsForPost.loading}
+                    onFetchMoreComments={handleFetchMoreComments}
                     onLikeComment={handleLikeComment}
                     isCommentPosting={createCommentData.loading}
                     onPostComment={handlePostComment}
