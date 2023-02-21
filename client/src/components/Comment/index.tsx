@@ -16,6 +16,7 @@ import usersWhoLikedCommentMutations from '../../apollo/mutations/posts/usersWho
 
 interface CommentProps {
     comment: CommentI
+    dense: boolean
     onLikeComment: (commentId: string, postId: string, liked: boolean) => void
 }
 
@@ -134,9 +135,9 @@ export default function Comment (props: CommentProps) {
             margin='0'
             border='0'
             padding='0'
-            marginBottom='16px'
             display='block'
             sx={{ verticalAlign: 'baseline', listStyleType: 'none' }}
+            {...!props.dense && { marginBottom: '16px' }}
         >
             <Box
                 component='div'
@@ -156,7 +157,7 @@ export default function Comment (props: CommentProps) {
                     component='li'
                     paddingBottom='0'
                     overflow='visible'
-                    padding='12px 0'
+                    paddingTop='12px'
                     width='auto'
                     marginRight='-2px'
                     marginTop='-5px'
