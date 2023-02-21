@@ -2,6 +2,7 @@ import React, {useState, useMemo, useEffect} from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useSnackbar } from 'notistack'
 import Box from '@mui/material/Box'
+import Skeleton from '@mui/material/Skeleton'
 import UserAvatar from '../UserAvatar'
 import UserLikesModal from '../UserLikesModal'
 import LoadingIconButton from '../LoadingIconButton'
@@ -14,18 +15,30 @@ import { UsersWhoLikedCommentQueryData, UnfollowUserMutationData } from '../../g
 import usersWhoLikedCommentMutations from '../../apollo/mutations/posts/usersWhoLikedComment'
 
 
-interface CommentProps {
+interface StaticProps {
     comment: CommentI
     dense: boolean
     onLikeComment: (commentId: string, postId: string, liked: boolean) => void
+    loading?: never
 }
+
+interface LoadingProps {
+    comment?: never
+    dense?: never
+    onLikeComment?: never
+    loading: true
+}
+
+type CommentProps = StaticProps | LoadingProps
 
 export default function Comment (props: CommentProps) {
 
-    const ago = useMemo(() => getTimeElapsed(props.comment.createdAt), [props.comment.createdAt])
+    const ago = useMemo(() => props.loading ? '' : getTimeElapsed(props.comment.createdAt), [props.comment, props.loading])
 
     const handleLikeComment = () => {
-        props.onLikeComment(props.comment._id, props.comment.postId, !props.comment.liked)
+        if (!props.loading) {
+            props.onLikeComment(props.comment._id, props.comment.postId, !props.comment.liked)
+        }
     }
 
     const { enqueueSnackbar } = useSnackbar()
@@ -39,12 +52,13 @@ export default function Comment (props: CommentProps) {
     const [unfollowUser] = useMutation<UnfollowUserMutationData>(UNFOLLOW_USER)
 
     const handleViewLikingUsers = () => {
+        const comment = props.comment as CommentI
         setIsUserLikesModalOpen(true)
         if (!usersWhoLikedComment.called) {
             setIsInitialLoading(true)
             getUsersWhoLikedComment({
                 variables: {
-                    commentId: props.comment._id,
+                    commentId: comment._id,
                     offset: 0,
                     limit: 10,
                 }
@@ -187,11 +201,21 @@ export default function Comment (props: CommentProps) {
                             flexDirection='row'
                             width='100% - 28px'
                         >
-                            <UserAvatar
-                                size={40}
-                                fontSize={16}
-                                firstName={props.comment.user.firstName}
-                                lastName={props.comment.user.lastName} />
+                            { props.loading ? (
+                                <Skeleton
+                                    component='div'
+                                    animation='wave'
+                                    variant='circular'
+                                    width='40px'
+                                    height='40px'
+                                    sx={{ backgroundColor: '#262626' }} />
+                            ) : (
+                                <UserAvatar
+                                    size={40}
+                                    fontSize={16}
+                                    firstName={props.comment.user.firstName}
+                                    lastName={props.comment.user.lastName} />
+                            )}
                             <Box
                                 component='div'
                                 border='0'
@@ -237,7 +261,9 @@ export default function Comment (props: CommentProps) {
                                                 display='inline'
                                                 position='relative'
                                             >
-                                                { props.comment.user.username }
+                                                { props.loading ? (
+                                                    <Skeleton sx={{ backgroundColor: '#262626' }} animation='wave' width='340px' />
+                                                ) : props.comment.user.username }
                                             </Box>
                                         </Box>
                                     </Box>
@@ -255,60 +281,64 @@ export default function Comment (props: CommentProps) {
                                         fontSize='14px'
                                         lineHeight='18px'
                                     >
-                                        { props.comment.text }
+                                        { props.loading ? (
+                                            <Skeleton sx={{ backgroundColor: '#262626' }} animation='wave' width='140px' />
+                                        ) : props.comment.text }
                                     </Box>
                                 </Box>
-                                <Box
-                                    component='div'
-                                    marginTop='8px'
-                                    marginBottom='4px'
-                                    flex='0 0 auto'
-                                    justifyContent='flex-start'
-                                    flexDirection='column'
-                                    alignItems='stretch'
-                                    alignContent='stretch'
-                                    display='flex'
-                                    boxSizing='border-box'
-                                    position='relative'
-                                >
+                                { !props.loading && (
                                     <Box
                                         component='div'
-                                        display='block'
-                                        color='#A8A8A8'
-                                        fontWeight='400'
-                                        fontSize='12px'
-                                        lineHeight='16px'
-                                        margin='-2px 0 -3px'
+                                        marginTop='8px'
+                                        marginBottom='4px'
+                                        flex='0 0 auto'
+                                        justifyContent='flex-start'
+                                        flexDirection='column'
+                                        alignItems='stretch'
+                                        alignContent='stretch'
+                                        display='flex'
+                                        boxSizing='border-box'
+                                        position='relative'
                                     >
                                         <Box
-                                            component='span'
-                                            display='inline-block'
-                                            marginRight='4px'
+                                            component='div'
+                                            display='block'
+                                            color='#A8A8A8'
+                                            fontWeight='400'
+                                            fontSize='12px'
+                                            lineHeight='16px'
+                                            margin='-2px 0 -3px'
                                         >
-                                            { ago }
+                                            <Box
+                                                component='span'
+                                                display='inline-block'
+                                                marginRight='4px'
+                                            >
+                                                { ago }
+                                            </Box>
+                                            { props.comment.likesCount > 0 && (
+                                                <>
+                                                    <Box
+                                                        component='span'
+                                                        display='inline-block'
+                                                        marginRight='4px'
+                                                    >
+                                                        &middot;
+                                                    </Box>
+                                                    <Box
+                                                        component='span'
+                                                        display='inline-block'
+                                                        marginRight='4px'
+                                                        onClick={handleViewLikingUsers}
+                                                        sx={{ cursor: 'pointer' }}
+                                                    >
+                                                        { props.comment.likesCount } { props.comment.likesCount > 1 ? 'likes' : 'like' }
+                                                    </Box>
+                                                </>
+                                            )}
                                         </Box>
-                                        { props.comment.likesCount > 0 && (
-                                            <>
-                                                <Box
-                                                    component='span'
-                                                    display='inline-block'
-                                                    marginRight='4px'
-                                                >
-                                                    &middot;
-                                                </Box>
-                                                <Box
-                                                    component='span'
-                                                    display='inline-block'
-                                                    marginRight='4px'
-                                                    onClick={handleViewLikingUsers}
-                                                    sx={{ cursor: 'pointer' }}
-                                                >
-                                                    { props.comment.likesCount } { props.comment.likesCount > 1 ? 'likes' : 'like' }
-                                                </Box>
-                                            </>
-                                        )}
                                     </Box>
-                                </Box>
+                                )}
                             </Box>
                         </Box>
                         <Box
@@ -321,14 +351,16 @@ export default function Comment (props: CommentProps) {
                                 border='none'
                                 padding='0'
                             >
-                                <LoadingIconButton
-                                    color={props.comment.liked ? '#ED4956' : '#FFFFFF'}
-                                    loading={props.comment.isLikedLoading}
-                                    iconComponent={props.comment.liked ?
-                                        <Favorite sx={{ fontSize: 16 }}/> :
-                                        <FavoriteBorder sx={{ fontSize: 16 }}/>
-                                    }
-                                    onClick={handleLikeComment} />
+                                { !props.loading && (
+                                    <LoadingIconButton
+                                        color={props.comment.liked ? '#ED4956' : '#FFFFFF'}
+                                        loading={props.comment.isLikedLoading}
+                                        iconComponent={props.comment.liked ?
+                                            <Favorite sx={{ fontSize: 16 }}/> :
+                                            <FavoriteBorder sx={{ fontSize: 16 }}/>
+                                        }
+                                        onClick={handleLikeComment} />
+                                )}
                             </Box>
                         </Box>
                     </Box>
