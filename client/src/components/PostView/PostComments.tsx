@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Box from '@mui/material/Box'
 import { AddCircleOutline } from '@mui/icons-material'
 import Comment from '../Comment'
 import LoadingIconButton from '../LoadingIconButton'
 import { Comment as CommentI } from '../../types'
+import _range from 'lodash/range'
 
 
 interface Props {
@@ -16,7 +17,10 @@ interface Props {
 
 export default function PostComments (props: Props) {
 
-    return props.comments.length > 0 ? (
+    const commentsInitialLoading = useMemo(() =>
+        props.moreCommentsLoading && props.comments.length < 1, [props.moreCommentsLoading, props.comments])
+
+    return commentsInitialLoading || props.comments.length > 0 ? (
         <Box
             component='ul'
             border='0'
@@ -30,14 +34,19 @@ export default function PostComments (props: Props) {
             width='100%'
             sx={{ overflowX: 'hidden', overflowY: 'auto', verticalAlign: 'baseline' }}
         >
-            { props.comments.map((comment, index) => (
+            { commentsInitialLoading ? _range(5).map(index => (
+                <Comment
+                    key={index}
+                    loading={true}
+                />
+            )) : props.comments.map((comment, index) => (
                 <Comment
                     key={comment._id}
                     comment={comment}
                     dense={index === props.comments.length - 1}
                     onLikeComment={props.onLikeComment} />
             ))}
-            { props.hasMoreComments && (
+            { !commentsInitialLoading && props.hasMoreComments && (
                 <Box
                     component='li'
                     display='list-item'
