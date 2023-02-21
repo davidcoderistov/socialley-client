@@ -1,11 +1,16 @@
 import React from 'react'
 import Box from '@mui/material/Box'
+import { AddCircleOutline } from '@mui/icons-material'
 import Comment from '../Comment'
+import LoadingIconButton from '../LoadingIconButton'
 import { Comment as CommentI } from '../../types'
 
 
 interface Props {
     comments: CommentI[]
+    hasMoreComments: boolean
+    moreCommentsLoading: boolean
+    onFetchMoreComments: () => void
     onLikeComment: (commentId: string, postId: string, liked: boolean) => void
 }
 
@@ -25,12 +30,36 @@ export default function PostComments (props: Props) {
             width='100%'
             sx={{ overflowX: 'hidden', overflowY: 'auto', verticalAlign: 'baseline' }}
         >
-            { props.comments.map(comment => (
+            { props.comments.map((comment, index) => (
                 <Comment
                     key={comment._id}
                     comment={comment}
+                    dense={index === props.comments.length - 1}
                     onLikeComment={props.onLikeComment} />
             ))}
+            { props.hasMoreComments && (
+                <Box
+                    component='li'
+                    display='list-item'
+                    sx={{ listStyleType: 'none' }}
+                >
+                    <Box
+                        minHeight='40px'
+                        position='relative'
+                        justifyContent='center'
+                        flexDirection='column'
+                        alignItems='stretch'
+                        display='flex'
+                        boxSizing='border-box'
+                    >
+                        <LoadingIconButton
+                            color='#FFFFFF'
+                            loading={props.moreCommentsLoading}
+                            iconComponent={<AddCircleOutline />}
+                            onClick={props.onFetchMoreComments} />
+                    </Box>
+                </Box>
+            )}
         </Box>
     ) : (
         <Box
