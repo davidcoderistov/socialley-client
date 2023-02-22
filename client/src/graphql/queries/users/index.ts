@@ -12,3 +12,20 @@ export const GET_USERS_BY_SEARCH_QUERY = gql`
         }
     }
 `
+
+export const GET_SUGGESTED_USERS = gql`
+    query getSuggestedUsers {
+        getSuggestedUsers {
+            _id
+            firstName
+            lastName
+            username
+            avatarURL
+            latestFollower {
+                _id
+                username
+            }
+            followedCount
+        }
+    }
+`
