@@ -80,6 +80,14 @@ export interface LikingUser extends PublicUser {
     isFollowingLoading: boolean
 }
 
+
+export interface SuggestedUser extends Omit<PublicUser, 'email'> {
+    latestFollower: Pick<PublicUser, '_id' | 'username'>
+    followedCount: number
+    following: boolean
+    isFollowingLoading: boolean
+}
+
 export interface Comment {
     _id: string
     text: string

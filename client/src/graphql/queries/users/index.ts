@@ -26,6 +26,8 @@ export const GET_SUGGESTED_USERS = gql`
                 username
             }
             followedCount
+            following @client
+            isFollowingLoading @client
         }
     }
 `

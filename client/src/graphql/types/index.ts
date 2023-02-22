@@ -1,9 +1,5 @@
-import { FullMessage, Message, FollowedUserPost, LikingUser, Comment } from '../../types'
+import { FullMessage, Message, FollowedUserPost, LikingUser, Comment, SuggestedUser } from '../../types'
 
-
-export interface LatestMessageQueryData {
-    getLatestMessage: FullMessage | null
-}
 
 export interface LatestMessagesQueryData {
     getLatestMessages: {
@@ -90,4 +86,8 @@ export interface CreateCommentMutationData {
         userId: string
         createdAt: number
     }
+}
+
+export interface SuggestedUsersQueryData {
+    getSuggestedUsers: SuggestedUser[]
 }
