@@ -1,8 +1,9 @@
 import React from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { Box, Typography, Skeleton } from '@mui/material'
-import LoadingButton from '@mui/lab/LoadingButton'
 import UserAvatar from '../UserAvatar'
+import FollowButton from '../FollowButton'
+import FollowingButton from '../FollowingButton'
 
 
 interface User {
@@ -118,52 +119,15 @@ export default function UserListItem ({ user, isUserLoading, onFollowUser, onUnf
                 </Box>
             </Box>
             { !isUserLoading && user && user._id !== loggedInUser._id ? user.following ? (
-                <LoadingButton
-                    variant='contained'
-                    sx={{
-                        textTransform: 'none',
-                        borderRadius: '10px',
-                        minWidth: '100px',
-                        backgroundColor: '#EFEFEF',
-                        color: '#000000',
-                        '&:hover': {
-                            backgroundColor: '#DBDBDB'
-                        },
-                        '&.MuiLoadingButton-loading': {
-                            backgroundColor: '#FFFFFF',
-                        },
-                        '.MuiLoadingButton-loadingIndicator': {
-                            color: '#000000',
-                        }
-                    }}
+                <FollowingButton
+                    contained={true}
                     loading={user.isFollowingLoading}
-                    onClick={handleUnfollowUser}
-                >
-                    Following
-                </LoadingButton>
+                    onClick={handleUnfollowUser} />
             ) : (
-                <LoadingButton
-                    variant='contained'
-                    sx={{
-                        textTransform: 'none',
-                        borderRadius: '10px',
-                        minWidth: '80px',
-                        backgroundColor: '#0095F6',
-                        '&:hover': {
-                            backgroundColor: '#1877F2',
-                        },
-                        '&.MuiLoadingButton-loading': {
-                            backgroundColor: '#0095F6',
-                        },
-                        '.MuiLoadingButton-loadingIndicator': {
-                            color: '#FFFFFF',
-                        }
-                    }}
+                <FollowButton
+                    contained={true}
                     loading={user.isFollowingLoading}
-                    onClick={handleFollowUser}
-                >
-                    Follow
-                </LoadingButton>
+                    onClick={handleFollowUser} />
             ) : null }
         </Box>
     )
