@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
-import UserListItem from './UserListItem'
+import FollowUserDetails from '../FollowUserDetails'
 import UnfollowUserModal from '../UnfollowUserModal'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import _range from 'lodash/range'
@@ -58,8 +58,10 @@ export default function UserList (props: Props) {
                 sx={{ overflowX: 'hidden', overflowY: 'auto' }}
             >
                 { props.isInitialLoading ? _range(5).map(index => (
-                    <UserListItem
+                    <FollowUserDetails
                         key={index}
+                        dense={false}
+                        dark={true}
                         isUserLoading={true} />
                 )) : (
                     <InfiniteScroll
@@ -81,8 +83,10 @@ export default function UserList (props: Props) {
                         scrollableTarget='scrollableLikingUserList'
                     >
                         { props.users.map(user => (
-                            <UserListItem
+                            <FollowUserDetails
                                 key={user._id}
+                                dense={false}
+                                dark={true}
                                 user={user}
                                 onFollowUser={props.onFollowUser}
                                 onUnfollowUser={handleOpenUnfollowUserModal}
