@@ -1,46 +1,62 @@
 import { gql } from '@apollo/client'
+import { User, AuthUser } from '../../types/user'
 
+
+export interface SignUpMutationType {
+    signUp: Pick<User, '_id'>
+}
 
 export const SIGN_UP = gql`
-    mutation signUp($user: SignUpInput) {
+    mutation signUp($user: SignUpOptions) {
         signUp(user: $user) {
             _id
-            username
-            firstName
-            lastName
-            email
+        }
+    }
+`
+
+export interface LoginMutationType {
+    login: AuthUser
+}
+
+export const LOGIN = gql`
+    mutation login($user: LoginOptions) {
+        login(user: $user) {
+            user {
+                _id
+                firstName
+                lastName
+                username
+                email
+                avatarURL
+            }
             accessToken
         }
     }
 `
 
-export const LOGIN = gql`
-    mutation login($user: LoginInput) {
-        login(user: $user) {
-            _id
-            firstName
-            lastName
-            username
-            email
-            avatarURL
-            accessToken
-        }
-    }
-`
+export interface RefreshMutationType {
+    refresh: AuthUser
+}
 
 export const REFRESH = gql`
     mutation refresh {
         refresh {
-            _id
-            firstName
-            lastName
-            username
-            email
-            avatarURL
+            user {
+                _id
+                firstName
+                lastName
+                username
+                email
+                avatarURL
+            }
             accessToken
         }
     }
 `
+
+export interface LogoutMutationType {
+    logout: Pick<User, '_id' | 'username'>
+}
 
 export const LOGOUT = gql`
     mutation logout {
