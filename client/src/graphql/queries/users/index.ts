@@ -1,5 +1,10 @@
 import { gql } from '@apollo/client'
+import { User } from '../../types/user'
 
+
+export interface GetUsersBySearchQueryQueryType {
+    getUsersBySearchQuery: User[]
+}
 
 export const GET_USERS_BY_SEARCH_QUERY = gql`
     query getUsersBySearchQuery($searchQuery: String!, $limit: Int!) {

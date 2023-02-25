@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import { useLazyQuery } from '@apollo/client'
-import { GET_USERS_BY_SEARCH_QUERY } from '../../graphql/queries/users'
-import { UsersBySearchQueryData } from '../../graphql/types'
+import { GET_USERS_BY_SEARCH_QUERY, GetUsersBySearchQueryQueryType } from '../../graphql/queries/users'
 import { Box, Typography, IconButton, InputBase } from '@mui/material'
 import { Dialog } from '@mui/material'
 import { Close } from '@mui/icons-material'
@@ -25,7 +24,7 @@ interface Props {
 
 export default function SendMessageModal (props: Props) {
 
-    const [findUsersBySearchQuery, { loading, data }] = useLazyQuery<UsersBySearchQueryData>(GET_USERS_BY_SEARCH_QUERY)
+    const [findUsersBySearchQuery, { loading, data }] = useLazyQuery<GetUsersBySearchQueryQueryType>(GET_USERS_BY_SEARCH_QUERY)
 
     const _findUsersBySearchQuery = useMemo(() => _debounce(findUsersBySearchQuery, 500), [])
 
