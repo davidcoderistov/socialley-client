@@ -3,7 +3,7 @@ import { User } from '../../types/user'
 
 
 export interface GetUsersBySearchQueryQueryType {
-    getUsersBySearchQuery: User[]
+    getUsersBySearchQuery: Omit<User, 'email'>[]
 }
 
 export const GET_USERS_BY_SEARCH_QUERY = gql`
