@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSnackbar } from 'notistack'
 import SignUp, { SignUpProps } from '../../components/SignUp'
 import { useMutation, ApolloError } from '@apollo/client'
-import { SIGN_UP } from '../../graphql/mutations/auth'
+import { SIGN_UP, SignUpMutationType } from '../../graphql/mutations/auth'
 import { getValidationError } from '../../utils'
 
 
@@ -11,7 +11,7 @@ export default function SignUpPage () {
 
     const navigate = useNavigate()
 
-    const [signUp, { loading }] = useMutation(SIGN_UP)
+    const [signUp, { loading }] = useMutation<SignUpMutationType>(SIGN_UP)
 
     const { enqueueSnackbar } = useSnackbar()
 
