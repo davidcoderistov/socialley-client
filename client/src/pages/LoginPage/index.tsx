@@ -4,7 +4,7 @@ import AppContext from '../../config/context'
 import { useSnackbar } from 'notistack'
 import Login, { SignInProps } from '../../components/Login'
 import { useMutation, ApolloError } from '@apollo/client'
-import { LOGIN } from '../../graphql/mutations/auth'
+import { LOGIN, LoginMutationType } from '../../graphql/mutations/auth'
 import { getValidationError } from '../../utils'
 
 
@@ -14,7 +14,7 @@ export default function LoginPage () {
 
     const navigate = useNavigate()
 
-    const [login, { loading }] = useMutation(LOGIN)
+    const [login, { loading }] = useMutation<LoginMutationType>(LOGIN)
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -27,15 +27,19 @@ export default function LoginPage () {
                 }
             }
         }).then(({ data }) => {
-            setLoggedInUser({
-                _id: data.login._id,
-                firstName: data.login.firstName,
-                lastName: data.login.lastName,
-                username: data.login.username,
-                email: data.login.email,
-                avatarURL: data.login.avatarURL,
-                accessToken: data.login.accessToken,
-            })
+            if (data) {
+                setLoggedInUser({
+                    _id: data.login.user._id,
+                    firstName: data.login.user.firstName,
+                    lastName: data.login.user.lastName,
+                    username: data.login.user.username,
+                    email: data.login.user.email,
+                    avatarURL: data.login.user.avatarURL,
+                    accessToken: data.login.accessToken,
+                })
+            } else {
+                enqueueSnackbar('Could not sign in. Please try again later', { variant: 'error' })
+            }
         }).catch((err: ApolloError) => {
             const validationError = getValidationError(err)
             if (validationError?.username) {
