@@ -3,7 +3,12 @@ import AppContext from '../../config/context'
 import { User } from '../../types'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
-import { REFRESH, LOGOUT } from '../../graphql/mutations/auth'
+import {
+    REFRESH,
+    RefreshMutationType,
+    LOGOUT,
+    LogoutMutationType,
+} from '../../graphql/mutations/auth'
 import { setStorageLoggedInUser } from '../../localStorage'
 import { isInvalidSessionError } from '../../utils'
 import SignedInRouter from '../SignedInRouter'
@@ -17,8 +22,8 @@ export default function AppRouter () {
     const [loggedInUser, setUser] = useState<User | null>(null)
     const [sessionModalOpen, setSessionModalOpen] = useState(false)
 
-    const [refresh] = useMutation(REFRESH)
-    const [logout] = useMutation(LOGOUT)
+    const [refresh] = useMutation<RefreshMutationType>(REFRESH)
+    const [logout] = useMutation<LogoutMutationType>(LOGOUT)
 
     const [loadingInitialUser, setLoadingInitialUser] = useState(false)
     const [refreshingSession, setRefreshingSession] = useState(false)
@@ -29,8 +34,10 @@ export default function AppRouter () {
         const getInitialUser = async () => {
             setLoadingInitialUser(true)
             try {
-                const user = await refresh()
-                setLoggedInUser(getRefreshUser(user.data))
+                const user: { data?: RefreshMutationType | null } = await refresh()
+                if (user.data) {
+                    setLoggedInUser(getRefreshUser(user.data))
+                }
             } catch (err) {
 
             } finally {
@@ -53,14 +60,14 @@ export default function AppRouter () {
         }
     }, [loggedInUser])
 
-    const getRefreshUser = (data: any) => {
+    const getRefreshUser = (data: RefreshMutationType) => {
         return {
-            _id: data.refresh._id,
-            firstName: data.refresh.firstName,
-            lastName: data.refresh.lastName,
-            username: data.refresh.username,
-            email: data.refresh.email,
-            avatarURL: data.refresh.avatarURL,
+            _id: data.refresh.user._id,
+            firstName: data.refresh.user.firstName,
+            lastName: data.refresh.user.lastName,
+            username: data.refresh.user.username,
+            email: data.refresh.user.email,
+            avatarURL: data.refresh.user.avatarURL,
             accessToken: data.refresh.accessToken,
         }
     }
@@ -68,8 +75,10 @@ export default function AppRouter () {
     const refreshSession = async () => {
         setRefreshingSession(true)
         try {
-            const user = await refresh()
-            setLoggedInUser(getRefreshUser(user.data))
+            const user: { data?: RefreshMutationType | null } = await refresh()
+            if (user.data) {
+                setLoggedInUser(getRefreshUser(user.data))
+            }
         } catch (err) {
             if (isInvalidSessionError(err)) {
                 setLoggedInUser(null)
