@@ -117,11 +117,6 @@ const cache = new InMemoryCache({
         },
         SuggestedUser: {
             fields: {
-                following: {
-                    read (following = false) {
-                        return following
-                    }
-                },
                 isFollowingLoading: {
                     read (isFollowingLoading = false) {
                         return isFollowingLoading
