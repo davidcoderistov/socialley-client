@@ -9,7 +9,7 @@ export interface FollowedUserPost {
         photoURL: string
         videoURL: string | null
         user: Omit<User, 'email'>
-        firstLikeUser: Pick<User, '_id' | 'username'>
+        firstLikeUser: Pick<User, '_id' | 'username'> | null
         liked: boolean
         isLikedLoading: boolean
         favorite: boolean
