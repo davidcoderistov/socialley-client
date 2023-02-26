@@ -1,43 +1,35 @@
-import {
-    FollowedUserPost,
-} from '../../types'
+import { GetFollowedUsersPostsQueryType, FollowedUserPost } from '../../graphql/queries/posts'
 import { GetSuggestedUsersQueryType, SuggestedUser } from '../../graphql/queries/users'
 import { GetUsersWhoLikedPostQueryType, UserWhoLikedPost } from '../../graphql/queries/posts'
 import { GetUsersWhoLikedCommentQueryType, UserWhoLikedComment } from '../../graphql/queries/posts'
 import { GetCommentsForPostQueryType, Comment } from '../../graphql/queries/posts'
-import {
-    FollowedUsersPostsQueryData,
-} from '../../graphql/types'
 
 
 interface UpdateFollowedUserPostByPostIdOptions {
-    followedUsersPosts: FollowedUsersPostsQueryData
+    followedUsersPosts: GetFollowedUsersPostsQueryType
     postId: string
-    post: Partial<FollowedUserPost>
+    mapper: (followedUserPost: FollowedUserPost) => FollowedUserPost
 }
 
 interface UpdateFollowedUserPostByPostIdReturnValue {
-    followedUsersPosts: FollowedUsersPostsQueryData
+    followedUsersPosts: GetFollowedUsersPostsQueryType
     success: boolean
 }
 
-export function updateFollowedUserPostByPostId (options: UpdateFollowedUserPostByPostIdOptions): UpdateFollowedUserPostByPostIdReturnValue {
-    const { followedUsersPosts, postId } = options
+export function updateOneFollowedUserPost (options: UpdateFollowedUserPostByPostIdOptions): UpdateFollowedUserPostByPostIdReturnValue {
+    const { followedUsersPosts, postId, mapper } = options
 
     let success = false
     const followedUsersPostsResult = {
         ...followedUsersPosts,
-        getFollowedUsersPostsPaginated: {
-            ...followedUsersPosts.getFollowedUsersPostsPaginated,
-            data: followedUsersPosts.getFollowedUsersPostsPaginated.data.map(post => {
-                if (post._id === postId) {
+        getFollowedUsersPosts: {
+            ...followedUsersPosts.getFollowedUsersPosts,
+            data: followedUsersPosts.getFollowedUsersPosts.data.map(followedUserPost => {
+                if (followedUserPost.post._id === postId) {
                     success = true
-                    return {
-                        ...post,
-                        ...options.post,
-                    }
+                    return mapper(followedUserPost)
                 }
-                return post
+                return followedUserPost
             })
         }
     }
