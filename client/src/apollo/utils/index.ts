@@ -1,13 +1,12 @@
 import {
     FollowedUserPost,
     LikingUser,
-    SuggestedUser
 } from '../../types'
+import { GetSuggestedUsersQueryType, SuggestedUser } from '../../graphql/queries/users'
 import {
     FollowedUsersPostsQueryData,
     UsersWhoLikedPostQueryData,
     UsersWhoLikedCommentQueryData,
-    SuggestedUsersQueryData
 } from '../../graphql/types'
 
 
@@ -125,32 +124,29 @@ export function updateCommentLikingUserByUserId (options: UpdateCommentLikingUse
     }
 }
 
-interface UpdateSuggestedUserByUserIdOptions {
-    suggestedUsers: SuggestedUsersQueryData
+interface UpdateOneSuggestedUserOptions {
+    suggestedUsers: GetSuggestedUsersQueryType
     userId: string
-    suggestedUser: Partial<SuggestedUser>
+    mapper: (suggestedUser: SuggestedUser) => SuggestedUser
 }
 
-interface UpdateSuggestedUserByUserIdReturnValue {
-    suggestedUsers: SuggestedUsersQueryData
+interface UpdateOneSuggestedUserReturnValue {
+    suggestedUsers: GetSuggestedUsersQueryType
     success: boolean
 }
 
-export function updateSuggestedUserByUserId (options: UpdateSuggestedUserByUserIdOptions): UpdateSuggestedUserByUserIdReturnValue {
-    const { suggestedUsers, userId, suggestedUser } = options
+export function updateOneSuggestedUser (options: UpdateOneSuggestedUserOptions): UpdateOneSuggestedUserReturnValue {
+    const { suggestedUsers, userId, mapper } = options
 
     let success = false
     const suggestedUsersResult = {
         ...suggestedUsers,
-        getSuggestedUsers: suggestedUsers.getSuggestedUsers.map(user => {
-            if (user._id === userId) {
+        getSuggestedUsers: suggestedUsers.getSuggestedUsers.map(suggestedUser => {
+            if (suggestedUser.followableUser.user._id === userId) {
                 success = true
-                return {
-                    ...user,
-                    ...suggestedUser,
-                }
+                return mapper(suggestedUser)
             }
-            return user
+            return suggestedUser
         })
     }
 

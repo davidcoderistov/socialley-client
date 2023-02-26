@@ -1,44 +1,55 @@
-import { SuggestedUsersQueryData } from '../../../graphql/types'
-import { updateSuggestedUserByUserId } from '../../utils'
+import { GetSuggestedUsersQueryType } from '../../../graphql/queries/users'
+import { updateOneSuggestedUser } from '../../utils'
 
 
 interface UpdateFollowingLoadingStatusOptions {
-    suggestedUsers: SuggestedUsersQueryData
+    suggestedUsers: GetSuggestedUsersQueryType
     userId: string
     isFollowingLoading: boolean
 }
 
 interface UpdateFollowingLoadingStatusReturnValue {
-    suggestedUsers: SuggestedUsersQueryData
+    suggestedUsers: GetSuggestedUsersQueryType
     success: boolean
 }
 
 export function updateFollowingLoadingStatus (options: UpdateFollowingLoadingStatusOptions): UpdateFollowingLoadingStatusReturnValue {
-    return updateSuggestedUserByUserId({
+    return updateOneSuggestedUser({
         suggestedUsers: options.suggestedUsers,
         userId: options.userId,
-        suggestedUser: { isFollowingLoading: options.isFollowingLoading }
+        mapper (suggestedUser) {
+            return {
+                ...suggestedUser,
+                isFollowingLoading: options.isFollowingLoading
+            }
+        }
     })
 }
 
 interface UpdateFollowingStatusOptions {
-    suggestedUsers: SuggestedUsersQueryData
+    suggestedUsers: GetSuggestedUsersQueryType
     userId: string
     following: boolean
 }
 
 interface UpdateFollowingStatusReturnValue {
-    suggestedUsers: SuggestedUsersQueryData
+    suggestedUsers: GetSuggestedUsersQueryType
     success: boolean
 }
 
 export function updateFollowingStatus (options: UpdateFollowingStatusOptions): UpdateFollowingStatusReturnValue {
-    return updateSuggestedUserByUserId({
+    return updateOneSuggestedUser({
         suggestedUsers: options.suggestedUsers,
         userId: options.userId,
-        suggestedUser: {
-            following: options.following,
-            isFollowingLoading: false,
+        mapper (suggestedUser) {
+            return {
+                ...suggestedUser,
+                followableUser: {
+                    ...suggestedUser.followableUser,
+                    following: options.following
+                },
+                isFollowingLoading: false,
+            }
         }
     })
 }
