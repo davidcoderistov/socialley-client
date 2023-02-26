@@ -2,22 +2,22 @@ import React, { useState, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
 import {
-    GET_FOLLOWED_USERS_POSTS_PAGINATED,
+    FollowedUserPost,
+    GetFollowedUsersPostsQueryType,
+    GET_FOLLOWED_USERS_POSTS,
+    GetUsersWhoLikedPostQueryType,
     GET_USERS_WHO_LIKED_POST,
-    GET_FIRST_LIKING_USER_FOR_POST,
+    GetFirstUserWhoLikedPost,
+    GET_FIRST_USER_WHO_LIKED_POST,
+    GetCommentsForPostQueryType,
     GET_COMMENTS_FOR_POST,
+    GetUsersWhoLikedCommentQueryType,
     GET_USERS_WHO_LIKED_COMMENT,
 } from '../../graphql/queries/posts'
 import {
-    FollowedUsersPostsQueryData,
-    UsersWhoLikedPostQueryData,
-    FirstLikingUserForPostQueryData,
-    CommentsForPostQueryData,
-    UsersWhoLikedCommentQueryData,
     CreateCommentMutationData,
 } from '../../graphql/types'
 import { Comment } from '../../types'
-import { FollowedUserPost } from '../../types'
 import Box, { BoxProps } from '@mui/material/Box'
 import Post from '../Post'
 import PostView from '../PostView/PostView'
@@ -58,16 +58,16 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     const [viewingPostId, setViewingPostId] = useState<string | null>(null)
 
-    const { data, loading, updateQuery } = useQuery<FollowedUsersPostsQueryData>(GET_FOLLOWED_USERS_POSTS_PAGINATED, {
+    const { data, loading, updateQuery } = useQuery<GetFollowedUsersPostsQueryType>(GET_FOLLOWED_USERS_POSTS, {
         variables: {
             offset: 0,
             limit: 10,
         }
     })
 
-    const [getFirstLikingUser] = useLazyQuery<FirstLikingUserForPostQueryData>(GET_FIRST_LIKING_USER_FOR_POST)
+    const [getFirstLikingUser] = useLazyQuery<GetFirstUserWhoLikedPost>(GET_FIRST_USER_WHO_LIKED_POST)
 
-    const commentsForPost = useQuery<CommentsForPostQueryData>(GET_COMMENTS_FOR_POST, {
+    const commentsForPost = useQuery<GetCommentsForPostQueryType>(GET_COMMENTS_FOR_POST, {
         variables: {
             postId: viewingPostId,
             offset: 0,
@@ -121,14 +121,14 @@ export default function FollowedUsersPosts (props: BoxProps) {
                         postId,
                         liked,
                         usersWhoLikedPost.getUsersWhoLikedPost.data.length > 0 ?
-                            usersWhoLikedPost.getUsersWhoLikedPost.data[0] : null
+                            usersWhoLikedPost.getUsersWhoLikedPost.data[0].followableUser.user : null
                     )
                 } else {
-                    const post = data?.getFollowedUsersPostsPaginated.data.find(post => post._id === postId)
-                    if (post) {
-                        if (post.likesCount > 1) {
+                    const followedUserPost = data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.post._id === postId)
+                    if (followedUserPost) {
+                        if (followedUserPost.post.likesCount > 1) {
                             return getFirstLikingUser({ variables: { postId }}).then(({ data }) => {
-                                const firstLikingUser = data?.getFirstLikingUserForPost ?? null
+                                const firstLikingUser = data?.getFirstUserWhoLikedPost ?? null
                                 updateQueryFollowedUserPostLikedStatus(postId, liked, firstLikingUser)
                             }).catch(() => {
                                 updateQueryFollowedUserPostLikedStatus(postId, liked, null)
@@ -192,13 +192,15 @@ export default function FollowedUsersPosts (props: BoxProps) {
         client.cache.updateQuery({
             query: GET_USERS_WHO_LIKED_POST,
             variables: { postId }
-        }, (usersWhoLikedPost: UsersWhoLikedPostQueryData | null) => {
+        }, (usersWhoLikedPost: GetUsersWhoLikedPostQueryType | null) => {
             if (usersWhoLikedPost) {
-                return usersWhoLikedPostMutations.addLikingUser({
+                return usersWhoLikedPostMutations.addUserWhoLikedPost({
                     usersWhoLikedPost,
-                    likingUser: {
-                        ...loggedInUser,
-                        following: true,
+                    userWhoLikedPost: {
+                        followableUser: {
+                            user: loggedInUser,
+                            following: true,
+                        },
                         isFollowingLoading: false,
                     }
                 }).usersWhoLikedPost
@@ -206,15 +208,15 @@ export default function FollowedUsersPosts (props: BoxProps) {
         })
     }
 
-    const updatePostQueryRemoveLikingUser = (postId: string): UsersWhoLikedPostQueryData | null => {
+    const updatePostQueryRemoveLikingUser = (postId: string): GetUsersWhoLikedPostQueryType | null => {
         let usersWhoLikedPostResult = null
         client.cache.updateQuery({
             query: GET_USERS_WHO_LIKED_POST,
             variables: { postId }
-        }, (usersWhoLikedPost: UsersWhoLikedPostQueryData | null) => {
+        }, (usersWhoLikedPost: GetUsersWhoLikedPostQueryType | null) => {
             if (usersWhoLikedPost) {
                 usersWhoLikedPostResult = usersWhoLikedPost
-                const result = usersWhoLikedPostMutations.removeLikingUser({
+                const result = usersWhoLikedPostMutations.removeUserWhoLikedPost({
                     usersWhoLikedPost,
                     userId: loggedInUser._id
                 })
@@ -236,7 +238,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
     }
 
     const viewingPost: FollowedUserPost | null = useMemo(() => {
-        return data?.getFollowedUsersPostsPaginated.data.find(post => post._id === viewingPostId) ?? null
+        return data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.post._id === viewingPostId) ?? null
     }, [data, viewingPostId])
 
     const [likeComment] = useMutation(LIKE_COMMENT)
@@ -246,7 +248,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         client.cache.updateQuery({
             query: GET_COMMENTS_FOR_POST,
             variables: { postId }
-        }, (commentsForPost: CommentsForPostQueryData | null) => {
+        }, (commentsForPost: GetCommentsForPostQueryType | null) => {
             if (commentsForPost) {
                 return updateCommentLikedLoadingStatus({
                     commentsForPost,
@@ -261,7 +263,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         client.cache.updateQuery({
             query: GET_COMMENTS_FOR_POST,
             variables: { postId }
-        }, (commentsForPost: CommentsForPostQueryData | null) => {
+        }, (commentsForPost: GetCommentsForPostQueryType | null) => {
             if (commentsForPost) {
                 return updateCommentLikedStatus({
                     commentsForPost,
@@ -276,13 +278,15 @@ export default function FollowedUsersPosts (props: BoxProps) {
         client.cache.updateQuery({
             query: GET_USERS_WHO_LIKED_COMMENT,
             variables: { commentId }
-        }, (usersWhoLikedComment: UsersWhoLikedCommentQueryData | null) => {
+        }, (usersWhoLikedComment: GetUsersWhoLikedCommentQueryType | null) => {
             if (usersWhoLikedComment) {
-                return usersWhoLikedCommentMutations.addLikingUser({
+                return usersWhoLikedCommentMutations.addUserWhoLikedComment({
                     usersWhoLikedComment,
-                    likingUser: {
-                        ...loggedInUser,
-                        following: true,
+                    userWhoLikedComment: {
+                        followableUser: {
+                            user: loggedInUser,
+                            following: true,
+                        },
                         isFollowingLoading: false,
                     }
                 }).usersWhoLikedComment
@@ -294,9 +298,9 @@ export default function FollowedUsersPosts (props: BoxProps) {
         client.cache.updateQuery({
             query: GET_USERS_WHO_LIKED_COMMENT,
             variables: { commentId }
-        }, (usersWhoLikedComment: UsersWhoLikedCommentQueryData | null) => {
+        }, (usersWhoLikedComment: GetUsersWhoLikedCommentQueryType | null) => {
             if (usersWhoLikedComment) {
-                return usersWhoLikedCommentMutations.removeLikingUser({
+                return usersWhoLikedCommentMutations.removeUserWhoLikedComment({
                     usersWhoLikedComment,
                     userId: loggedInUser._id
                 }).usersWhoLikedComment
@@ -335,7 +339,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         client.cache.updateQuery({
             query: GET_COMMENTS_FOR_POST,
             variables: { postId }
-        }, (commentsForPost: CommentsForPostQueryData | null) => {
+        }, (commentsForPost: GetCommentsForPostQueryType | null) => {
             if (commentsForPost) {
                 return addCommentForPost({
                     commentsForPost,
@@ -383,10 +387,10 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     const handleFetchMoreComments = () => {
         const postId = viewingPostId as string
-        const commentsForPostData = commentsForPost.data as CommentsForPostQueryData
+        const commentsForPostData = commentsForPost.data as GetCommentsForPostQueryType
         commentsForPost.fetchMore({
             variables: { postId, offset: commentsForPostData.getCommentsForPost.data.length },
-            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: CommentsForPostQueryData }) {
+            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetCommentsForPostQueryType }) {
                 return {
                     ...existing,
                     getCommentsForPost: {
@@ -410,10 +414,10 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 <Post loading={true} />
             ) : (
                 <>
-                    { data && data.getFollowedUsersPostsPaginated.data.map(post => (
+                    { data && data.getFollowedUsersPosts.data.map(followedUserPost => (
                         <Post
-                            key={post._id}
-                            post={post}
+                            key={followedUserPost.post._id}
+                            post={{...followedUserPost, ...followedUserPost.post, user: {...followedUserPost.post.user, following: false, isFollowingLoading: false}}}
                             onClickUser={() => {}}
                             onFollowUser={() => {}}
                             onLikePost={handleLikePost}
@@ -426,7 +430,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
             )}
             { viewingPost && (
                 <PostView
-                    postDetails={viewingPost}
+                    postDetails={{...viewingPost, ...viewingPost.post, user: {...viewingPost.post.user, following: false, isFollowingLoading: false}}}
                     isPostDetailsLoading={false}
                     onClickUser={() => {}}
                     onFollowUser={() => {}}
