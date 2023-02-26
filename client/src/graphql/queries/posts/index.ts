@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { FollowableUser } from '../../types/user'
 
 
 export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
@@ -35,16 +36,32 @@ export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
     }
 `
 
+export interface UserWhoLikedPost {
+    followableUser: FollowableUser
+    isFollowingLoading: boolean
+}
+
+export interface GetUsersWhoLikedPostQueryType {
+    getUsersWhoLikedPost: {
+        data: UserWhoLikedPost[]
+        total: number
+    }
+}
+
 export const GET_USERS_WHO_LIKED_POST = gql`
     query getUsersWhoLikedPost ($postId: String!, $offset: Int!, $limit: Int!) {
         getUsersWhoLikedPost (postId: $postId, offset: $offset, limit: $limit) {
             data {
-                _id
-                username
-                firstName
-                lastName
-                avatarURL
-                following
+                followableUser {
+                    user {
+                        _id
+                        username
+                        firstName
+                        lastName
+                        avatarURL
+                    }
+                    following
+                }
                 isFollowingLoading @client
             }
             total
