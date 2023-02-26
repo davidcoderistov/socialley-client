@@ -1,12 +1,11 @@
 import {
     FollowedUserPost,
-    LikingUser,
 } from '../../types'
 import { GetSuggestedUsersQueryType, SuggestedUser } from '../../graphql/queries/users'
 import { GetUsersWhoLikedPostQueryType, UserWhoLikedPost } from '../../graphql/queries/posts'
+import { GetUsersWhoLikedCommentQueryType, UserWhoLikedComment } from '../../graphql/queries/posts'
 import {
     FollowedUsersPostsQueryData,
-    UsersWhoLikedCommentQueryData,
 } from '../../graphql/types'
 
 
@@ -83,34 +82,31 @@ export function updateOneUserWhoLikedPost (options: UpdateOneUserWhoLikedPostOpt
     }
 }
 
-interface UpdateCommentLikingUserByUserIdOptions {
-    usersWhoLikedComment: UsersWhoLikedCommentQueryData
+interface UpdateOneUserWhoLikedCommentOptions {
+    usersWhoLikedComment: GetUsersWhoLikedCommentQueryType
     userId: string
-    likingUser: Partial<LikingUser>
+    mapper: (userWhoLikedComment: UserWhoLikedComment) => UserWhoLikedComment
 }
 
-interface UpdateCommentLikingUserByUserIdReturnValue {
-    usersWhoLikedComment: UsersWhoLikedCommentQueryData
+interface UpdateOneUserWhoLikedCommentReturnValue {
+    usersWhoLikedComment: GetUsersWhoLikedCommentQueryType
     success: boolean
 }
 
-export function updateCommentLikingUserByUserId (options: UpdateCommentLikingUserByUserIdOptions): UpdateCommentLikingUserByUserIdReturnValue {
-    const { usersWhoLikedComment, userId, likingUser } = options
+export function updateOneUserWhoLikedComment (options: UpdateOneUserWhoLikedCommentOptions): UpdateOneUserWhoLikedCommentReturnValue {
+    const { usersWhoLikedComment, userId, mapper } = options
 
     let success = false
     const usersWhoLikedCommentResult = {
         ...usersWhoLikedComment,
         getUsersWhoLikedComment: {
             ...usersWhoLikedComment.getUsersWhoLikedComment,
-            data: usersWhoLikedComment.getUsersWhoLikedComment.data.map(user => {
-                if (user._id === userId) {
+            data: usersWhoLikedComment.getUsersWhoLikedComment.data.map(userWhoLikedComment => {
+                if (userWhoLikedComment.followableUser.user._id  === userId) {
                     success = true
-                    return {
-                        ...user,
-                        ...likingUser,
-                    }
+                    return mapper(userWhoLikedComment)
                 }
-                return user
+                return userWhoLikedComment
             })
         }
     }
