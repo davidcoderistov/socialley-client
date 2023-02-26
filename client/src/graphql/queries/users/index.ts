@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'
-import { User } from '../../types/user'
+import { User, FollowableUser } from '../../types/user'
 
 
 export interface GetUsersBySearchQueryQueryType {
@@ -18,20 +18,35 @@ export const GET_USERS_BY_SEARCH_QUERY = gql`
     }
 `
 
+export interface SuggestedUser {
+    followableUser: FollowableUser
+    latestFollower: Pick<User, '_id' | 'username'> | null
+    followedCount: number
+    isFollowingLoading: boolean
+}
+
+export interface GetSuggestedUsersQueryType {
+    getSuggestedUsers: SuggestedUser[]
+}
+
 export const GET_SUGGESTED_USERS = gql`
     query getSuggestedUsers {
         getSuggestedUsers {
-            _id
-            firstName
-            lastName
-            username
-            avatarURL
+            followableUser {
+                user {
+                    _id
+                    firstName
+                    lastName
+                    username
+                    avatarURL
+                }
+                following
+            }
             latestFollower {
                 _id
                 username
             }
             followedCount
-            following @client
             isFollowingLoading @client
         }
     }
