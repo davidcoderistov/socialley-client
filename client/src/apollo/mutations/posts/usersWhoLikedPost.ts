@@ -1,67 +1,77 @@
-import { UsersWhoLikedPostQueryData } from '../../../graphql/types'
-import { LikingUser } from '../../../types'
-import { updatePostLikingUserByUserId } from '../../utils'
+import { GetUsersWhoLikedPostQueryType, UserWhoLikedPost } from '../../../graphql/queries/posts'
+import { updateOneUserWhoLikedPost } from '../../utils'
 
 
 interface UpdateFollowingLoadingStatusOptions {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     userId: string
     isFollowingLoading: boolean
 }
 
 interface UpdateFollowingLoadingStatusReturnValue {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     success: boolean
 }
 
 export function updateFollowingLoadingStatus (options: UpdateFollowingLoadingStatusOptions): UpdateFollowingLoadingStatusReturnValue {
-    return updatePostLikingUserByUserId({
+    return updateOneUserWhoLikedPost({
         usersWhoLikedPost: options.usersWhoLikedPost,
         userId: options.userId,
-        likingUser: { isFollowingLoading: options.isFollowingLoading }
+        mapper (userWhoLikedPost) {
+            return {
+                ...userWhoLikedPost,
+                isFollowingLoading: options.isFollowingLoading,
+            }
+        }
     })
 }
 
 interface UpdateFollowingStatusOptions {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     userId: string
     following: boolean
 }
 
 interface UpdateFollowingStatusReturnValue {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     success: boolean
 }
 
 export function updateFollowingStatus (options: UpdateFollowingStatusOptions): UpdateFollowingStatusReturnValue {
-    return updatePostLikingUserByUserId({
+    return updateOneUserWhoLikedPost({
         usersWhoLikedPost: options.usersWhoLikedPost,
         userId: options.userId,
-        likingUser: {
-            following: options.following,
-            isFollowingLoading: false
+        mapper (userWhoLikedPost) {
+            return {
+                ...userWhoLikedPost,
+                followableUser: {
+                    ...userWhoLikedPost.followableUser,
+                    following: options.following
+                },
+                isFollowingLoading: false,
+            }
         }
     })
 }
 
-interface AddLikingUserOptions {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
-    likingUser: LikingUser
+interface AddUserWhoLikedPostOptions {
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
+    userWhoLikedPost: UserWhoLikedPost
 }
 
-interface AddLikingUserReturnValue {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+interface AddUserWhoLikedPostReturnValue {
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     success: boolean
 }
 
-export function addLikingUser (options: AddLikingUserOptions): AddLikingUserReturnValue {
-    const { usersWhoLikedPost, likingUser } = options
+export function addUserWhoLikedPost (options: AddUserWhoLikedPostOptions): AddUserWhoLikedPostReturnValue {
+    const { usersWhoLikedPost, userWhoLikedPost } = options
 
     const usersWhoLikedPostResult = {
         ...usersWhoLikedPost,
         getUsersWhoLikedPost: {
             ...usersWhoLikedPost.getUsersWhoLikedPost,
-            data: [likingUser, ...usersWhoLikedPost.getUsersWhoLikedPost.data],
+            data: [userWhoLikedPost, ...usersWhoLikedPost.getUsersWhoLikedPost.data],
             total: usersWhoLikedPost.getUsersWhoLikedPost.total + 1
         }
     }
@@ -72,23 +82,24 @@ export function addLikingUser (options: AddLikingUserOptions): AddLikingUserRetu
     }
 }
 
-interface RemoveLikingUserOptions {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+interface RemoveUserWhoLikedPostOptions {
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     userId: string
 }
 
-interface RemoveLikingUserReturnValue {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+interface RemoveUserWhoLikedPostReturnValue {
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     success: boolean
 }
 
-export function removeLikingUser (options: RemoveLikingUserOptions): RemoveLikingUserReturnValue {
+export function removeUserWhoLikedPost (options: RemoveUserWhoLikedPostOptions): RemoveUserWhoLikedPostReturnValue {
     const { usersWhoLikedPost, userId } = options
 
-    const findLikingUserIndex = usersWhoLikedPost.getUsersWhoLikedPost.data.findIndex(likingUser => likingUser._id === userId)
-    if (findLikingUserIndex >= 0) {
+    const findUserWhoLikedPostIndex = usersWhoLikedPost.getUsersWhoLikedPost.data
+        .findIndex(userWhoLikedPost => userWhoLikedPost.followableUser.user._id === userId)
+    if (findUserWhoLikedPostIndex >= 0) {
         const newData = [...usersWhoLikedPost.getUsersWhoLikedPost.data]
-        newData.splice(findLikingUserIndex, 1)
+        newData.splice(findUserWhoLikedPostIndex, 1)
         return {
             usersWhoLikedPost: {
                 ...usersWhoLikedPost,
@@ -111,6 +122,6 @@ export function removeLikingUser (options: RemoveLikingUserOptions): RemoveLikin
 export default {
     updateFollowingLoadingStatus,
     updateFollowingStatus,
-    addLikingUser,
-    removeLikingUser
+    addUserWhoLikedPost,
+    removeUserWhoLikedPost,
 }

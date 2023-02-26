@@ -3,9 +3,9 @@ import {
     LikingUser,
 } from '../../types'
 import { GetSuggestedUsersQueryType, SuggestedUser } from '../../graphql/queries/users'
+import { GetUsersWhoLikedPostQueryType, UserWhoLikedPost } from '../../graphql/queries/posts'
 import {
     FollowedUsersPostsQueryData,
-    UsersWhoLikedPostQueryData,
     UsersWhoLikedCommentQueryData,
 } from '../../graphql/types'
 
@@ -48,34 +48,31 @@ export function updateFollowedUserPostByPostId (options: UpdateFollowedUserPostB
     }
 }
 
-interface UpdatePostLikingUserByUserIdOptions {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+interface UpdateOneUserWhoLikedPostOptions {
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     userId: string
-    likingUser: Partial<LikingUser>
+    mapper: (userWhoLikedPost: UserWhoLikedPost) => UserWhoLikedPost
 }
 
-interface UpdatePostLikingUserByUserIdReturnValue {
-    usersWhoLikedPost: UsersWhoLikedPostQueryData
+interface UpdateOneUserWhoLikedPostReturnValue {
+    usersWhoLikedPost: GetUsersWhoLikedPostQueryType
     success: boolean
 }
 
-export function updatePostLikingUserByUserId (options: UpdatePostLikingUserByUserIdOptions): UpdatePostLikingUserByUserIdReturnValue {
-    const { usersWhoLikedPost, userId, likingUser } = options
+export function updateOneUserWhoLikedPost (options: UpdateOneUserWhoLikedPostOptions): UpdateOneUserWhoLikedPostReturnValue {
+    const { usersWhoLikedPost, userId, mapper } = options
 
     let success = false
     const usersWhoLikedPostResult = {
         ...usersWhoLikedPost,
         getUsersWhoLikedPost: {
             ...usersWhoLikedPost.getUsersWhoLikedPost,
-            data: usersWhoLikedPost.getUsersWhoLikedPost.data.map(user => {
-                if (user._id === userId) {
+            data: usersWhoLikedPost.getUsersWhoLikedPost.data.map(userWhoLikedPost => {
+                if (userWhoLikedPost.followableUser.user._id === userId) {
                     success = true
-                    return {
-                        ...user,
-                        ...likingUser,
-                    }
+                    return mapper(userWhoLikedPost)
                 }
-                return user
+                return userWhoLikedPost
             })
         }
     }
