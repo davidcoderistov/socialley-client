@@ -133,7 +133,7 @@ const cache = new InMemoryCache({
                 }
             }
         },
-        FollowedUserPost: {
+        Post: {
             fields: {
                 isLikedLoading: {
                     read (isLikedLoading = false) {
