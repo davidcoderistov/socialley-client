@@ -1,92 +1,64 @@
-import { CommentsForPostQueryData } from '../../../graphql/types'
-import { Comment } from '../../../types'
+import { GetCommentsForPostQueryType, Comment } from '../../../graphql/queries/posts'
+import { updateOneCommentForPost } from '../../utils'
 
 
 interface UpdateCommentLikedLoadingStatusOptions {
-    commentsForPost: CommentsForPostQueryData
+    commentsForPost: GetCommentsForPostQueryType
     commentId: string
     isLikedLoading: boolean
 }
 
 interface UpdateCommentLikedLoadingStatusReturnValue {
-    commentsForPost: CommentsForPostQueryData
+    commentsForPost: GetCommentsForPostQueryType
     success: boolean
 }
 
 export function updateCommentLikedLoadingStatus (options: UpdateCommentLikedLoadingStatusOptions): UpdateCommentLikedLoadingStatusReturnValue {
-    const { commentsForPost, commentId, isLikedLoading } = options
-
-    let success = false
-    const commentsForPostResult = {
-        ...commentsForPost,
-        getCommentsForPost: {
-            ...commentsForPost.getCommentsForPost,
-            data: commentsForPost.getCommentsForPost.data.map(comment => {
-                if (comment._id === commentId) {
-                    success = true
-                    return {
-                        ...comment,
-                        isLikedLoading,
-                    }
-                }
-                return comment
-            })
+    return updateOneCommentForPost({
+        commentsForPost: options.commentsForPost,
+        commentId: options.commentId,
+        mapper (commentForPost) {
+            return {
+                ...commentForPost,
+                isLikedLoading: options.isLikedLoading,
+            }
         }
-    }
-
-    return {
-        commentsForPost: commentsForPostResult,
-        success,
-    }
+    })
 }
 
 interface UpdateCommentLikedStatusOptions {
-    commentsForPost: CommentsForPostQueryData
+    commentsForPost: GetCommentsForPostQueryType
     commentId: string
     liked: boolean
 }
 
 interface UpdateCommentLikedStatusReturnValue {
-    commentsForPost: CommentsForPostQueryData
+    commentsForPost: GetCommentsForPostQueryType
     success: boolean
 }
 
 export function updateCommentLikedStatus (options: UpdateCommentLikedStatusOptions): UpdateCommentLikedStatusReturnValue {
-    const { commentsForPost, commentId, liked } = options
-
-    let success = false
-    const commentsForPostResult = {
-        ...commentsForPost,
-        getCommentsForPost: {
-            ...commentsForPost.getCommentsForPost,
-            data: commentsForPost.getCommentsForPost.data.map(comment => {
-                if (comment._id === commentId) {
-                    success = true
-                    return {
-                        ...comment,
-                        liked,
-                        isLikedLoading: false,
-                        likesCount: liked ? comment.likesCount + 1 : comment.likesCount - 1
-                    }
-                }
-                return comment
-            })
+    return updateOneCommentForPost({
+        commentsForPost: options.commentsForPost,
+        commentId: options.commentId,
+        mapper (commentForPost) {
+            return {
+                ...commentForPost,
+                liked: options.liked,
+                isLikedLoading: false,
+                likesCount: options.liked ? commentForPost.likesCount + 1 : commentForPost.likesCount - 1
+            }
         }
-    }
-
-    return {
-        commentsForPost: commentsForPostResult,
-        success,
-    }
+    })
 }
 
 interface AddCommentForPostOptions {
-    commentsForPost: CommentsForPostQueryData
+    commentsForPost: GetCommentsForPostQueryType
     comment: Comment
 }
 
 interface AddCommentForPostReturnValue {
-    commentsForPost: CommentsForPostQueryData
+    commentsForPost: GetCommentsForPostQueryType
     success: boolean
 }
 

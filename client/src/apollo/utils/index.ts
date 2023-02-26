@@ -4,6 +4,7 @@ import {
 import { GetSuggestedUsersQueryType, SuggestedUser } from '../../graphql/queries/users'
 import { GetUsersWhoLikedPostQueryType, UserWhoLikedPost } from '../../graphql/queries/posts'
 import { GetUsersWhoLikedCommentQueryType, UserWhoLikedComment } from '../../graphql/queries/posts'
+import { GetCommentsForPostQueryType, Comment } from '../../graphql/queries/posts'
 import {
     FollowedUsersPostsQueryData,
 } from '../../graphql/types'
@@ -145,6 +146,41 @@ export function updateOneSuggestedUser (options: UpdateOneSuggestedUserOptions):
 
     return {
         suggestedUsers: suggestedUsersResult,
+        success,
+    }
+}
+
+interface UpdateOneCommentForPostOptions {
+    commentsForPost: GetCommentsForPostQueryType
+    commentId: string
+    mapper: (commentForPost: Comment) => Comment
+}
+
+interface UpdateOneCommentForPostReturnValue {
+    commentsForPost: GetCommentsForPostQueryType
+    success: boolean
+}
+
+export function updateOneCommentForPost (options: UpdateOneCommentForPostOptions): UpdateOneCommentForPostReturnValue {
+    const { commentsForPost, commentId, mapper } = options
+
+    let success = false
+    const commentsForPostResult = {
+        ...commentsForPost,
+        getCommentsForPost: {
+            ...commentsForPost.getCommentsForPost,
+            data: commentsForPost.getCommentsForPost.data.map(commentForPost => {
+                if (commentForPost._id === commentId) {
+                    success = true
+                    return mapper(commentForPost)
+                }
+                return commentForPost
+            })
+        }
+    }
+
+    return {
+        commentsForPost: commentsForPostResult,
         success,
     }
 }
