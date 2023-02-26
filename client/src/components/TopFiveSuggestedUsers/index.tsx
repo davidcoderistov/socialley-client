@@ -1,9 +1,9 @@
 import React from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { useSnackbar } from 'notistack'
-import { GET_SUGGESTED_USERS } from '../../graphql/queries/users'
+import { GET_SUGGESTED_USERS, GetSuggestedUsersQueryType } from '../../graphql/queries/users'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
-import { SuggestedUsersQueryData, UnfollowUserMutationData } from '../../graphql/types'
+import { UnfollowUserMutationData } from '../../graphql/types'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
@@ -16,7 +16,7 @@ export default function TopFiveSuggestedUsers () {
 
     const { enqueueSnackbar } = useSnackbar()
 
-    const suggestedUsers = useQuery<SuggestedUsersQueryData>(GET_SUGGESTED_USERS)
+    const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS)
 
     const [followUser] = useMutation(FOLLOW_USER)
     const [unfollowUser] = useMutation<UnfollowUserMutationData>(UNFOLLOW_USER)
@@ -120,10 +120,10 @@ export default function TopFiveSuggestedUsers () {
                     dense={true}
                     dark={false} />
             )) : suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.length > 0 ?
-                suggestedUsers.data.getSuggestedUsers.slice(0, 5).map(user => (
+                suggestedUsers.data.getSuggestedUsers.slice(0, 5).map(suggestedUser => (
                     <FollowUserDetails
-                        key={user._id}
-                        user={user}
+                        key={suggestedUser.followableUser.user._id}
+                        user={{...suggestedUser, ...suggestedUser.followableUser, ...suggestedUser.followableUser.user}}
                         dense={true}
                         dark={false}
                         onFollowUser={handleFollowUser}
