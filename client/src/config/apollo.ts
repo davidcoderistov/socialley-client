@@ -92,15 +92,6 @@ const cache = new InMemoryCache({
                 }
             },
         },
-        LikingUser: {
-            fields: {
-                isFollowingLoading: {
-                    read (isFollowingLoading = false) {
-                        return isFollowingLoading
-                    }
-                }
-            }
-        },
         FollowedUser: {
             fields: {
                 following: {
@@ -125,6 +116,15 @@ const cache = new InMemoryCache({
             }
         },
         UserWhoLikedPost: {
+            fields: {
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
+                }
+            }
+        },
+        UserWhoLikedComment: {
             fields: {
                 isFollowingLoading: {
                     read (isFollowingLoading = false) {
