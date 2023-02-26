@@ -147,7 +147,7 @@ const cache = new InMemoryCache({
                 }
             }
         },
-        CommentWithLike: {
+        Comment: {
             fields: {
                 isLikedLoading: {
                     read (isLikedLoading = false) {
