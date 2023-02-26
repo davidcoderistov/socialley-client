@@ -111,7 +111,7 @@ export interface Comment {
     _id: string
     text: string
     postId: string
-    user: User
+    user: Omit<User, 'email'>
     liked: boolean
     isLikedLoading: boolean
     likesCount: number
