@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'
-import { FollowableUser } from '../../types/user'
+import { FollowableUser, User } from '../../types/user'
 
 
 export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
@@ -77,6 +77,24 @@ export const GET_FIRST_LIKING_USER_FOR_POST = gql`
        }
    }
 `
+
+export interface Comment {
+    _id: string
+    text: string
+    postId: string
+    user: User
+    liked: boolean
+    isLikedLoading: boolean
+    likesCount: number
+    createdAt: number
+}
+
+export interface GetCommentsForPostQueryType {
+    getCommentsForPost: {
+        data: Comment[]
+        total: number
+    }
+}
 
 export const GET_COMMENTS_FOR_POST = gql`
     query getCommentsForPost($postId: String!, $offset: Int!, $limit: Int!) {
