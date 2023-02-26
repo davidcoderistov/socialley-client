@@ -69,9 +69,13 @@ export const GET_USERS_WHO_LIKED_POST = gql`
     }
 `
 
-export const GET_FIRST_LIKING_USER_FOR_POST = gql`
-   query getFirstLikingUserForPost($postId: String!) {
-       getFirstLikingUserForPost(postId: $postId) {
+export interface GetFirstUserWhoLikedPost {
+    getFirstUserWhoLikedPost: User | null
+}
+
+export const GET_FIRST_USER_WHO_LIKED_POST = gql`
+   query getFirstUserWhoLikedPost ($postId: String!) {
+       getFirstUserWhoLikedPost (postId: $postId) {
            _id
            username
        }
