@@ -2,34 +2,59 @@ import { gql } from '@apollo/client'
 import { FollowableUser, User } from '../../types/user'
 
 
-export const GET_FOLLOWED_USERS_POSTS_PAGINATED = gql`
-    query getFollowedUsersPostsPaginated ($offset: Int!, $limit: Int!) {
-        getFollowedUsersPostsPaginated(offset: $offset, limit: $limit) {
+export interface FollowedUserPost {
+    post: {
+        _id: string
+        title: string | null
+        photoURL: string
+        videoURL: string | null
+        user: Omit<User, 'email'>
+        firstLikeUser: Pick<User, '_id' | 'username'>
+        liked: boolean
+        isLikedLoading: boolean
+        favorite: boolean
+        isFavoriteLoading: boolean
+        likesCount: number
+        createdAt: number
+    }
+    commentsCount: number
+}
+
+export interface GetFollowedUsersPostsQueryType {
+    getFollowedUsersPosts: {
+        data: FollowedUserPost[]
+        total: number
+    }
+}
+
+export const GET_FOLLOWED_USERS_POSTS = gql`
+    query getFollowedUsersPosts ($offset: Int!, $limit: Int!) {
+        getFollowedUsersPosts (offset: $offset, limit: $limit) {
             data {
-                _id
-                title
-                photoURL
-                videoURL
-                user {
+                post {
                     _id
-                    firstName
-                    lastName
-                    username
-                    avatarURL
-                    following @client
-                    isFollowingLoading @client
+                    title
+                    photoURL
+                    videoURL
+                    user {
+                        _id
+                        firstName
+                        lastName
+                        username
+                        avatarURL
+                    }
+                    firstLikeUser {
+                        _id
+                        username
+                    }
+                    liked
+                    isLikedLoading @client
+                    favorite
+                    isFavoriteLoading @client
+                    likesCount
+                    createdAt
                 }
-                firstLikeUser {
-                    _id
-                    username
-                }
-                liked
-                isLikedLoading @client
-                favorite
-                isFavoriteLoading @client
-                likesCount
                 commentsCount
-                createdAt
             }
             total
         }
