@@ -13,3 +13,8 @@ export interface AuthUser {
     user: User
     accessToken: string
 }
+
+export interface FollowableUser {
+    user: Omit<User, 'email'>
+    following: boolean
+}
