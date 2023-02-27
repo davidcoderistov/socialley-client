@@ -22,8 +22,8 @@ interface User {
 
 interface LoadingStateProps {
     isUserLoading: true
-    dense: boolean
-    dark: boolean
+    dense?: boolean
+    dark?: boolean
     user?: never
     onFollowUser?: never
     onUnfollowUser?: never
@@ -31,8 +31,8 @@ interface LoadingStateProps {
 
 interface UserStateProps {
     isUserLoading?: never
-    dense: boolean
-    dark: boolean
+    dense?: boolean
+    dark?: boolean
     user: User
     onFollowUser: (userId: string) => void
     onUnfollowUser: (userId: string) => void
@@ -40,7 +40,7 @@ interface UserStateProps {
 
 type Props = UserStateProps | LoadingStateProps
 
-export default function FollowUserDetails ({ user, dense, dark, isUserLoading, onFollowUser, onUnfollowUser }: Props) {
+export default function FollowUserDetails ({ user, dense = false, dark = false, isUserLoading, onFollowUser, onUnfollowUser }: Props) {
 
     const [loggedInUser] = useLoggedInUser()
 

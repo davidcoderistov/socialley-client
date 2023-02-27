@@ -60,8 +60,7 @@ export default function UserList (props: Props) {
                 { props.isInitialLoading ? _range(5).map(index => (
                     <FollowUserDetails
                         key={index}
-                        dense={false}
-                        dark={true}
+                        dark
                         isUserLoading={true} />
                 )) : (
                     <InfiniteScroll
@@ -85,8 +84,7 @@ export default function UserList (props: Props) {
                         { props.users.map(user => (
                             <FollowUserDetails
                                 key={user._id}
-                                dense={false}
-                                dark={true}
+                                dark
                                 user={user}
                                 onFollowUser={props.onFollowUser}
                                 onUnfollowUser={handleOpenUnfollowUserModal}

@@ -71,15 +71,13 @@ export default function TopFiveSuggestedUsers () {
                 <FollowUserDetails
                     key={index}
                     isUserLoading={true}
-                    dense={true}
-                    dark={false} />
+                    dense />
             )) : suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.length > 0 ?
                 suggestedUsers.data.getSuggestedUsers.slice(0, 5).map(suggestedUser => (
                     <FollowUserDetails
                         key={suggestedUser.followableUser.user._id}
                         user={{...suggestedUser, ...suggestedUser.followableUser, ...suggestedUser.followableUser.user}}
-                        dense={true}
-                        dark={false}
+                        dense
                         onFollowUser={handleFollowUser}
                         onUnfollowUser={handleUnfollowUser}
                     />

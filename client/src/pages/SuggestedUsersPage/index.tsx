@@ -96,8 +96,6 @@ export default function SuggestedUsersPage () {
                                     <FollowUserDetails
                                         key={suggestedUser.followableUser.user._id}
                                         user={{...suggestedUser, ...suggestedUser.followableUser, ...suggestedUser.followableUser.user}}
-                                        dense={false}
-                                        dark={false}
                                         onFollowUser={handleFollowUser}
                                         onUnfollowUser={handleUnfollowUser}
                                     />
