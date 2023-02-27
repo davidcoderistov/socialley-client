@@ -1,8 +1,7 @@
 import { useApolloClient, useLazyQuery } from '@apollo/client'
 import { GET_LATEST_CHAT_MESSAGES } from '../../../graphql/queries/messages'
-import { LatestChatMessagesQueryData } from '../../../graphql/types'
-import { Message } from '../../../types'
-
+import { GetLatestChatMessagesQueryType } from '../../../graphql/types/queries/messages'
+import { Message } from '../../../graphql/types/models'
 
 export function useLatestChatMessages ({ limit }: { limit: number }) {
 
@@ -26,7 +25,7 @@ export function useLatestChatMessages ({ limit }: { limit: number }) {
                 userId,
                 offset
             },
-            updateQuery (existing: LatestChatMessagesQueryData, { fetchMoreResult}: { fetchMoreResult: LatestChatMessagesQueryData }) {
+            updateQuery (existing: GetLatestChatMessagesQueryType, { fetchMoreResult}: { fetchMoreResult: GetLatestChatMessagesQueryType }) {
                 return {
                     ...existing,
                     getLatestChatMessages: {

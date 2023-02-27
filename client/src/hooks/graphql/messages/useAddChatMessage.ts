@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client'
 import { GET_LATEST_CHAT_MESSAGES } from '../../../graphql/queries/messages'
-import { LatestChatMessagesQueryData } from '../../../graphql/types'
+import { GetLatestChatMessagesQueryType } from '../../../graphql/types/queries/messages'
 import { Message } from '../../../types'
 
 
@@ -12,7 +12,7 @@ export function useAddChatMessage () {
         client.cache.updateQuery({
             query: GET_LATEST_CHAT_MESSAGES,
             variables: { userId },
-        }, (queryData: LatestChatMessagesQueryData | null) => {
+        }, (queryData: GetLatestChatMessagesQueryType | null) => {
             if (queryData) {
                 const findIndex = queryData.getLatestChatMessages.data.findIndex(m => m._id === updateMessageId)
                 if (findIndex > -1) {

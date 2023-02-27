@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client'
 import { CREATE_MESSAGE } from '../../../graphql/mutations/messages'
-import { FullMessage } from '../../../types'
+import { FullMessage } from '../../../graphql/types/models'
 import { useLoggedInUser } from '../../misc'
 import { useAddLatestMessage } from './useAddLatestMessage'
 import { useAddChatMessage } from './useAddChatMessage'

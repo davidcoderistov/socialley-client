@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_LATEST_MESSAGES } from '../../../graphql/queries/messages'
-import { FullMessage } from '../../../types'
-import { LatestMessagesQueryData } from '../../../graphql/types'
+import { GetLatestMessagesQueryType } from '../../../graphql/types/queries/messages'
+import { FullMessage } from '../../../graphql/types/models'
 import _differenceBy from 'lodash/differenceBy'
 
 
@@ -34,7 +34,7 @@ export function useLatestMessages ({ limit }: { limit: number }) {
             variables: {
                 offset,
             },
-            updateQuery (existing: LatestMessagesQueryData, { fetchMoreResult }: { fetchMoreResult: LatestMessagesQueryData }) {
+            updateQuery (existing: GetLatestMessagesQueryType, { fetchMoreResult }: { fetchMoreResult: GetLatestMessagesQueryType }) {
                 return {
                     ...existing,
                     getLatestMessages: {

@@ -1,8 +1,8 @@
 import { useApolloClient } from '@apollo/client'
 import { useLoggedInUser } from '../../misc'
 import { GET_LATEST_MESSAGES } from '../../../graphql/queries/messages'
-import { LatestMessagesQueryData } from '../../../graphql/types'
-import { FullMessage } from '../../../types'
+import { GetLatestMessagesQueryType } from '../../../graphql/types/queries/messages'
+import { FullMessage } from '../../../graphql/types/models'
 
 
 export function useAddLatestMessage () {
@@ -14,7 +14,7 @@ export function useAddLatestMessage () {
     const addLatestMessage = (message: FullMessage) => {
         client.cache.updateQuery({
             query: GET_LATEST_MESSAGES,
-        }, (queryData: LatestMessagesQueryData | null) => {
+        }, (queryData: GetLatestMessagesQueryType | null) => {
             if (queryData) {
                 const userId = message.fromUser._id === loggedInUser._id ? message.toUser._id : message.fromUser._id
                 const findIndex = queryData.getLatestMessages.data.findIndex(latestMessage =>

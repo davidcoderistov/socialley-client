@@ -4,7 +4,7 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { createUploadLink } from 'apollo-upload-client'
 import { createClient } from 'graphql-ws'
 import { getStorageLoggedInUser } from '../localStorage'
-import { FollowableUser } from '../graphql/types/user'
+import { FollowableUser } from '../graphql/types/models'
 
 
 const httpLink = createHttpLink({

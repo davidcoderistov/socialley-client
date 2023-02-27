@@ -3,7 +3,7 @@ import { useLoggedInUser } from '../../hooks/misc'
 import { useApolloClient, useLazyQuery } from '@apollo/client'
 import { useAddLatestMessage } from '../../hooks/graphql/messages'
 import { GET_LATEST_MESSAGES, GET_LATEST_MESSAGE } from '../../graphql/queries/messages'
-import { LatestMessagesQueryData } from '../../graphql/types'
+import { GetLatestMessagesQueryType } from '../../graphql/types/queries/messages'
 import Box from '@mui/material/Box'
 import ChatMessageList from '../../components/Chat/ChatMessageList'
 import Chat from '../../components/Chat/Chat'
@@ -105,7 +105,7 @@ export default function MessagesPage (props: MessagesPageProps) {
 
     const handleClickSendMessageToUser = async (user: SendMessageUser) => {
         setSendMessageModalOpen(false)
-        const queryData: LatestMessagesQueryData | null = client.cache.readQuery({
+        const queryData: GetLatestMessagesQueryType | null = client.cache.readQuery({
             query: GET_LATEST_MESSAGES,
         })
         if (queryData) {

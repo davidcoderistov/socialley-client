@@ -12,13 +12,13 @@ export interface GetLatestMessagesQueryType {
     }
 }
 
-export interface GetLatestMessagesCount {
+export interface GetLatestMessagesCountQueryType {
     getLatestMessagesCount: {
         count: number
     }
 }
 
-export interface GetLatestChatMessages {
+export interface GetLatestChatMessagesQueryType {
     getLatestChatMessages: {
         data: Message[]
         total: number

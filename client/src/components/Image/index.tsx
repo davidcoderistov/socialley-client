@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import { useLazyQuery } from '@apollo/client'
 import { GET_IMAGE } from '../../graphql/queries/files'
-import { ImageQueryData } from '../../graphql/types'
+import { GetImageQueryType } from '../../graphql/types/queries/files'
 
 
 interface Props extends BoxProps {
@@ -12,7 +12,7 @@ interface Props extends BoxProps {
 
 export default function Image ({url, remote, ...boxProps}: Props) {
 
-    const [fetchImage, data] = useLazyQuery<ImageQueryData>(GET_IMAGE, {
+    const [fetchImage, data] = useLazyQuery<GetImageQueryType>(GET_IMAGE, {
         variables: {
             url
         }
