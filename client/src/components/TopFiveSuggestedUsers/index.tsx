@@ -1,5 +1,7 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
+import { useFollowSuggestedUser } from '../../hooks/graphql/users'
 import { GET_SUGGESTED_USERS } from '../../graphql/queries/users'
 import { GetSuggestedUsersQueryType } from '../../graphql/types/queries/users'
 import Box from '@mui/material/Box'
@@ -7,10 +9,11 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import FollowUserDetails from '../FollowUserDetails'
 import _range from 'lodash/range'
-import { useFollowSuggestedUser } from '../../hooks/graphql/users'
 
 
 export default function TopFiveSuggestedUsers () {
+
+    const navigate = useNavigate()
 
     const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS)
 
@@ -22,6 +25,10 @@ export default function TopFiveSuggestedUsers () {
 
     const handleUnfollowUser = (userId: string) => {
         unfollowUser(userId)
+    }
+
+    const handleClickSeeAll = () => {
+        navigate('/suggested-users')
     }
 
     return (
@@ -54,6 +61,7 @@ export default function TopFiveSuggestedUsers () {
                                 color: '#A8A8A8'
                             }
                         }}
+                        onClick={handleClickSeeAll}
                     >
                         See All
                     </Button>
