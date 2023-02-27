@@ -1,31 +1,5 @@
 import { gql } from '@apollo/client'
-import { FollowableUser, User } from '../../types/user'
 
-
-export interface FollowedUserPost {
-    post: {
-        _id: string
-        title: string | null
-        photoURL: string
-        videoURL: string | null
-        user: Omit<User, 'email'>
-        firstLikeUser: Pick<User, '_id' | 'username'> | null
-        liked: boolean
-        isLikedLoading: boolean
-        favorite: boolean
-        isFavoriteLoading: boolean
-        likesCount: number
-        createdAt: number
-    }
-    commentsCount: number
-}
-
-export interface GetFollowedUsersPostsQueryType {
-    getFollowedUsersPosts: {
-        data: FollowedUserPost[]
-        total: number
-    }
-}
 
 export const GET_FOLLOWED_USERS_POSTS = gql`
     query getFollowedUsersPosts ($offset: Int!, $limit: Int!) {
@@ -61,18 +35,6 @@ export const GET_FOLLOWED_USERS_POSTS = gql`
     }
 `
 
-export interface UserWhoLikedPost {
-    followableUser: FollowableUser
-    isFollowingLoading: boolean
-}
-
-export interface GetUsersWhoLikedPostQueryType {
-    getUsersWhoLikedPost: {
-        data: UserWhoLikedPost[]
-        total: number
-    }
-}
-
 export const GET_USERS_WHO_LIKED_POST = gql`
     query getUsersWhoLikedPost ($postId: String!, $offset: Int!, $limit: Int!) {
         getUsersWhoLikedPost (postId: $postId, offset: $offset, limit: $limit) {
@@ -94,10 +56,6 @@ export const GET_USERS_WHO_LIKED_POST = gql`
     }
 `
 
-export interface GetFirstUserWhoLikedPost {
-    getFirstUserWhoLikedPost: User | null
-}
-
 export const GET_FIRST_USER_WHO_LIKED_POST = gql`
    query getFirstUserWhoLikedPost ($postId: String!) {
        getFirstUserWhoLikedPost (postId: $postId) {
@@ -106,24 +64,6 @@ export const GET_FIRST_USER_WHO_LIKED_POST = gql`
        }
    }
 `
-
-export interface Comment {
-    _id: string
-    text: string
-    postId: string
-    user: Omit<User, 'email'>
-    liked: boolean
-    isLikedLoading: boolean
-    likesCount: number
-    createdAt: number
-}
-
-export interface GetCommentsForPostQueryType {
-    getCommentsForPost: {
-        data: Comment[]
-        total: number
-    }
-}
 
 export const GET_COMMENTS_FOR_POST = gql`
     query getCommentsForPost($postId: String!, $offset: Int!, $limit: Int!) {
@@ -148,18 +88,6 @@ export const GET_COMMENTS_FOR_POST = gql`
         }
     }
 `
-
-export interface UserWhoLikedComment {
-    followableUser: FollowableUser
-    isFollowingLoading: boolean
-}
-
-export interface GetUsersWhoLikedCommentQueryType {
-    getUsersWhoLikedComment: {
-        data: UserWhoLikedComment[]
-        total: number
-    }
-}
 
 export const GET_USERS_WHO_LIKED_COMMENT = gql`
     query getUsersWhoLikedComment ($commentId: String!, $offset: Int!, $limit: Int!) {

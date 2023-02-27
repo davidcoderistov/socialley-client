@@ -1,10 +1,5 @@
 import { gql } from '@apollo/client'
-import { User, AuthUser } from '../../types/user'
 
-
-export interface SignUpMutationType {
-    signUp: Pick<User, '_id'>
-}
 
 export const SIGN_UP = gql`
     mutation signUp($user: SignUpOptions) {
@@ -13,10 +8,6 @@ export const SIGN_UP = gql`
         }
     }
 `
-
-export interface LoginMutationType {
-    login: AuthUser
-}
 
 export const LOGIN = gql`
     mutation login($user: LoginOptions) {
@@ -34,10 +25,6 @@ export const LOGIN = gql`
     }
 `
 
-export interface RefreshMutationType {
-    refresh: AuthUser
-}
-
 export const REFRESH = gql`
     mutation refresh {
         refresh {
@@ -53,10 +40,6 @@ export const REFRESH = gql`
         }
     }
 `
-
-export interface LogoutMutationType {
-    logout: Pick<User, '_id' | 'username'>
-}
 
 export const LOGOUT = gql`
     mutation logout {

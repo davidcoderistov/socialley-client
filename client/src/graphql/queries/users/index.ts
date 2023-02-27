@@ -1,10 +1,5 @@
 import { gql } from '@apollo/client'
-import { User, FollowableUser } from '../../types/user'
 
-
-export interface GetUsersBySearchQueryQueryType {
-    getUsersBySearchQuery: Omit<User, 'email'>[]
-}
 
 export const GET_USERS_BY_SEARCH_QUERY = gql`
     query getUsersBySearchQuery($searchQuery: String!, $limit: Int!) {
@@ -17,17 +12,6 @@ export const GET_USERS_BY_SEARCH_QUERY = gql`
         }
     }
 `
-
-export interface SuggestedUser {
-    followableUser: FollowableUser
-    latestFollower: Pick<User, '_id' | 'username'> | null
-    followedCount: number
-    isFollowingLoading: boolean
-}
-
-export interface GetSuggestedUsersQueryType {
-    getSuggestedUsers: SuggestedUser[]
-}
 
 export const GET_SUGGESTED_USERS = gql`
     query getSuggestedUsers {
