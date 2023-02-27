@@ -1,4 +1,4 @@
-import { GetFollowedUsersPostsQueryType } from '../../../graphql/queries/posts'
+import { GetFollowedUsersPostsQueryType } from '../../../graphql/types/queries/posts'
 import { updateOneFollowedUserPost } from '../../utils'
 
 

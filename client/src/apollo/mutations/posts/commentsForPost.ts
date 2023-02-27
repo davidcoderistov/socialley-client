@@ -1,4 +1,5 @@
-import { GetCommentsForPostQueryType, Comment } from '../../../graphql/queries/posts'
+import { GetCommentsForPostQueryType } from '../../../graphql/types/queries/posts'
+import { Comment } from '../../../graphql/types/models'
 import { updateOneCommentForPost } from '../../utils'
 
 

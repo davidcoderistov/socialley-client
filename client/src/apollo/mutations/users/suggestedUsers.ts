@@ -1,4 +1,4 @@
-import { GetSuggestedUsersQueryType } from '../../../graphql/queries/users'
+import { GetSuggestedUsersQueryType } from '../../../graphql/types/queries/users'
 import { updateOneSuggestedUser } from '../../utils'
 
 

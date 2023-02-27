@@ -1,8 +1,17 @@
-import { GetFollowedUsersPostsQueryType, FollowedUserPost } from '../../graphql/queries/posts'
-import { GetSuggestedUsersQueryType, SuggestedUser } from '../../graphql/queries/users'
-import { GetUsersWhoLikedPostQueryType, UserWhoLikedPost } from '../../graphql/queries/posts'
-import { GetUsersWhoLikedCommentQueryType, UserWhoLikedComment } from '../../graphql/queries/posts'
-import { GetCommentsForPostQueryType, Comment } from '../../graphql/queries/posts'
+import {
+    FollowedUserPost,
+    UserWhoLikedPost,
+    UserWhoLikedComment,
+    SuggestedUser,
+    Comment
+} from '../../graphql/types/models'
+import {
+    GetFollowedUsersPostsQueryType,
+    GetUsersWhoLikedPostQueryType,
+    GetUsersWhoLikedCommentQueryType,
+    GetCommentsForPostQueryType
+} from '../../graphql/types/queries/posts'
+import { GetSuggestedUsersQueryType } from '../../graphql/types/queries/users'
 
 
 interface UpdateFollowedUserPostByPostIdOptions {

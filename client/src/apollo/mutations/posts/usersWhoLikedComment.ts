@@ -1,4 +1,5 @@
-import { GetUsersWhoLikedCommentQueryType, UserWhoLikedComment } from '../../../graphql/queries/posts'
+import { GetUsersWhoLikedCommentQueryType } from '../../../graphql/types/queries/posts'
+import { UserWhoLikedComment } from '../../../graphql/types/models'
 import { updateOneUserWhoLikedComment } from '../../utils'
 
 

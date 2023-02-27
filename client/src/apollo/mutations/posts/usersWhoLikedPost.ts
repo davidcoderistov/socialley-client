@@ -1,4 +1,5 @@
-import { GetUsersWhoLikedPostQueryType, UserWhoLikedPost } from '../../../graphql/queries/posts'
+import { GetUsersWhoLikedPostQueryType } from '../../../graphql/types/queries/posts'
+import { UserWhoLikedPost } from '../../../graphql/types/models'
 import { updateOneUserWhoLikedPost } from '../../utils'
 
 
