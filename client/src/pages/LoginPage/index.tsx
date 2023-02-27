@@ -4,7 +4,8 @@ import AppContext from '../../config/context'
 import { useSnackbar } from 'notistack'
 import Login, { SignInProps } from '../../components/Login'
 import { useMutation, ApolloError } from '@apollo/client'
-import { LOGIN, LoginMutationType } from '../../graphql/mutations/auth'
+import { LOGIN } from '../../graphql/mutations/auth'
+import { LoginMutationType } from '../../graphql/types/mutations/auth'
 import { getValidationError } from '../../utils'
 
 

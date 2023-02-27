@@ -9,9 +9,10 @@ import LoadingIconButton from '../LoadingIconButton'
 import { FavoriteBorder, Favorite } from '@mui/icons-material'
 import { getTimeElapsed } from '../../utils'
 import { Comment as CommentI } from '../../types'
-import { GET_USERS_WHO_LIKED_COMMENT, GetUsersWhoLikedCommentQueryType } from '../../graphql/queries/posts'
+import { GET_USERS_WHO_LIKED_COMMENT } from '../../graphql/queries/posts'
+import { GetUsersWhoLikedCommentQueryType } from '../../graphql/types/queries/posts'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
-import { UnfollowUserMutationData } from '../../graphql/types'
+import { UnfollowUserMutationType } from '../../graphql/types/mutations/users'
 import usersWhoLikedCommentMutations from '../../apollo/mutations/posts/usersWhoLikedComment'
 
 
@@ -49,7 +50,7 @@ export default function Comment (props: CommentProps) {
     const [getUsersWhoLikedComment, usersWhoLikedComment] = useLazyQuery<GetUsersWhoLikedCommentQueryType>(GET_USERS_WHO_LIKED_COMMENT)
 
     const [followUser] = useMutation(FOLLOW_USER)
-    const [unfollowUser] = useMutation<UnfollowUserMutationData>(UNFOLLOW_USER)
+    const [unfollowUser] = useMutation<UnfollowUserMutationType>(UNFOLLOW_USER)
 
     const handleViewLikingUsers = () => {
         const comment = props.comment as CommentI

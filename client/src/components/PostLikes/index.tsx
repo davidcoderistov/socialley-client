@@ -3,10 +3,11 @@ import Box from '@mui/material/Box'
 import UserLikesModal from '../UserLikesModal'
 import { useSnackbar } from 'notistack'
 import { useLazyQuery } from '@apollo/client'
-import { GET_USERS_WHO_LIKED_POST, GetUsersWhoLikedPostQueryType } from '../../graphql/queries/posts'
+import { GET_USERS_WHO_LIKED_POST } from '../../graphql/queries/posts'
+import { GetUsersWhoLikedPostQueryType } from '../../graphql/types/queries/posts'
 import { useMutation } from '@apollo/client'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
-import { UnfollowUserMutationData } from '../../graphql/types'
+import { UnfollowUserMutationType } from '../../graphql/types/mutations/users'
 import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
 
 
@@ -29,7 +30,7 @@ export default function PostLikes (props: Props) {
     const [getUsersWhoLikedPost, usersWhoLikedPost] = useLazyQuery<GetUsersWhoLikedPostQueryType>(GET_USERS_WHO_LIKED_POST)
 
     const [followUser] = useMutation(FOLLOW_USER)
-    const [unfollowUser] = useMutation<UnfollowUserMutationData>(UNFOLLOW_USER)
+    const [unfollowUser] = useMutation<UnfollowUserMutationType>(UNFOLLOW_USER)
 
     const handleViewLikingUsers = () => {
         setIsUserLikesModalOpen(true)

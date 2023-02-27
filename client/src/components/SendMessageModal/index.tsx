@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { useLazyQuery } from '@apollo/client'
-import { GET_USERS_BY_SEARCH_QUERY, GetUsersBySearchQueryQueryType } from '../../graphql/queries/users'
+import { GET_USERS_BY_SEARCH_QUERY } from '../../graphql/queries/users'
+import { GetUsersBySearchQueryQueryType } from '../../graphql/types/queries/users'
 import { Box, Typography, IconButton, InputBase } from '@mui/material'
 import { Dialog } from '@mui/material'
 import { Close } from '@mui/icons-material'

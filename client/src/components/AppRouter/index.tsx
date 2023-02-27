@@ -5,10 +5,12 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import {
     REFRESH,
-    RefreshMutationType,
     LOGOUT,
-    LogoutMutationType,
 } from '../../graphql/mutations/auth'
+import {
+    RefreshMutationType,
+    LogoutMutationType
+} from '../../graphql/types/mutations/auth'
 import { setStorageLoggedInUser } from '../../localStorage'
 import { isInvalidSessionError } from '../../utils'
 import SignedInRouter from '../SignedInRouter'
@@ -60,7 +62,7 @@ export default function AppRouter () {
         }
     }, [loggedInUser])
 
-    const getRefreshUser = (data: RefreshMutationType) => {
+    const getRefreshUser = (data: RefreshMutationType): User => {
         return {
             _id: data.refresh.user._id,
             firstName: data.refresh.user.firstName,

@@ -2,22 +2,21 @@ import React, { useState, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
 import {
-    FollowedUserPost,
-    GetFollowedUsersPostsQueryType,
     GET_FOLLOWED_USERS_POSTS,
-    GetUsersWhoLikedPostQueryType,
     GET_USERS_WHO_LIKED_POST,
-    GetFirstUserWhoLikedPost,
     GET_FIRST_USER_WHO_LIKED_POST,
-    GetCommentsForPostQueryType,
     GET_COMMENTS_FOR_POST,
-    GetUsersWhoLikedCommentQueryType,
     GET_USERS_WHO_LIKED_COMMENT,
 } from '../../graphql/queries/posts'
 import {
-    CreateCommentMutationData,
-} from '../../graphql/types'
-import { Comment } from '../../types'
+    GetFollowedUsersPostsQueryType,
+    GetUsersWhoLikedPostQueryType,
+    GetFirstUserWhoLikedPostQueryType,
+    GetCommentsForPostQueryType,
+    GetUsersWhoLikedCommentQueryType,
+} from '../../graphql/types/queries/posts'
+import { FollowedUserPost, Comment } from '../../graphql/types/models'
+import { CreateCommentMutationType } from '../../graphql/types/mutations/posts'
 import Box, { BoxProps } from '@mui/material/Box'
 import Post from '../Post'
 import PostView from '../PostView/PostView'
@@ -65,7 +64,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }
     })
 
-    const [getFirstLikingUser] = useLazyQuery<GetFirstUserWhoLikedPost>(GET_FIRST_USER_WHO_LIKED_POST)
+    const [getFirstLikingUser] = useLazyQuery<GetFirstUserWhoLikedPostQueryType>(GET_FIRST_USER_WHO_LIKED_POST)
 
     const commentsForPost = useQuery<GetCommentsForPostQueryType>(GET_COMMENTS_FOR_POST, {
         variables: {
@@ -333,7 +332,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }
     }
 
-    const [createComment, createCommentData] = useMutation<CreateCommentMutationData>(CREATE_COMMENT)
+    const [createComment, createCommentData] = useMutation<CreateCommentMutationType>(CREATE_COMMENT)
 
     const updateCommentsForPostAddComment = (postId: string, comment: Comment) => {
         client.cache.updateQuery({

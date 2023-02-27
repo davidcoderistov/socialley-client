@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useSnackbar } from 'notistack'
 import SignUp, { SignUpProps } from '../../components/SignUp'
 import { useMutation, ApolloError } from '@apollo/client'
-import { SIGN_UP, SignUpMutationType } from '../../graphql/mutations/auth'
+import { SIGN_UP } from '../../graphql/mutations/auth'
+import { SignUpMutationType } from '../../graphql/types/mutations/auth'
 import { getValidationError } from '../../utils'
 
 
