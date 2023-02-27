@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack'
 import { GET_SUGGESTED_USERS } from '../../graphql/queries/users'
 import { GetSuggestedUsersQueryType } from '../../graphql/types/queries/users'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
-import { UnfollowUserMutationType } from '../../graphql/types/mutations/users'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
@@ -20,7 +19,7 @@ export default function TopFiveSuggestedUsers () {
     const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS)
 
     const [followUser] = useMutation(FOLLOW_USER)
-    const [unfollowUser] = useMutation<UnfollowUserMutationType>(UNFOLLOW_USER)
+    const [unfollowUser] = useMutation(UNFOLLOW_USER)
 
     const updateSuggestedUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         suggestedUsers.updateQuery((suggestedUsers) => {
