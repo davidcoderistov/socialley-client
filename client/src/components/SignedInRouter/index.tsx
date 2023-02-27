@@ -4,6 +4,7 @@ import Dashboard from '../Dashboard'
 import HomePage from '../../pages/HomePage'
 import MessagesPage from '../../pages/MessagesPage'
 import ProfilePage from '../../pages/ProfilePage'
+import SuggestedUsersPage from '../../pages/SuggestedUsersPage'
 import { useLatestMessages, useReceiveMessage } from '../../hooks/graphql/messages'
 
 
@@ -32,6 +33,9 @@ export default function SignedInRouter () {
                 } />
                 <Route path='/profile' element={
                     <ProfilePage />
+                } />
+                <Route path='/suggested-users' element={
+                    <SuggestedUsersPage />
                 } />
                 <Route path='*' element={
                     <Navigate to='/' replace />
