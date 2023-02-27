@@ -5,7 +5,8 @@ import PostComments from '../PostView/PostComments'
 import PostActions from '../PostActions'
 import PostLikes from '../PostLikes'
 import PostAddComment from '../PostView/PostAddComment'
-import { PostDetails as PostDetailsI, Comment } from '../../types'
+import { PostDetails as PostDetailsI } from '../../types'
+import { Comment } from '../../graphql/types/models'
 import moment from 'moment'
 
 

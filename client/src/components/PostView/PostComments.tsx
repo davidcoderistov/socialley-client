@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import { AddCircleOutline } from '@mui/icons-material'
 import Comment from '../Comment'
 import LoadingIconButton from '../LoadingIconButton'
-import { Comment as CommentI } from '../../types'
+import { Comment as CommentI } from '../../graphql/types/models'
 import _range from 'lodash/range'
 
 

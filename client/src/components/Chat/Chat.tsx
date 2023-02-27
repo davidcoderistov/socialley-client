@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Message, MessageUser } from '../../types'
+import { Message } from '../../graphql/types/models'
+import { MessageUser } from '../../types'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'

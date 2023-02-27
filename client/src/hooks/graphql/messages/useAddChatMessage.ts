@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client'
 import { GET_LATEST_CHAT_MESSAGES } from '../../../graphql/queries/messages'
 import { GetLatestChatMessagesQueryType } from '../../../graphql/types/queries/messages'
-import { Message } from '../../../types'
+import { Message } from '../../../graphql/types/models'
 
 
 export function useAddChatMessage () {

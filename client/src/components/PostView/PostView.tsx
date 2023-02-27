@@ -6,7 +6,8 @@ import { Close } from '@mui/icons-material'
 import ImageDisplay from '../ImageDisplay'
 import PostVideoPlayer from '../PostVideoPlayer'
 import PostDetails from './PostDetails'
-import { PostDetails as PostDetailsI, Comment } from '../../types'
+import { PostDetails as PostDetailsI } from '../../types'
+import { Comment } from '../../graphql/types/models'
 
 
 const IMAGE_POST_CONTAINER_WIDTH = 66
