@@ -135,14 +135,18 @@ export default function FollowUserDetails ({ user, dense, dark, isUserLoading, o
                             { user.firstName } { user.lastName }
                         </Typography>
                     ) : null }
-                    { !!user && !!user.followedCount && user.followedCount > 0 && user.latestFollower && (
+                    { !!user && (
                         <Typography
                             color='#8E8E8E'
                             fontSize={12}
                             noWrap
                         >
-                            Followed by { user.latestFollower.username }
-                            { user.followedCount > 1 && ` + ${user.followedCount - 1} more`}
+                            { !!user.followedCount && user.followedCount > 0 && user.latestFollower ? (
+                                <>
+                                    Followed by { user.latestFollower.username }
+                                    { user.followedCount > 1 && ` + ${user.followedCount - 1} more`}
+                                </>
+                            ) : 'No mutual followers' }
                         </Typography>
                     )}
                 </Box>
