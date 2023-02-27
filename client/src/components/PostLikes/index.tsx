@@ -93,24 +93,15 @@ export default function PostLikes (props: Props) {
 
     const handleUnfollowUser = (userId: string) => {
         updatePostQueryFollowingLoadingStatus(userId, true)
-
-        const showErrorAndToggleFollowingLoadingStatus = () => {
-            updatePostQueryFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
-        }
-
         unfollowUser({
             variables: {
                 followedUserId: userId
             }
-        }).then((data) => {
-            if (data.data?.unfollowUser) {
-                updatePostQueryFollowingStatus(userId, false)
-            } else {
-                showErrorAndToggleFollowingLoadingStatus()
-            }
+        }).then(() => {
+            updatePostQueryFollowingStatus(userId, false)
         }).catch(() => {
-            showErrorAndToggleFollowingLoadingStatus()
+            updatePostQueryFollowingLoadingStatus(userId, false)
+            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
 

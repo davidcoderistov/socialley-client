@@ -58,24 +58,15 @@ export default function TopFiveSuggestedUsers () {
 
     const handleUnfollowUser = (userId: string) => {
         updateSuggestedUserFollowingLoadingStatus(userId, true)
-
-        const showErrorAndToggleFollowingLoadingStatus = () => {
-            updateSuggestedUserFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
-        }
-
         unfollowUser({
             variables: {
                 followedUserId: userId
             }
-        }).then((data) => {
-            if (data.data?.unfollowUser) {
-                updateSuggestedUserFollowingStatus(userId, false)
-            } else {
-                showErrorAndToggleFollowingLoadingStatus()
-            }
+        }).then(() => {
+            updateSuggestedUserFollowingStatus(userId, false)
         }).catch(() => {
-            showErrorAndToggleFollowingLoadingStatus()
+            updateSuggestedUserFollowingLoadingStatus(userId, false)
+            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
 

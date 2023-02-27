@@ -114,24 +114,15 @@ export default function Comment (props: CommentProps) {
 
     const handleUnfollowUser = (userId: string) => {
         updateCommentQueryFollowingLoadingStatus(userId, true)
-
-        const showErrorAndToggleFollowingLoadingStatus = () => {
-            updateCommentQueryFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
-        }
-
         unfollowUser({
             variables: {
                 followedUserId: userId
             }
-        }).then((data) => {
-            if (data.data?.unfollowUser) {
-                updateCommentQueryFollowingStatus(userId, false)
-            } else {
-                showErrorAndToggleFollowingLoadingStatus()
-            }
+        }).then(() => {
+            updateCommentQueryFollowingStatus(userId, false)
         }).catch(() => {
-            showErrorAndToggleFollowingLoadingStatus()
+            updateCommentQueryFollowingLoadingStatus(userId, false)
+            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
 
