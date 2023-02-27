@@ -1,72 +1,27 @@
 import React from 'react'
-import { useQuery, useMutation } from '@apollo/client'
-import { useSnackbar } from 'notistack'
+import { useQuery } from '@apollo/client'
 import { GET_SUGGESTED_USERS } from '../../graphql/queries/users'
 import { GetSuggestedUsersQueryType } from '../../graphql/types/queries/users'
-import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import FollowUserDetails from '../FollowUserDetails'
 import _range from 'lodash/range'
-import suggestedUsersMutations from '../../apollo/mutations/users/suggestedUsers'
+import { useFollowSuggestedUser } from '../../hooks/graphql/users'
 
 
 export default function TopFiveSuggestedUsers () {
 
-    const { enqueueSnackbar } = useSnackbar()
-
     const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS)
 
-    const [followUser] = useMutation(FOLLOW_USER)
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
-
-    const updateSuggestedUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
-        suggestedUsers.updateQuery((suggestedUsers) => {
-            return suggestedUsersMutations.updateFollowingLoadingStatus({
-                suggestedUsers,
-                userId,
-                isFollowingLoading,
-            }).suggestedUsers
-        })
-    }
-
-    const updateSuggestedUserFollowingStatus = (userId: string, following: boolean) => {
-        suggestedUsers.updateQuery((suggestedUsers) => {
-            return suggestedUsersMutations.updateFollowingStatus({
-                suggestedUsers,
-                userId,
-                following,
-            }).suggestedUsers
-        })
-    }
+    const [{ followUser, unfollowUser }] = useFollowSuggestedUser()
 
     const handleFollowUser = (userId: string) => {
-        updateSuggestedUserFollowingLoadingStatus(userId, true)
-        followUser({
-            variables: {
-                followedUserId: userId
-            }
-        }).then(() => {
-            updateSuggestedUserFollowingStatus(userId, true)
-        }).catch(() => {
-            updateSuggestedUserFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not follow user', { variant: 'error' })
-        })
+        followUser(userId)
     }
 
     const handleUnfollowUser = (userId: string) => {
-        updateSuggestedUserFollowingLoadingStatus(userId, true)
-        unfollowUser({
-            variables: {
-                followedUserId: userId
-            }
-        }).then(() => {
-            updateSuggestedUserFollowingStatus(userId, false)
-        }).catch(() => {
-            updateSuggestedUserFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
-        })
+        unfollowUser(userId)
     }
 
     return (
