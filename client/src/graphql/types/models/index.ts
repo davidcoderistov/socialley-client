@@ -15,7 +15,7 @@ export interface AuthUser {
 }
 
 export interface FollowableUser {
-    user: User
+    user: Omit<User, 'email'>
     following: boolean
 }
 

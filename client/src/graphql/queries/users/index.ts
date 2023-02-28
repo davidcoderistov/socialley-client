@@ -35,3 +35,33 @@ export const GET_SUGGESTED_USERS = gql`
         }
     }
 `
+
+export const GET_FOLLOWING_FOR_USER = gql`
+    query getFollowingForUser ($userId: String!) {
+        getFollowingForUser (userId: $userId) {
+            user {
+                _id
+                firstName
+                lastName
+                username
+                avatarURL
+            }
+            following
+        }
+    }
+`
+
+export const GET_FOLLOWERS_FOR_USER = gql`
+    query getFollowersForUser ($userId: String!) {
+        getFollowersForUser (userId: $userId) {
+            user {
+                _id
+                firstName
+                lastName
+                username
+                avatarURL
+            }
+            following
+        }
+    }
+`
