@@ -114,3 +114,13 @@ export interface UserWhoLikedComment {
     followableUser: FollowableUser
     isFollowingLoading: boolean
 }
+
+export interface FollowingUser {
+    followableUser: FollowableUser
+    isFollowingLoading: boolean
+}
+
+export interface FollowerUser {
+    followableUser: FollowableUser
+    isFollowingLoading: boolean
+}

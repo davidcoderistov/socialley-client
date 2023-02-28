@@ -1,4 +1,4 @@
-import { User, SuggestedUser, FollowableUser } from '../../models'
+import { User, SuggestedUser, FollowingUser, FollowerUser } from '../../models'
 
 
 export interface GetUsersBySearchQueryQueryType {
@@ -10,9 +10,9 @@ export interface GetSuggestedUsersQueryType {
 }
 
 export interface GetFollowingForUserQueryType {
-    getFollowingForUser: FollowableUser[]
+    getFollowingForUser: FollowingUser[]
 }
 
 export interface GetFollowersForUserQueryType {
-    getFollowersForUser: FollowableUser[]
+    getFollowersForUser: FollowerUser[]
 }
