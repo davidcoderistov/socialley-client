@@ -10,9 +10,15 @@ export interface GetSuggestedUsersQueryType {
 }
 
 export interface GetFollowingForUserQueryType {
-    getFollowingForUser: FollowingUser[]
+    getFollowingForUser: {
+        data: FollowingUser[]
+        total: number
+    }
 }
 
 export interface GetFollowersForUserQueryType {
-    getFollowersForUser: FollowerUser[]
+    getFollowersForUser: {
+        data: FollowerUser[]
+        total: number
+    }
 }

@@ -37,35 +37,41 @@ export const GET_SUGGESTED_USERS = gql`
 `
 
 export const GET_FOLLOWING_FOR_USER = gql`
-    query getFollowingForUser ($userId: String!) {
-        getFollowingForUser (userId: $userId) {
-            followableUser {
-                user {
-                    _id
-                    firstName
-                    lastName
-                    username
-                    avatarURL
+    query getFollowingForUser ($userId: String!, $offset: Int!, $limit: Int!) {
+        getFollowingForUser (userId: $userId, offset: $offset, limit: $limit) {
+            data {
+                followableUser {
+                    user {
+                        _id
+                        firstName
+                        lastName
+                        username
+                        avatarURL
+                    }
+                    following
                 }
-                following
             }
+            total
         }
     }
 `
 
 export const GET_FOLLOWERS_FOR_USER = gql`
-    query getFollowersForUser ($userId: String!) {
-        getFollowersForUser (userId: $userId) {
-            followableUser {
-                user {
-                    _id
-                    firstName
-                    lastName
-                    username
-                    avatarURL
+    query getFollowersForUser ($userId: String!, $offset: Int!, $limit: Int!) {
+        getFollowersForUser (userId: $userId, offset: $offset, limit: $limit) {
+            data {
+                followableUser {
+                    user {
+                        _id
+                        firstName
+                        lastName
+                        username
+                        avatarURL
+                    }
+                    following
                 }
-                following
             }
+            total
         }
     }
 `
