@@ -50,6 +50,7 @@ export const GET_FOLLOWING_FOR_USER = gql`
                     }
                     following
                 }
+                isFollowingLoading @client
             }
             total
         }
@@ -70,6 +71,7 @@ export const GET_FOLLOWERS_FOR_USER = gql`
                     }
                     following
                 }
+                isFollowingLoading @client
             }
             total
         }
