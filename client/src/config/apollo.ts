@@ -148,7 +148,25 @@ const cache = new InMemoryCache({
                     }
                 }
             }
-        }
+        },
+        FollowingUser: {
+            fields: {
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
+                }
+            }
+        },
+        FollowerUser: {
+            fields: {
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
+                }
+            }
+        },
     }
 })
 
