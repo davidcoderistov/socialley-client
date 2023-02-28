@@ -51,6 +51,18 @@ export default function PostLikes (props: Props) {
                 variables: {
                     offset: usersWhoLikedPost.data.getUsersWhoLikedPost.data.length,
                     limit: 10,
+                },
+                updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetUsersWhoLikedPostQueryType }) {
+                    return {
+                        ...existing,
+                        getUsersWhoLikedPost: {
+                            ...existing.getUsersWhoLikedPost,
+                            data: [
+                                ...existing.getUsersWhoLikedPost.data,
+                                ...fetchMoreResult.getUsersWhoLikedPost.data,
+                            ]
+                        }
+                    }
                 }
             })
         }
