@@ -5,16 +5,18 @@ import {
     SuggestedUser,
     Comment,
     FollowingUser,
+    FollowerUser,
 } from '../../graphql/types/models'
 import {
     GetFollowedUsersPostsQueryType,
     GetUsersWhoLikedPostQueryType,
     GetUsersWhoLikedCommentQueryType,
-    GetCommentsForPostQueryType
+    GetCommentsForPostQueryType,
 } from '../../graphql/types/queries/posts'
 import {
     GetSuggestedUsersQueryType,
     GetFollowingForUserQueryType,
+    GetFollowersForUserQueryType,
 } from '../../graphql/types/queries/users'
 
 
@@ -221,6 +223,41 @@ export function updateOneFollowingUser (options: UpdateOneFollowingUserOptions):
 
     return {
         followingUsers: followingUsersResult,
+        success,
+    }
+}
+
+interface UpdateOneFollowerUserOptions {
+    followerUsers: GetFollowersForUserQueryType
+    userId: string
+    mapper: (followerUser: FollowerUser) => FollowerUser
+}
+
+interface UpdateOneFollowerUserReturnValue {
+    followerUsers: GetFollowersForUserQueryType
+    success: boolean
+}
+
+export function updateOneFollowerUser (options: UpdateOneFollowerUserOptions): UpdateOneFollowerUserReturnValue {
+    const { followerUsers, userId, mapper } = options
+
+    let success = false
+    const followerUsersResult = {
+        ...followerUsers,
+        getFollowersForUser: {
+            ...followerUsers.getFollowersForUser,
+            data: followerUsers.getFollowersForUser.data.map(followerUser => {
+                if (followerUser.followableUser.user._id  === userId) {
+                    success = true
+                    return mapper(followerUser)
+                }
+                return followerUser
+            })
+        }
+    }
+
+    return {
+        followerUsers: followerUsersResult,
         success,
     }
 }
