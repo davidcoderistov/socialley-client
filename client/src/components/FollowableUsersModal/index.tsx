@@ -15,6 +15,7 @@ interface User {
 }
 
 interface Props {
+    title: string
     open: boolean
     onCloseModal: () => void
     users: User[]
@@ -26,7 +27,7 @@ interface Props {
     onUnfollowUser: (userId: string) => void
 }
 
-export default function UserLikesModal (props: Props) {
+export default function FollowableUsersModal (props: Props) {
 
     return (
         <Dialog
@@ -49,7 +50,7 @@ export default function UserLikesModal (props: Props) {
                 alignItems='center'
             >
                 <Box component='div' />
-                <Typography color='#FFFFFF'>Likes</Typography>
+                <Typography color='#FFFFFF'>{ props.title }</Typography>
                 <IconButton
                     aria-label='close'
                     onClick={props.onCloseModal}

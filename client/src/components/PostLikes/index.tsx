@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Box from '@mui/material/Box'
-import UserLikesModal from '../UserLikesModal'
+import FollowableUsersModal from '../FollowableUsersModal'
 import { useSnackbar } from 'notistack'
 import { useLazyQuery } from '@apollo/client'
 import { GET_USERS_WHO_LIKED_POST } from '../../graphql/queries/posts'
@@ -196,7 +196,8 @@ export default function PostLikes (props: Props) {
                     </Box>
                 </Box>
             </Box>
-            <UserLikesModal
+            <FollowableUsersModal
+                title='Likes'
                 open={isUserLikesModalOpen}
                 onCloseModal={handleCloseUserLikesModal}
                 users={usersWhoLikedPost.data?.getUsersWhoLikedPost.data.map(userWhoLikedPost => ({...userWhoLikedPost, ...userWhoLikedPost.followableUser, ...userWhoLikedPost.followableUser.user})) ?? []}

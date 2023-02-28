@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack'
 import Box from '@mui/material/Box'
 import Skeleton from '@mui/material/Skeleton'
 import UserAvatar from '../UserAvatar'
-import UserLikesModal from '../UserLikesModal'
+import FollowableUsersModal from '../FollowableUsersModal'
 import LoadingIconButton from '../LoadingIconButton'
 import { FavoriteBorder, Favorite } from '@mui/icons-material'
 import { getTimeElapsed } from '../../utils'
@@ -369,7 +369,8 @@ export default function Comment (props: CommentProps) {
                     </Box>
                 </Box>
             </Box>
-            <UserLikesModal
+            <FollowableUsersModal
+                title='Likes'
                 open={isUserLikesModalOpen}
                 onCloseModal={handleCloseUserLikesModal}
                 users={usersWhoLikedComment.data?.getUsersWhoLikedComment.data.map(userWhoLikedComment => ({...userWhoLikedComment,...userWhoLikedComment.followableUser,...userWhoLikedComment.followableUser.user})) ?? []}
