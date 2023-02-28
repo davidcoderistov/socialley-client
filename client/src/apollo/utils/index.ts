@@ -3,7 +3,8 @@ import {
     UserWhoLikedPost,
     UserWhoLikedComment,
     SuggestedUser,
-    Comment
+    Comment,
+    FollowingUser,
 } from '../../graphql/types/models'
 import {
     GetFollowedUsersPostsQueryType,
@@ -11,7 +12,10 @@ import {
     GetUsersWhoLikedCommentQueryType,
     GetCommentsForPostQueryType
 } from '../../graphql/types/queries/posts'
-import { GetSuggestedUsersQueryType } from '../../graphql/types/queries/users'
+import {
+    GetSuggestedUsersQueryType,
+    GetFollowingForUserQueryType,
+} from '../../graphql/types/queries/users'
 
 
 interface UpdateFollowedUserPostByPostIdOptions {
@@ -182,6 +186,41 @@ export function updateOneCommentForPost (options: UpdateOneCommentForPostOptions
 
     return {
         commentsForPost: commentsForPostResult,
+        success,
+    }
+}
+
+interface UpdateOneFollowingUserOptions {
+    followingUsers: GetFollowingForUserQueryType
+    userId: string
+    mapper: (followingUser: FollowingUser) => FollowingUser
+}
+
+interface UpdateOneFollowingUserReturnValue {
+    followingUsers: GetFollowingForUserQueryType
+    success: boolean
+}
+
+export function updateOneFollowingUser (options: UpdateOneFollowingUserOptions): UpdateOneFollowingUserReturnValue {
+    const { followingUsers, userId, mapper } = options
+
+    let success = false
+    const followingUsersResult = {
+        ...followingUsers,
+        getFollowingForUser: {
+            ...followingUsers.getFollowingForUser,
+            data: followingUsers.getFollowingForUser.data.map(followingUser => {
+                if (followingUser.followableUser.user._id  === userId) {
+                    success = true
+                    return mapper(followingUser)
+                }
+                return followingUser
+            })
+        }
+    }
+
+    return {
+        followingUsers: followingUsersResult,
         success,
     }
 }
