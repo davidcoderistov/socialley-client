@@ -72,6 +72,18 @@ export default function Comment (props: CommentProps) {
                 variables: {
                     offset: usersWhoLikedComment.data.getUsersWhoLikedComment.data.length,
                     limit: 10,
+                },
+                updateQuery (existing, { fetchMoreResult}: { fetchMoreResult : GetUsersWhoLikedCommentQueryType }) {
+                    return {
+                        ...existing,
+                        getUsersWhoLikedComment: {
+                            ...existing.getUsersWhoLikedComment,
+                            data: [
+                                ...existing.getUsersWhoLikedComment.data,
+                                ...fetchMoreResult.getUsersWhoLikedComment.data,
+                            ]
+                        }
+                    }
                 }
             })
         }
