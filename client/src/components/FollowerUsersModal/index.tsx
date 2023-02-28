@@ -50,7 +50,7 @@ export default function FollowerUsersModal (props: Props) {
         }
     }
 
-    const updateFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
+    const updateFollowerUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         followerUsers.updateQuery((prevFollowerUsers) => {
             return followerUsersMutations.updateFollowingLoadingStatus({
                 followerUsers: prevFollowerUsers,
@@ -60,7 +60,7 @@ export default function FollowerUsersModal (props: Props) {
         })
     }
 
-    const updateFollowingStatus = (userId: string, following: boolean) => {
+    const updateFollowerUserFollowingStatus = (userId: string, following: boolean) => {
         followerUsers.updateQuery((prevFollowerUsers) => {
             return followerUsersMutations.updateFollowingStatus({
                 followerUsers: prevFollowerUsers,
@@ -71,29 +71,29 @@ export default function FollowerUsersModal (props: Props) {
     }
 
     const handleFollowUser = (userId: string) => {
-        updateFollowingLoadingStatus(userId, true)
+        updateFollowerUserFollowingLoadingStatus(userId, true)
         followUser({
             variables: {
                 followedUserId: userId
             }
         }).then(() => {
-            updateFollowingStatus(userId, true)
+            updateFollowerUserFollowingStatus(userId, true)
         }).catch(() => {
-            updateFollowingLoadingStatus(userId, false)
+            updateFollowerUserFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
         })
     }
 
     const handleUnfollowUser = (userId: string) => {
-        updateFollowingLoadingStatus(userId, true)
+        updateFollowerUserFollowingLoadingStatus(userId, true)
         unfollowUser({
             variables: {
                 followedUserId: userId
             }
         }).then(() => {
-            updateFollowingStatus(userId, false)
+            updateFollowerUserFollowingStatus(userId, false)
         }).catch(() => {
-            updateFollowingLoadingStatus(userId, false)
+            updateFollowerUserFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
