@@ -135,7 +135,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                             { user.firstName } { user.lastName }
                         </Typography>
                     ) : null }
-                    { !!user && (
+                    { !!user && user.hasOwnProperty('followedCount') && (
                         <Typography
                             color='#8E8E8E'
                             fontSize={12}
