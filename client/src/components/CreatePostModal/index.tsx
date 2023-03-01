@@ -11,7 +11,12 @@ import PostPreview from './PostPreview'
 import { createFileFromBase64 } from '../../utils'
 
 
-export default function CreatePostModal () {
+interface CreatePostModalProps {
+    open: boolean
+    onClose: () => void
+}
+
+export default function CreatePostModal (props: CreatePostModalProps) {
 
     const [step, setStep] = useState<number>(0)
     const [imageFile, setImageFile] = useState<File | null>(null)
@@ -88,7 +93,7 @@ export default function CreatePostModal () {
 
     return (
         <Dialog
-            open={true}
+            open={props.open}
             fullWidth
             PaperProps={{
                 sx: {
@@ -150,7 +155,7 @@ export default function CreatePostModal () {
                     ) : (
                         <IconButton
                             aria-label='close'
-                            onClick={() => {}}
+                            onClick={props.onClose}
                             sx={{ paddingTop: '15px' }}
                         >
                             <Close sx={{ color: '#FFFFFF' }} />

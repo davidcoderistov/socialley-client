@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     Box,
     List,
@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles'
 import NavLink from './NavLink'
+import CreatePostModal from '../CreatePostModal'
 import { useLocation } from 'react-router-dom'
 
 
@@ -53,9 +54,19 @@ interface Props {
 
 export default function Dashboard (props: Props) {
 
+    const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false)
+
     const location = useLocation()
 
     const backgroundColor = location.pathname === '/' ? '#000000' : '#121212'
+
+    const handleOpenCreatePostModal = () => {
+        setIsCreatePostModalOpen(true)
+    }
+
+    const handleCloseCreatePostModal = () => {
+        setIsCreatePostModalOpen(false)
+    }
 
     return (
         <ThemeProvider theme={mdTheme}>
@@ -76,7 +87,7 @@ export default function Dashboard (props: Props) {
                     <List component='nav' sx={{ paddingX: '12px' }}>
                         <NavLink to='/' type='home' />
                         <NavLink to='/messages' type='messages' />
-                        <NavLink isNotLink type='create' />
+                        <NavLink isNotLink type='create' onClick={handleOpenCreatePostModal} />
                         <NavLink to='/profile' type='profile' />
                     </List>
                 </Drawer>
@@ -147,6 +158,9 @@ export default function Dashboard (props: Props) {
                     </Box>
                 </Box>
             </Box>
+            <CreatePostModal
+                open={isCreatePostModalOpen}
+                onClose={handleCloseCreatePostModal} />
         </ThemeProvider>
     )
 }

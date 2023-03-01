@@ -14,17 +14,19 @@ interface LinkProps {
     to: string
     type: NavType
     isNotLink?: never
+    onClick?: never
 }
 
 interface NotLinkProps {
     to?: never
     type: NavType
     isNotLink: true
+    onClick: () => void
 }
 
 export type NavLinkProps = LinkProps | NotLinkProps
 
-export default function NavLink ({ to, isNotLink, type }: NavLinkProps) {
+export default function NavLink ({ to, isNotLink, onClick, type }: NavLinkProps) {
 
     const [isHovered, setIsHovered] = useState(false)
 
@@ -55,6 +57,7 @@ export default function NavLink ({ to, isNotLink, type }: NavLinkProps) {
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
             sx={{ cursor: 'pointer' }}
+            onClick={onClick}
         >
             <NavItem
                 active={false}
