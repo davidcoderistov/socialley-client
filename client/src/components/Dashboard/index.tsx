@@ -158,9 +158,11 @@ export default function Dashboard (props: Props) {
                     </Box>
                 </Box>
             </Box>
-            <CreatePostModal
-                open={isCreatePostModalOpen}
-                onClose={handleCloseCreatePostModal} />
+            { isCreatePostModalOpen && (
+                <CreatePostModal
+                    open={isCreatePostModalOpen}
+                    onClose={handleCloseCreatePostModal} />
+            )}
         </ThemeProvider>
     )
 }
