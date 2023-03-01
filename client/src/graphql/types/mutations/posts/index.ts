@@ -2,7 +2,7 @@ import { Post, PostLike, UserFavorite, CommentLike } from '../../models'
 
 
 export interface CreatePostMutationType {
-    createPost: Pick<Post, '_id' | 'title' | 'photoURL' | 'videoURL' | 'user' | 'createdAt'>
+    createPost: Post
 }
 
 export interface LikePostMutationType {

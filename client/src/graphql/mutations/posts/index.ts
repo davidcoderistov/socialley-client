@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 
 export const CREATE_POST = gql`
-    mutation createPost($post: CreatePostInput) {
+    mutation createPost($post: CreatePostInput!) {
         createPost(post: $post) {
             _id
             title
@@ -12,8 +12,18 @@ export const CREATE_POST = gql`
                 _id
                 firstName
                 lastName
+                username
                 avatarURL
             }
+            firstLikeUser {
+                _id
+                username
+            }
+            liked
+            isLikedLoading @client
+            favorite
+            isFavoriteLoading @client
+            likesCount
             createdAt
         }
     }
