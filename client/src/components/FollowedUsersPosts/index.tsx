@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
+import { useInfiniteScroll } from '../../hooks/misc'
 import {
     GET_FOLLOWED_USERS_POSTS,
     GET_USERS_WHO_LIKED_POST,
@@ -18,6 +19,7 @@ import {
 import { FollowedUserPost, Comment } from '../../graphql/types/models'
 import { CreateCommentMutationType } from '../../graphql/types/mutations/posts'
 import Box, { BoxProps } from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
 import Post from '../Post'
 import PostView from '../PostView/PostView'
 import AllCaughtUp from './AllCaughtUp'
@@ -56,13 +58,59 @@ export default function FollowedUsersPosts (props: BoxProps) {
     const { enqueueSnackbar } = useSnackbar()
 
     const [viewingPostId, setViewingPostId] = useState<string | null>(null)
+    const [isFollowedUsersPostsInitialLoading, setIsFollowedUsersPostsInitialLoading] = useState(true)
 
-    const followedUsersPosts = useQuery<GetFollowedUsersPostsQueryType>(GET_FOLLOWED_USERS_POSTS, {
-        variables: {
-            offset: 0,
-            limit: 10,
-        }
+    const [getFollowedUsersPosts, followedUsersPosts] = useLazyQuery<GetFollowedUsersPostsQueryType>(GET_FOLLOWED_USERS_POSTS, {
+        notifyOnNetworkStatusChange: true,
     })
+
+    const hasMoreFollowedUsersPosts = useMemo(() => {
+        if (!followedUsersPosts.error) {
+            if (followedUsersPosts.data) {
+                const data = followedUsersPosts.data.getFollowedUsersPosts.data
+                const total = followedUsersPosts.data.getFollowedUsersPosts.total
+                if (data.length > 0 && data.length < total) {
+                    return true
+                }
+            }
+        }
+        return false
+    }, [followedUsersPosts])
+
+    const handleFetchMoreFollowedUsersPosts = () => {
+        if (!followedUsersPosts.loading) {
+            followedUsersPosts.fetchMore({
+                variables: {
+                    offset: followedUsersPosts.data?.getFollowedUsersPosts.data.length,
+                    limit: 4,
+                },
+                updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetFollowedUsersPostsQueryType }) {
+                    return {
+                        ...existing,
+                        getFollowedUsersPosts: {
+                            ...existing.getFollowedUsersPosts,
+                            data: [
+                                ...existing.getFollowedUsersPosts.data,
+                                ...fetchMoreResult.getFollowedUsersPosts.data,
+                            ]
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(handleFetchMoreFollowedUsersPosts)
+
+    useEffect(() => {
+        setIsFollowedUsersPostsInitialLoading(true)
+        getFollowedUsersPosts({
+            variables: {
+                offset: 0,
+                limit: 4,
+            }
+        }).finally(() => setIsFollowedUsersPostsInitialLoading(false))
+    }, [])
 
     const [getFirstLikingUser] = useLazyQuery<GetFirstUserWhoLikedPostQueryType>(GET_FIRST_USER_WHO_LIKED_POST)
 
@@ -409,7 +457,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     return (
         <Box {...props}>
-            { followedUsersPosts.loading ? (
+            { isFollowedUsersPostsInitialLoading ? (
                 <Post loading={true} />
             ) : (
                 <>
@@ -424,7 +472,21 @@ export default function FollowedUsersPosts (props: BoxProps) {
                             onBookmarkPost={handleBookmarkPost}
                             onViewComments={handleViewPost} />
                     ))}
-                    <AllCaughtUp />
+                    { hasMoreFollowedUsersPosts ? (
+                        <Box
+                            ref={infiniteScrollRef}
+                            component='div'
+                            display='flex'
+                            flexDirection='row'
+                            justifyContent='center'
+                            alignItems='flex-start'
+                            height='60px'
+                        >
+                            <CircularProgress size={30} sx={{ color: '#FFFFFF', mt: 1 }} />
+                        </Box>
+                    ) : (
+                        <AllCaughtUp />
+                    )}
                 </>
             )}
             { viewingPost && (
