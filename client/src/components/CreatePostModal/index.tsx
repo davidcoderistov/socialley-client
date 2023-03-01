@@ -1,14 +1,22 @@
 import React, { useState, useMemo } from 'react'
+import { useApolloClient, useMutation } from '@apollo/client'
+import { useSnackbar } from 'notistack'
+import { GET_FOLLOWED_USERS_POSTS } from '../../graphql/queries/posts'
+import { GetFollowedUsersPostsQueryType } from '../../graphql/types/queries/posts'
+import { CREATE_POST } from '../../graphql/mutations/posts'
+import { CreatePostMutationType } from '../../graphql/types/mutations/posts'
 import Dialog from '@mui/material/Dialog'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import LoadingButton from '@mui/lab/LoadingButton'
 import IconButton from '@mui/material/IconButton'
 import { Close, ArrowBack } from '@mui/icons-material'
 import MediaUpload from './MediaUpload'
 import ThumbnailPicker from './ThumbnailPicker'
 import PostPreview from './PostPreview'
 import { createFileFromBase64 } from '../../utils'
+import { addFollowedUserPost } from '../../apollo/mutations/posts/followedUsersPosts'
 
 
 interface CreatePostModalProps {
@@ -17,6 +25,12 @@ interface CreatePostModalProps {
 }
 
 export default function CreatePostModal (props: CreatePostModalProps) {
+
+    const client = useApolloClient()
+
+    const { enqueueSnackbar } = useSnackbar()
+
+    const [createPost, { loading }] = useMutation<CreatePostMutationType>(CREATE_POST)
 
     const [step, setStep] = useState<number>(0)
     const [imageFile, setImageFile] = useState<File | null>(null)
@@ -63,13 +77,46 @@ export default function CreatePostModal (props: CreatePostModalProps) {
     }
 
     const onShare = () => {
-        // TODO: Implement create post
         const postText = postPreviewRef.current?.getPostText() ?? ''
+        let photo = null, video = null
         if (imageFile) {
-
+            photo = imageFile
         } else if (videoFile && coverPhotoFile) {
-
+            photo = coverPhotoFile
+            video = videoFile
         }
+        createPost({
+            variables: {
+                post: {
+                    title: postText,
+                    photo,
+                    video,
+                }
+            },
+            context: {
+                hasUpload: true,
+            }
+        }).then(data => {
+            const post = data.data?.createPost
+            if (post) {
+                client.cache.updateQuery(
+                    { query: GET_FOLLOWED_USERS_POSTS },
+                    (followedUsersPosts: GetFollowedUsersPostsQueryType | null) => {
+                        if (followedUsersPosts) {
+                            return addFollowedUserPost({
+                                followedUsersPosts,
+                                post,
+                            }).followedUsersPosts
+                        }
+                    }
+                )
+                enqueueSnackbar('Post shared', { variant: 'success' })
+                props.onClose()
+            }
+        }).catch(err => {
+            enqueueSnackbar('Post could not be shared', { variant: 'error' })
+            console.log(err)
+        })
     }
 
     const onUploadCoverPhoto = (file: File) => {
@@ -146,12 +193,13 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                             onClick={onClickNext}
                         >Next</Button>
                     ) : (
-                        <Button
+                        <LoadingButton
                             variant='text'
                             color='primary'
                             sx={{ textTransform: 'none' }}
+                            loading={loading}
                             onClick={onShare}
-                        >Share</Button>
+                        >Share</LoadingButton>
                     ) : (
                         <IconButton
                             aria-label='close'
