@@ -57,7 +57,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     const [viewingPostId, setViewingPostId] = useState<string | null>(null)
 
-    const { data, loading, updateQuery } = useQuery<GetFollowedUsersPostsQueryType>(GET_FOLLOWED_USERS_POSTS, {
+    const followedUsersPosts = useQuery<GetFollowedUsersPostsQueryType>(GET_FOLLOWED_USERS_POSTS, {
         variables: {
             offset: 0,
             limit: 10,
@@ -80,14 +80,14 @@ export default function FollowedUsersPosts (props: BoxProps) {
     const [unlikePost] = useMutation(UNLIKE_POST)
 
     const updateQueryFollowedUserPostLikedLoadingStatus = (postId: string, isLikedLoading: boolean) =>
-        updateQuery(followedUsersPosts => updateFollowedUserPostLikedLoadingStatus({
+        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostLikedLoadingStatus({
             followedUsersPosts,
             postId,
             isLikedLoading,
         }).followedUsersPosts)
 
     const updateQueryFollowedUserPostLikedStatus = (postId: string, liked: boolean, firstLikeUser: { _id: string, username: string } | null) =>
-        updateQuery(followedUsersPosts => updateFollowedUserPostLikedStatus({
+        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostLikedStatus({
             followedUsersPosts,
             postId,
             liked,
@@ -123,7 +123,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                             usersWhoLikedPost.getUsersWhoLikedPost.data[0].followableUser.user : null
                     )
                 } else {
-                    const followedUserPost = data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.post._id === postId)
+                    const followedUserPost = followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.post._id === postId)
                     if (followedUserPost) {
                         if (followedUserPost.post.likesCount > 1) {
                             return getFirstLikingUser({ variables: { postId }}).then(({ data }) => {
@@ -147,14 +147,14 @@ export default function FollowedUsersPosts (props: BoxProps) {
     const [unmarkPostAsFavorite] = useMutation(UNMARK_USER_POST_AS_FAVORITE)
 
     const updateQueryFollowedUserPostFavoriteLoadingStatus = (postId: string, isFavoriteLoading: boolean) =>
-        updateQuery(followedUsersPosts => updateFollowedUserPostFavoriteLoadingStatus({
+        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostFavoriteLoadingStatus({
             followedUsersPosts,
             postId,
             isFavoriteLoading,
         }).followedUsersPosts)
 
     const updateQueryFollowedUserPostFavoriteStatus = (postId: string, favorite: boolean) =>
-        updateQuery(followedUsersPosts => updateFollowedUserPostFavoriteStatus({
+        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostFavoriteStatus({
             followedUsersPosts,
             postId,
             favorite,
@@ -237,8 +237,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
     }
 
     const viewingPost: FollowedUserPost | null = useMemo(() => {
-        return data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.post._id === viewingPostId) ?? null
-    }, [data, viewingPostId])
+        return followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.post._id === viewingPostId) ?? null
+    }, [followedUsersPosts.data, viewingPostId])
 
     const [likeComment] = useMutation(LIKE_COMMENT)
     const [unlikeComment] = useMutation(UNLIKE_COMMENT)
@@ -372,7 +372,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                         }
                     )
                 }
-                updateQuery(followedUsersPosts => incrementFollowedUserPostCommentsCount({
+                followedUsersPosts.updateQuery(followedUsersPosts => incrementFollowedUserPostCommentsCount({
                     followedUsersPosts,
                     postId,
                 }).followedUsersPosts)
@@ -409,11 +409,11 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     return (
         <Box {...props}>
-            { loading ? (
+            { followedUsersPosts.loading ? (
                 <Post loading={true} />
             ) : (
                 <>
-                    { data && data.getFollowedUsersPosts.data.map(followedUserPost => (
+                    { followedUsersPosts.data && followedUsersPosts.data.getFollowedUsersPosts.data.map(followedUserPost => (
                         <Post
                             key={followedUserPost.post._id}
                             post={{...followedUserPost, ...followedUserPost.post, user: {...followedUserPost.post.user, following: false, isFollowingLoading: false}}}
