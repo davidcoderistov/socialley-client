@@ -58,6 +58,9 @@ const cache = new InMemoryCache({
     typePolicies: {
         Query: {
             fields: {
+                getFollowedUsersPosts: {
+                    keyArgs: false,
+                },
                 getLatestMessages: {
                     keyArgs: false
                 },
