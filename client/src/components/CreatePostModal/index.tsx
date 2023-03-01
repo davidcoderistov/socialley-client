@@ -81,7 +81,7 @@ export default function CreatePostModal () {
         if (videoFile && step === 1) {
             return 650
         }
-        return 500
+        return 600
     }, [step, videoFile])
 
     const showThumbnailPicker = useMemo(() => step === 1 && videoFile, [step, videoFile])
@@ -96,7 +96,7 @@ export default function CreatePostModal () {
                     borderRadius: '20px',
                     maxWidth: width,
                     paddingBottom: '10px',
-                    height: 400
+                    height: videoFile && step === 1 ? 400 : 500
                 }
             }}
         >

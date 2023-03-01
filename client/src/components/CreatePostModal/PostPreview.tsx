@@ -28,7 +28,7 @@ const PostPreview = React.forwardRef((props: { url: string | null, containerProp
                 justifyContent='center'
                 height='100%'
                 alignItems='flex-start'
-                width='450px'
+                width='700px'
             >
                 <Box
                     component='div'
