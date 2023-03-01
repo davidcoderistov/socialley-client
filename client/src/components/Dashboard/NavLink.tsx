@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Box from '@mui/material/Box'
 import { styled } from '@mui/material'
 import NavItem, { NavType } from './NavItem'
 import { NavLink as Link } from 'react-router-dom'
@@ -9,12 +10,21 @@ const StyledLink = styled(Link)({
     textDecoration: 'none',
 })
 
-export interface NavLinkProps {
+interface LinkProps {
     to: string
     type: NavType
+    isNotLink?: never
 }
 
-export default function NavLink ({ to, type }: NavLinkProps) {
+interface NotLinkProps {
+    to?: never
+    type: NavType
+    isNotLink: true
+}
+
+export type NavLinkProps = LinkProps | NotLinkProps
+
+export default function NavLink ({ to, isNotLink, type }: NavLinkProps) {
 
     const [isHovered, setIsHovered] = useState(false)
 
@@ -26,7 +36,7 @@ export default function NavLink ({ to, type }: NavLinkProps) {
         setIsHovered(false)
     }
 
-    return (
+    return !isNotLink ? (
         <StyledLink
             to={to}
             onMouseEnter={handleOnMouseEnter}
@@ -39,5 +49,17 @@ export default function NavLink ({ to, type }: NavLinkProps) {
                     type={type} />
             )}
         </StyledLink>
+    ) : (
+        <Box
+            component='div'
+            onMouseEnter={handleOnMouseEnter}
+            onMouseLeave={handleOnMouseLeave}
+            sx={{ cursor: 'pointer' }}
+        >
+            <NavItem
+                active={false}
+                hovered={isHovered}
+                type={type} />
+        </Box>
     )
 }

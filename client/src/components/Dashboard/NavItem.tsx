@@ -3,6 +3,7 @@ import { Box, ListItemIcon, Typography, styled } from '@mui/material'
 import {
     Home,
     Reply,
+    AddCircleOutline,
     AccountCircle,
 } from '@mui/icons-material'
 
@@ -13,7 +14,7 @@ const Container = styled(Box)({
     padding: '8px',
 })
 
-export type NavType = 'home' | 'messages' | 'profile'
+export type NavType = 'home' | 'messages' | 'profile' | 'create'
 
 interface NavItemProps {
     active: boolean
@@ -27,7 +28,7 @@ export default function NavItem ({ active, hovered, type }: NavItemProps) {
 
     const iconSx = {
         color: '#FFFFFF',
-        fontSize: hoveredNotActive ? 32 : 30,
+        fontSize: 30,
     }
 
     return (
@@ -43,6 +44,9 @@ export default function NavItem ({ active, hovered, type }: NavItemProps) {
                 { type === 'messages' && (
                     <Reply sx={iconSx}/>
                 )}
+                { type === 'create' && (
+                    <AddCircleOutline sx={iconSx} />
+                )}
                 { type === 'profile' && (
                     <AccountCircle sx={iconSx}/>
                 )}
@@ -50,6 +54,7 @@ export default function NavItem ({ active, hovered, type }: NavItemProps) {
             <Typography noWrap marginY='4px' fontSize={15} sx={{ color: '#FFFFFF' }}>
                 { type === 'home' && 'Home '}
                 { type === 'messages' && 'Messages' }
+                { type === 'create' && 'Create' }
                 { type === 'profile' && 'Profile' }
             </Typography>
         </Container>

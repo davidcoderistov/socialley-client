@@ -76,6 +76,7 @@ export default function Dashboard (props: Props) {
                     <List component='nav' sx={{ paddingX: '12px' }}>
                         <NavLink to='/' type='home' />
                         <NavLink to='/messages' type='messages' />
+                        <NavLink isNotLink type='create' />
                         <NavLink to='/profile' type='profile' />
                     </List>
                 </Drawer>
