@@ -1,4 +1,5 @@
 import { GetFollowedUsersPostsQueryType } from '../../../graphql/types/queries/posts'
+import { Post } from '../../../graphql/types/models'
 import { updateOneFollowedUserPost } from '../../utils'
 
 
@@ -139,4 +140,28 @@ export function incrementFollowedUserPostCommentsCount (options: IncrementFollow
             }
         }
     })
+}
+
+interface AddFollowedUserPostOptions {
+    followedUsersPosts: GetFollowedUsersPostsQueryType
+    post: Post
+}
+
+interface AddFollowedUserPostReturnValue {
+    followedUsersPosts: GetFollowedUsersPostsQueryType
+    success: boolean
+}
+
+export function addFollowedUserPost (options: AddFollowedUserPostOptions): AddFollowedUserPostReturnValue {
+    return {
+        followedUsersPosts: {
+            ...options.followedUsersPosts,
+            getFollowedUsersPosts: {
+                ...options.followedUsersPosts.getFollowedUsersPosts,
+                data: [{ post: { ...options.post }, commentsCount: 0 }, ...options.followedUsersPosts.getFollowedUsersPosts.data],
+                total: options.followedUsersPosts.getFollowedUsersPosts.total + 1,
+            }
+        },
+        success: true,
+    }
 }
