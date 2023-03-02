@@ -1,5 +1,5 @@
 import { GetFollowedUsersPostsQueryType } from '../../../graphql/types/queries/posts'
-import { Post } from '../../../graphql/types/models'
+import { PostDetails } from '../../../graphql/types/models'
 import { updateOneFollowedUserPost } from '../../utils'
 
 
@@ -21,8 +21,8 @@ export function updateFollowedUserPostLikedLoadingStatus (options: UpdateFollowe
         mapper (followedUserPost) {
             return {
                 ...followedUserPost,
-                post: {
-                    ...followedUserPost.post,
+                postDetails: {
+                    ...followedUserPost.postDetails,
                     isLikedLoading: options.isLikedLoading,
                 }
             }
@@ -52,11 +52,11 @@ export function updateFollowedUserPostLikedStatus (options: UpdateFollowedUserPo
         mapper (followedUserPost) {
             return {
                 ...followedUserPost,
-                post: {
-                    ...followedUserPost.post,
+                postDetails: {
+                    ...followedUserPost.postDetails,
                     liked: options.liked,
                     firstLikeUser: options.firstLikeUser,
-                    likesCount: options.liked ? followedUserPost.post.likesCount + 1 : followedUserPost.post.likesCount - 1,
+                    likesCount: options.liked ? followedUserPost.postDetails.likesCount + 1 : followedUserPost.postDetails.likesCount - 1,
                     isLikedLoading: false,
                 }
             }
@@ -82,8 +82,8 @@ export function updateFollowedUserPostFavoriteLoadingStatus (options: UpdateFoll
         mapper (followedUserPost) {
             return {
                 ...followedUserPost,
-                post: {
-                    ...followedUserPost.post,
+                postDetails: {
+                    ...followedUserPost.postDetails,
                     isFavoriteLoading: options.isFavoriteLoading,
                 }
             }
@@ -109,8 +109,8 @@ export function updateFollowedUserPostFavoriteStatus (options: UpdateFollowedUse
         mapper (followedUserPost) {
             return {
                 ...followedUserPost,
-                post: {
-                    ...followedUserPost.post,
+                postDetails: {
+                    ...followedUserPost.postDetails,
                     favorite: options.favorite,
                     isFavoriteLoading: false,
                 }
@@ -144,7 +144,7 @@ export function incrementFollowedUserPostCommentsCount (options: IncrementFollow
 
 interface AddFollowedUserPostOptions {
     followedUsersPosts: GetFollowedUsersPostsQueryType
-    post: Post
+    postDetails: PostDetails
 }
 
 interface AddFollowedUserPostReturnValue {
@@ -158,7 +158,7 @@ export function addFollowedUserPost (options: AddFollowedUserPostOptions): AddFo
             ...options.followedUsersPosts,
             getFollowedUsersPosts: {
                 ...options.followedUsersPosts.getFollowedUsersPosts,
-                data: [{ post: { ...options.post }, commentsCount: 0 }, ...options.followedUsersPosts.getFollowedUsersPosts.data],
+                data: [{ postDetails: { ...options.postDetails }, commentsCount: 0 }, ...options.followedUsersPosts.getFollowedUsersPosts.data],
                 total: options.followedUsersPosts.getFollowedUsersPosts.total + 1,
             }
         },

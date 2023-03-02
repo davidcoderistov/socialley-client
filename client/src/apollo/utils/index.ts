@@ -40,7 +40,7 @@ export function updateOneFollowedUserPost (options: UpdateFollowedUserPostByPost
         getFollowedUsersPosts: {
             ...followedUsersPosts.getFollowedUsersPosts,
             data: followedUsersPosts.getFollowedUsersPosts.data.map(followedUserPost => {
-                if (followedUserPost.post._id === postId) {
+                if (followedUserPost.postDetails.post._id === postId) {
                     success = true
                     return mapper(followedUserPost)
                 }
