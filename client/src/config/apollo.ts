@@ -4,7 +4,7 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { createUploadLink } from 'apollo-upload-client'
 import { createClient } from 'graphql-ws'
 import { getStorageLoggedInUser } from '../localStorage'
-import { FollowableUser } from '../graphql/types/models'
+import { FollowableUser, PostDetails } from '../graphql/types/models'
 
 
 const httpLink = createHttpLink({
@@ -129,7 +129,11 @@ const cache = new InMemoryCache({
                 }
             }
         },
-        Post: {
+        PostDetails: {
+            keyFields: (postDetailsStoreObject) => {
+                const postDetails = postDetailsStoreObject as unknown as PostDetails & { __typename: string }
+                return `${postDetails.__typename}:${postDetails.post._id}`
+            },
             fields: {
                 isLikedLoading: {
                     read (isLikedLoading = false) {
