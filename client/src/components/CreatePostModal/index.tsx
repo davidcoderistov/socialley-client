@@ -97,15 +97,15 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                 hasUpload: true,
             }
         }).then(data => {
-            const post = data.data?.createPost
-            if (post) {
+            const postDetails = data.data?.createPost
+            if (postDetails) {
                 client.cache.updateQuery(
                     { query: GET_FOLLOWED_USERS_POSTS },
                     (followedUsersPosts: GetFollowedUsersPostsQueryType | null) => {
                         if (followedUsersPosts) {
                             return addFollowedUserPost({
                                 followedUsersPosts,
-                                post,
+                                postDetails,
                             }).followedUsersPosts
                         }
                     }

@@ -171,9 +171,9 @@ export default function FollowedUsersPosts (props: BoxProps) {
                             usersWhoLikedPost.getUsersWhoLikedPost.data[0].followableUser.user : null
                     )
                 } else {
-                    const followedUserPost = followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.post._id === postId)
+                    const followedUserPost = followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.postDetails.post._id === postId)
                     if (followedUserPost) {
-                        if (followedUserPost.post.likesCount > 1) {
+                        if (followedUserPost.postDetails.likesCount > 1) {
                             return getFirstLikingUser({ variables: { postId }}).then(({ data }) => {
                                 const firstLikingUser = data?.getFirstUserWhoLikedPost ?? null
                                 updateQueryFollowedUserPostLikedStatus(postId, liked, firstLikingUser)
@@ -285,7 +285,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
     }
 
     const viewingPost: FollowedUserPost | null = useMemo(() => {
-        return followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.post._id === viewingPostId) ?? null
+        return followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.postDetails.post._id === viewingPostId) ?? null
     }, [followedUsersPosts.data, viewingPostId])
 
     const [likeComment] = useMutation(LIKE_COMMENT)
@@ -463,8 +463,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 <>
                     { followedUsersPosts.data && followedUsersPosts.data.getFollowedUsersPosts.data.map(followedUserPost => (
                         <Post
-                            key={followedUserPost.post._id}
-                            post={{...followedUserPost, ...followedUserPost.post, user: {...followedUserPost.post.user, following: false, isFollowingLoading: false}}}
+                            key={followedUserPost.postDetails.post._id}
+                            post={{...followedUserPost, ...followedUserPost.postDetails, user: {...followedUserPost.postDetails.user, following: false, isFollowingLoading: false}, ...followedUserPost.postDetails.post}}
                             onClickUser={() => {}}
                             onFollowUser={() => {}}
                             onLikePost={handleLikePost}
@@ -491,7 +491,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
             )}
             { viewingPost && (
                 <PostView
-                    postDetails={{...viewingPost, ...viewingPost.post, user: {...viewingPost.post.user, following: false, isFollowingLoading: false}}}
+                    postDetails={{...viewingPost, ...viewingPost.postDetails, ...viewingPost.postDetails.post, user: {...viewingPost.postDetails.user, following: false, isFollowingLoading: false}}}
                     isPostDetailsLoading={false}
                     onClickUser={() => {}}
                     onFollowUser={() => {}}
