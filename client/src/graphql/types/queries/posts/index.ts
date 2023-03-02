@@ -40,3 +40,7 @@ export interface GetPostsForUserQueryType {
 export interface GetLikedPostsForUserQueryType {
     getLikedPostsForUser: Omit<Post, 'createdAt'>
 }
+
+export interface GetFavoritePostsForUserQueryType {
+    getFavoritePostsForUser: Omit<Post, 'createdAt'>
+}

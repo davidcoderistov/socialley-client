@@ -131,3 +131,13 @@ export const GET_LIKED_POSTS_FOR_USER = gql`
         }
     }
 `
+
+export const GET_FAVORITE_POSTS_FOR_USER = gql`
+    query getFavoritePostsForUser {
+        getFavoritePostsForUser {
+            _id
+            photoURL
+            videoURL
+        }
+    }
+`
