@@ -83,6 +83,11 @@ export interface Post {
     title: string | null
     photoURL: string
     videoURL: string | null
+    createdAt: number
+}
+
+export interface PostDetails {
+    post: Post
     user: Omit<User, 'email'>
     firstLikeUser: Pick<User, '_id' | 'username'> | null
     liked: boolean
@@ -90,11 +95,10 @@ export interface Post {
     favorite: boolean
     isFavoriteLoading: boolean
     likesCount: number
-    createdAt: number
 }
 
 export interface FollowedUserPost {
-    post: Post
+    postDetails: PostDetails
     commentsCount: number
 }
 

@@ -1,8 +1,8 @@
-import { Post, PostLike, UserFavorite, CommentLike } from '../../models'
+import { PostDetails, PostLike, UserFavorite, CommentLike } from '../../models'
 
 
 export interface CreatePostMutationType {
-    createPost: Post
+    createPost: PostDetails
 }
 
 export interface LikePostMutationType {
