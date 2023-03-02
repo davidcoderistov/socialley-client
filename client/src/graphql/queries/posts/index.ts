@@ -5,11 +5,14 @@ export const GET_FOLLOWED_USERS_POSTS = gql`
     query getFollowedUsersPosts ($offset: Int!, $limit: Int!) {
         getFollowedUsersPosts (offset: $offset, limit: $limit) {
             data {
-                post {
-                    _id
-                    title
-                    photoURL
-                    videoURL
+                postDetails {
+                    post {
+                        _id
+                        title
+                        photoURL
+                        videoURL
+                        createdAt
+                    }
                     user {
                         _id
                         firstName
@@ -26,7 +29,6 @@ export const GET_FOLLOWED_USERS_POSTS = gql`
                     favorite
                     isFavoriteLoading @client
                     likesCount
-                    createdAt
                 }
                 commentsCount
             }
