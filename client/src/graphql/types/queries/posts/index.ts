@@ -36,3 +36,7 @@ export interface GetUsersWhoLikedCommentQueryType {
 export interface GetPostsForUserQueryType {
     getPostsForUser: Omit<Post, 'createdAt'>
 }
+
+export interface GetLikedPostsForUserQueryType {
+    getLikedPostsForUser: Omit<Post, 'createdAt'>
+}

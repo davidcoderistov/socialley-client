@@ -121,3 +121,13 @@ export const GET_POSTS_FOR_USER = gql`
         }
     }
 `
+
+export const GET_LIKED_POSTS_FOR_USER = gql`
+    query getLikedPostsForUser {
+        getLikedPostsForUser {
+            _id
+            photoURL
+            videoURL
+        }
+    }
+`
