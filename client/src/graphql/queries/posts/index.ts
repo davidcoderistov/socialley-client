@@ -141,3 +141,33 @@ export const GET_FAVORITE_POSTS_FOR_USER = gql`
         }
     }
 `
+
+export const GET_POST_DETAILS = gql`
+    query getPostDetails ($postId: String!) {
+        getPostDetails (postId: $postId) {
+            post {
+                _id
+                title
+                photoURL
+                videoURL
+                createdAt
+            }
+            user {
+                _id
+                firstName
+                lastName
+                username
+                avatarURL
+            }
+            firstLikeUser {
+                _id
+                username
+            }
+            liked
+            isLikedLoading @client
+            favorite
+            isFavoriteLoading @client
+            likesCount
+        }
+    }
+`

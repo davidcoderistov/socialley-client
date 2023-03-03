@@ -1,4 +1,4 @@
-import { User, FollowedUserPost, UserWhoLikedPost, Comment, UserWhoLikedComment, Post } from '../../models'
+import { User, FollowedUserPost, UserWhoLikedPost, Comment, UserWhoLikedComment, Post, PostDetails } from '../../models'
 
 
 export interface GetFollowedUsersPostsQueryType {
@@ -43,4 +43,8 @@ export interface GetLikedPostsForUserQueryType {
 
 export interface GetFavoritePostsForUserQueryType {
     getFavoritePostsForUser: Omit<Post, 'createdAt'>
+}
+
+export interface GetPostDetailsQueryType {
+    getPostDetails: PostDetails
 }
