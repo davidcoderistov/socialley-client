@@ -2,6 +2,7 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
+import Skeleton from '@mui/material/Skeleton'
 import { Settings, MoreHoriz } from '@mui/icons-material'
 import UserActionButton from '../UserActionButton'
 import FollowButton from '../FollowButton'
@@ -10,6 +11,7 @@ import UserAvatar from '../UserAvatar'
 
 
 interface LoggedInUserProfileProps {
+    loading?: never
     isLoggedInUserProfile: true
     _id: string
     username: string
@@ -29,6 +31,7 @@ interface LoggedInUserProfileProps {
 }
 
 interface UserProfileDetailsProps {
+    loading?: never
     isLoggedInUserProfile: false
     _id: string
     username: string
@@ -50,18 +53,38 @@ interface UserProfileDetailsProps {
     onClickOptions: () => void
 }
 
-type Props = LoggedInUserProfileProps | UserProfileDetailsProps
+interface UserProfileLoadingDetailsProps {
+    loading: true
+    isLoggedInUserProfile?: never
+    _id?: never
+    username?: never
+    firstName?: never
+    lastName?: never
+    postsCount?: never
+    followersCount?: never
+    followingCount?: never
+    following?: never
+    isFollowingLoading?: never
+    latestMutualFollower?: never
+    mutualFollowersCount?: never
+    onFollowUser?: never
+    onUnfollowUser?: never
+    onEditProfile?: never
+    onClickOptions?: never
+}
+
+type Props = LoggedInUserProfileProps | UserProfileDetailsProps | UserProfileLoadingDetailsProps
 
 export default function UserProfileDetails (props: Props) {
 
     const handleFollowUser = () => {
-        if (!props.isLoggedInUserProfile) {
+        if (!props.loading && !props.isLoggedInUserProfile) {
             props.onFollowUser(props._id)
         }
     }
 
     const handleUnfollowUser = () => {
-        if (!props.isLoggedInUserProfile) {
+        if (!props.loading && !props.isLoggedInUserProfile) {
             props.onUnfollowUser(props._id)
         }
     }
@@ -94,10 +117,20 @@ export default function UserProfileDetails (props: Props) {
                     position='relative'
                     alignSelf='center'
                 >
-                    <UserAvatar
-                        firstName={props.firstName}
-                        lastName={props.lastName}
-                        size={150} />
+                    { props.loading ? (
+                        <Skeleton
+                            component='div'
+                            animation='wave'
+                            variant='circular'
+                            width='150px'
+                            height='150px'
+                            sx={{ backgroundColor: '#2C3539' }} />
+                    ) : (
+                        <UserAvatar
+                            firstName={props.firstName}
+                            lastName={props.lastName}
+                            size={150} />
+                    )}
                 </Box>
             </Box>
             <Box
@@ -126,52 +159,60 @@ export default function UserProfileDetails (props: Props) {
                     position='relative'
                     marginBottom='20px'
                 >
-                    <Typography sx={{ fontSize: 20 }}>{ props.username }</Typography>
-                    <Box
-                        component='div'
-                        marginLeft='20px'
-                        flex='0 0 auto'
-                        justifyContent='flex-start'
-                        flexDirection='row'
-                        alignItems='stretch'
-                        alignContent='stretch'
-                        display='flex'
-                        boxSizing='border-box'
-                        position='relative'
-                    >
-                        { props.isLoggedInUserProfile ? (
-                            <UserActionButton
-                                variant='secondary'
-                                text='Edit profile'
-                                contained={true}
-                                loading={false}
-                                onClick={props.onEditProfile} />
-                        ) : props.following ? (
-                            <FollowingButton
-                                contained={true}
-                                loading={props.isFollowingLoading}
-                                onClick={handleUnfollowUser} />
-                        ) : (
-                            <FollowButton
-                            contained={true}
-                            loading={props.isFollowingLoading}
-                            onClick={handleFollowUser} />
-                        ) }
-                    </Box>
-                    <Box
-                        component='div'
-                        marginLeft='5px'
-                        flexShrink='0'
-                        display='block'
-                    >
-                        <IconButton sx={{ color: '#FFFFFF' }} onClick={props.onClickOptions}>
-                            { props.isLoggedInUserProfile ? (
-                                <Settings />
-                            ) : (
-                                <MoreHoriz />
-                            )}
-                        </IconButton>
-                    </Box>
+                    <Typography sx={{ fontSize: 20 }}>
+                        { props.loading ? (
+                            <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='240px' />
+                        ): props.username }
+                    </Typography>
+                    { !props.loading && (
+                        <>
+                            <Box
+                                component='div'
+                                marginLeft='20px'
+                                flex='0 0 auto'
+                                justifyContent='flex-start'
+                                flexDirection='row'
+                                alignItems='stretch'
+                                alignContent='stretch'
+                                display='flex'
+                                boxSizing='border-box'
+                                position='relative'
+                            >
+                                { props.isLoggedInUserProfile ? (
+                                    <UserActionButton
+                                        variant='secondary'
+                                        text='Edit profile'
+                                        contained={true}
+                                        loading={false}
+                                        onClick={props.onEditProfile} />
+                                ) : props.following ? (
+                                    <FollowingButton
+                                        contained={true}
+                                        loading={props.isFollowingLoading}
+                                        onClick={handleUnfollowUser} />
+                                ) : (
+                                    <FollowButton
+                                        contained={true}
+                                        loading={props.isFollowingLoading}
+                                        onClick={handleFollowUser} />
+                                ) }
+                            </Box>
+                            <Box
+                                component='div'
+                                marginLeft='5px'
+                                flexShrink='0'
+                                display='block'
+                            >
+                                <IconButton sx={{ color: '#FFFFFF' }} onClick={props.onClickOptions}>
+                                    { props.isLoggedInUserProfile ? (
+                                        <Settings />
+                                    ) : (
+                                        <MoreHoriz />
+                                    )}
+                                </IconButton>
+                            </Box>
+                        </>
+                    )}
                 </Box>
                 <Box
                     component='ul'
@@ -197,19 +238,25 @@ export default function UserProfileDetails (props: Props) {
                             fontSize='16px'
                             lineHeight='24px'
                         >
-                            <Box
-                                component='span'
-                                color='#FFFFFF'
-                                fontWeight='600'
-                                marginRight='5px'
-                            >
-                                <Box
-                                    component='span'
-                                >
-                                    { props.postsCount }
-                                </Box>
-                            </Box>
-                            posts
+                            { props.loading ? (
+                                <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='40px' />
+                            ): (
+                                <>
+                                    <Box
+                                        component='span'
+                                        color='#FFFFFF'
+                                        fontWeight='600'
+                                        marginRight='5px'
+                                    >
+                                        <Box
+                                            component='span'
+                                        >
+                                            { props.postsCount }
+                                        </Box>
+                                    </Box>
+                                    posts
+                                </>
+                            )}
                         </Box>
                     </Box>
                     <Box
@@ -228,19 +275,25 @@ export default function UserProfileDetails (props: Props) {
                             fontSize='16px'
                             lineHeight='24px'
                         >
-                            <Box
-                                component='span'
-                                color='#FFFFFF'
-                                fontWeight='600'
-                                marginRight='5px'
-                            >
-                                <Box
-                                    component='span'
-                                >
-                                    { props.followersCount }
-                                </Box>
-                            </Box>
-                            followers
+                            { props.loading ? (
+                                <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='40px' />
+                            ): (
+                                <>
+                                    <Box
+                                        component='span'
+                                        color='#FFFFFF'
+                                        fontWeight='600'
+                                        marginRight='5px'
+                                    >
+                                        <Box
+                                            component='span'
+                                        >
+                                            { props.followersCount }
+                                        </Box>
+                                    </Box>
+                                    followers
+                                </>
+                            ) }
                         </Box>
                     </Box>
                     <Box
@@ -259,19 +312,25 @@ export default function UserProfileDetails (props: Props) {
                             fontSize='16px'
                             lineHeight='24px'
                         >
-                            <Box
-                                component='span'
-                                color='#FFFFFF'
-                                fontWeight='600'
-                                marginRight='5px'
-                            >
-                                <Box
-                                    component='span'
-                                >
-                                    { props.followingCount }
-                                </Box>
-                            </Box>
-                            following
+                            { props.loading ? (
+                                <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='40px' />
+                            ): (
+                                <>
+                                    <Box
+                                        component='span'
+                                        color='#FFFFFF'
+                                        fontWeight='600'
+                                        marginRight='5px'
+                                    >
+                                        <Box
+                                            component='span'
+                                        >
+                                            { props.followingCount }
+                                        </Box>
+                                    </Box>
+                                    following
+                                </>
+                            ) }
                         </Box>
                     </Box>
                 </Box>
@@ -290,9 +349,11 @@ export default function UserProfileDetails (props: Props) {
                         variant='body2'
                         noWrap
                     >
-                        { props.firstName } { props.lastName }
+                        { props.loading ? (
+                            <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='100px' />
+                        ) : `${props.firstName} ${props.lastName}` }
                     </Typography>
-                    { !props.isLoggedInUserProfile && props.following && (
+                    { !props.loading && !props.isLoggedInUserProfile && props.following && (
                         <Box
                             component='div'
                             border='0'
