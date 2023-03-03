@@ -113,31 +113,40 @@ export const GET_USERS_WHO_LIKED_COMMENT = gql`
 `
 
 export const GET_POSTS_FOR_USER = gql`
-    query getPostsForUser {
-        getPostsForUser {
-            _id
-            photoURL
-            videoURL
+    query getPostsForUser ($offset: Int!, $limit: Int!) {
+        getPostsForUser (offset: $offset, limit: $limit) {
+            data {
+                _id
+                photoURL
+                videoURL
+            }
+            total
         }
     }
 `
 
 export const GET_LIKED_POSTS_FOR_USER = gql`
-    query getLikedPostsForUser {
-        getLikedPostsForUser {
-            _id
-            photoURL
-            videoURL
+    query getLikedPostsForUser ($offset: Int!, $limit: Int!) {
+        getLikedPostsForUser (offset: $offset, limit: $limit) {
+            data {
+                _id
+                photoURL
+                videoURL
+            }
+            total
         }
     }
 `
 
 export const GET_FAVORITE_POSTS_FOR_USER = gql`
-    query getFavoritePostsForUser {
-        getFavoritePostsForUser {
-            _id
-            photoURL
-            videoURL
+    query getFavoritePostsForUser ($offset: Int!, $limit: Int!) {
+        getFavoritePostsForUser (offset: $offset, limit: $limit) {
+            data {
+                _id
+                photoURL
+                videoURL
+            }
+            total
         }
     }
 `

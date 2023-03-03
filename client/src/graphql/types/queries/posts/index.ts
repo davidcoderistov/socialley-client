@@ -34,15 +34,24 @@ export interface GetUsersWhoLikedCommentQueryType {
 }
 
 export interface GetPostsForUserQueryType {
-    getPostsForUser: Omit<Post, 'createdAt'>
+    getPostsForUser: {
+        data: Omit<Post, 'createdAt'>[]
+        total: number
+    }
 }
 
 export interface GetLikedPostsForUserQueryType {
-    getLikedPostsForUser: Omit<Post, 'createdAt'>
+    getLikedPostsForUser: {
+        data: Omit<Post, 'createdAt'>[]
+        total: number
+    }
 }
 
 export interface GetFavoritePostsForUserQueryType {
-    getFavoritePostsForUser: Omit<Post, 'createdAt'>
+    getFavoritePostsForUser: {
+        data: Omit<Post, 'createdAt'>[]
+        total: number
+    }
 }
 
 export interface GetPostDetailsQueryType {
