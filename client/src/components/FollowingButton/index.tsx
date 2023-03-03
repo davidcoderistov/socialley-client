@@ -1,5 +1,5 @@
 import React from 'react'
-import LoadingButton from '@mui/lab/LoadingButton'
+import UserActionButton from '../UserActionButton'
 
 
 interface FollowingButtonProps {
@@ -11,37 +11,11 @@ interface FollowingButtonProps {
 export default function FollowingButton (props: FollowingButtonProps) {
 
     return (
-        <LoadingButton
-            variant={props.contained ? 'contained' : 'text'}
-            sx={props.contained ? {
-                textTransform: 'none',
-                borderRadius: '10px',
-                minWidth: '100px',
-                backgroundColor: '#EFEFEF',
-                color: '#000000',
-                '&:hover': {
-                    backgroundColor: '#DBDBDB'
-                },
-                '&.MuiLoadingButton-loading': {
-                    backgroundColor: '#FFFFFF',
-                },
-                '.MuiLoadingButton-loadingIndicator': {
-                    color: '#000000',
-                }
-            } : {
-                textTransform: 'none',
-                color: '#DBDBDB',
-                '&:hover': {
-                    color: '#FFFFFF',
-                },
-                '.MuiLoadingButton-loadingIndicator': {
-                    color: '#DBDBDB',
-                }
-            }}
+        <UserActionButton
+            variant='secondary'
+            text='Following'
+            contained={props.contained}
             loading={props.loading}
-            onClick={props.onClick}
-        >
-            Following
-        </LoadingButton>
+            onClick={props.onClick} />
     )
 }
