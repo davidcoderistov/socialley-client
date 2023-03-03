@@ -128,3 +128,12 @@ export interface FollowerUser {
     followableUser: FollowableUser
     isFollowingLoading: boolean
 }
+
+export interface UserDetails {
+    followableUser: FollowableUser
+    postsCount: number
+    followingCount: number
+    followersCount: number
+    latestFollower: Pick<User, '_id' | 'username'> | null
+    followedCount: number
+}

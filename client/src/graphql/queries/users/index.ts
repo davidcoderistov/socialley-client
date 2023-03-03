@@ -77,3 +77,28 @@ export const GET_FOLLOWERS_FOR_USER = gql`
         }
     }
 `
+
+export const GET_USER_DETAILS = gql`
+    query getUserDetails ($userId: String!) {
+        getUserDetails (userId: $userId) {
+            followableUser {
+                user {
+                    _id
+                    firstName
+                    lastName
+                    avatarURL
+                    username
+                }
+                following
+            }
+            postsCount
+            followingCount
+            followersCount
+            latestFollower {
+                _id
+                username
+            }
+            followedCount
+        }
+    }
+`
