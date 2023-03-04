@@ -77,7 +77,6 @@ export const CREATE_COMMENT = gql`
             _id
             text
             postId
-            userId
             createdAt
         }
     }
