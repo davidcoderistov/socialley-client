@@ -2,19 +2,18 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
 import { useInfiniteScroll } from '../../hooks/misc'
+import { useLikeComment, useUnlikeComment } from '../../hooks/graphql/posts'
 import {
     GET_FOLLOWED_USERS_POSTS,
     GET_USERS_WHO_LIKED_POST,
     GET_FIRST_USER_WHO_LIKED_POST,
     GET_COMMENTS_FOR_POST,
-    GET_USERS_WHO_LIKED_COMMENT,
 } from '../../graphql/queries/posts'
 import {
     GetFollowedUsersPostsQueryType,
     GetUsersWhoLikedPostQueryType,
     GetFirstUserWhoLikedPostQueryType,
     GetCommentsForPostQueryType,
-    GetUsersWhoLikedCommentQueryType,
 } from '../../graphql/types/queries/posts'
 import { FollowedUserPost, Comment } from '../../graphql/types/models'
 import { CreateCommentMutationType } from '../../graphql/types/mutations/posts'
@@ -29,8 +28,6 @@ import {
     MARK_USER_POST_AS_FAVORITE,
     UNMARK_USER_POST_AS_FAVORITE,
     CREATE_COMMENT,
-    LIKE_COMMENT,
-    UNLIKE_COMMENT,
 } from '../../graphql/mutations/posts'
 import {
     updateFollowedUserPostLikedStatus,
@@ -40,12 +37,9 @@ import {
     incrementFollowedUserPostCommentsCount,
 } from '../../apollo/mutations/posts/followedUsersPosts'
 import {
-    updateCommentLikedStatus,
-    updateCommentLikedLoadingStatus,
     addCommentForPost,
 } from '../../apollo/mutations/posts/commentsForPost'
 import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
-import usersWhoLikedCommentMutations from '../../apollo/mutations/posts/usersWhoLikedComment'
 import { useSnackbar } from 'notistack'
 
 
@@ -288,95 +282,14 @@ export default function FollowedUsersPosts (props: BoxProps) {
         return followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.postDetails.post._id === viewingPostId) ?? null
     }, [followedUsersPosts.data, viewingPostId])
 
-    const [likeComment] = useMutation(LIKE_COMMENT)
-    const [unlikeComment] = useMutation(UNLIKE_COMMENT)
-
-    const updateQueryCommentLikedLoadingStatus = (commentId: string, postId: string, isLikedLoading: boolean) => {
-        client.cache.updateQuery({
-            query: GET_COMMENTS_FOR_POST,
-            variables: { postId }
-        }, (commentsForPost: GetCommentsForPostQueryType | null) => {
-            if (commentsForPost) {
-                return updateCommentLikedLoadingStatus({
-                    commentsForPost,
-                    commentId,
-                    isLikedLoading,
-                }).commentsForPost
-            }
-        })
-    }
-
-    const updateQueryCommentLikedStatus = (commentId: string, postId: string, liked: boolean) => {
-        client.cache.updateQuery({
-            query: GET_COMMENTS_FOR_POST,
-            variables: { postId }
-        }, (commentsForPost: GetCommentsForPostQueryType | null) => {
-            if (commentsForPost) {
-                return updateCommentLikedStatus({
-                    commentsForPost,
-                    commentId,
-                    liked,
-                }).commentsForPost
-            }
-        })
-    }
-
-    const updateCommentQueryAddLikingUser = (commentId: string) => {
-        client.cache.updateQuery({
-            query: GET_USERS_WHO_LIKED_COMMENT,
-            variables: { commentId }
-        }, (usersWhoLikedComment: GetUsersWhoLikedCommentQueryType | null) => {
-            if (usersWhoLikedComment) {
-                return usersWhoLikedCommentMutations.addUserWhoLikedComment({
-                    usersWhoLikedComment,
-                    userWhoLikedComment: {
-                        followableUser: {
-                            user: loggedInUser,
-                            following: true,
-                        },
-                        isFollowingLoading: false,
-                    }
-                }).usersWhoLikedComment
-            }
-        })
-    }
-
-    const updateCommentQueryRemoveLikingUser = (commentId: string) => {
-        client.cache.updateQuery({
-            query: GET_USERS_WHO_LIKED_COMMENT,
-            variables: { commentId }
-        }, (usersWhoLikedComment: GetUsersWhoLikedCommentQueryType | null) => {
-            if (usersWhoLikedComment) {
-                return usersWhoLikedCommentMutations.removeUserWhoLikedComment({
-                    usersWhoLikedComment,
-                    userId: loggedInUser._id
-                }).usersWhoLikedComment
-            }
-        })
-    }
+    const likeComment = useLikeComment()
+    const unlikeComment = useUnlikeComment()
 
     const handleLikeComment = (commentId: string, postId: string, liked: boolean) => {
-        updateQueryCommentLikedLoadingStatus(commentId, postId, true)
         if (liked) {
-            likeComment({
-                variables: { commentId }
-            }).then(() => {
-                updateCommentQueryAddLikingUser(commentId)
-                updateQueryCommentLikedStatus(commentId, postId, liked)
-            }).catch(() => {
-                updateQueryCommentLikedLoadingStatus(commentId, postId, false)
-                enqueueSnackbar(`Could not like this comment`, { variant: 'error' })
-            })
+            likeComment(commentId, postId)
         } else {
-            unlikeComment({
-                variables: { commentId }
-            }).then(() => {
-                updateCommentQueryRemoveLikingUser(commentId)
-                updateQueryCommentLikedStatus(commentId, postId, liked)
-            }).catch(() => {
-                updateQueryCommentLikedLoadingStatus(commentId, postId, false)
-                enqueueSnackbar(`Could not unlike this comment`, { variant: 'error' })
-            })
+            unlikeComment(commentId, postId)
         }
     }
 
