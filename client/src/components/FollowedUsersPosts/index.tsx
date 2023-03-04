@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
-import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
+import { useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
 import { useInfiniteScroll } from '../../hooks/misc'
 import {
     useLikeComment,
     useUnlikeComment,
     useUpdatePostAddLikingUser,
     useUpdatePostRemoveLikingUser,
+    useComments,
 } from '../../hooks/graphql/posts'
 import {
     GET_FOLLOWED_USERS_POSTS,
-    GET_USERS_WHO_LIKED_POST,
     GET_FIRST_USER_WHO_LIKED_POST,
     GET_COMMENTS_FOR_POST,
 } from '../../graphql/queries/posts'
 import {
     GetFollowedUsersPostsQueryType,
-    GetUsersWhoLikedPostQueryType,
     GetFirstUserWhoLikedPostQueryType,
     GetCommentsForPostQueryType,
 } from '../../graphql/types/queries/posts'
@@ -44,7 +43,6 @@ import {
 import {
     addCommentForPost,
 } from '../../apollo/mutations/posts/commentsForPost'
-import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
 import { useSnackbar } from 'notistack'
 
 
@@ -112,16 +110,6 @@ export default function FollowedUsersPosts (props: BoxProps) {
     }, [])
 
     const [getFirstLikingUser] = useLazyQuery<GetFirstUserWhoLikedPostQueryType>(GET_FIRST_USER_WHO_LIKED_POST)
-
-    const commentsForPost = useQuery<GetCommentsForPostQueryType>(GET_COMMENTS_FOR_POST, {
-        variables: {
-            postId: viewingPostId,
-            offset: 0,
-            limit: 10,
-        },
-        skip: !viewingPostId,
-        notifyOnNetworkStatusChange: true,
-    })
 
     const [likePost] = useMutation(LIKE_POST)
     const [unlikePost] = useMutation(UNLIKE_POST)
@@ -250,6 +238,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
         return followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.postDetails.post._id === viewingPostId) ?? null
     }, [followedUsersPosts.data, viewingPostId])
 
+    const { commentsForPost, fetchMoreComments, hasMoreComments } = useComments({ postId: viewingPostId })
+
     const likeComment = useLikeComment()
     const unlikeComment = useUnlikeComment()
 
@@ -313,29 +303,6 @@ export default function FollowedUsersPosts (props: BoxProps) {
         })
     }
 
-    const handleFetchMoreComments = () => {
-        const postId = viewingPostId as string
-        const commentsForPostData = commentsForPost.data as GetCommentsForPostQueryType
-        commentsForPost.fetchMore({
-            variables: { postId, offset: commentsForPostData.getCommentsForPost.data.length },
-            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetCommentsForPostQueryType }) {
-                return {
-                    ...existing,
-                    getCommentsForPost: {
-                        ...existing.getCommentsForPost,
-                        data: [
-                            ...existing.getCommentsForPost.data,
-                            ...fetchMoreResult.getCommentsForPost.data,
-                        ]
-                    }
-                }
-            }
-        }).catch(console.log)
-    }
-
-    const hasMoreComments = commentsForPost.data ?
-        commentsForPost.data.getCommentsForPost.data.length < commentsForPost.data.getCommentsForPost.total : false
-
     return (
         <Box {...props}>
             { isFollowedUsersPostsInitialLoading ? (
@@ -381,7 +348,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     comments={commentsForPost.data?.getCommentsForPost.data ?? []}
                     hasMoreComments={hasMoreComments}
                     commentsLoading={commentsForPost.loading}
-                    onFetchMoreComments={handleFetchMoreComments}
+                    onFetchMoreComments={fetchMoreComments}
                     onLikeComment={handleLikeComment}
                     isCommentPosting={createCommentData.loading}
                     onPostComment={handlePostComment}
