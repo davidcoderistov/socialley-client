@@ -6,7 +6,7 @@ import { GET_COMMENTS_FOR_POST } from '../../../graphql/queries/posts'
 import { GetCommentsForPostQueryType } from '../../../graphql/types/queries/posts'
 import { CREATE_COMMENT } from '../../../graphql/mutations/posts'
 import { CreateCommentMutationType } from '../../../graphql/types/mutations/posts'
-import { addCommentForPost } from '../../../apollo/mutations/posts/commentsForPost'
+import { addCommentForPost, incrementCommentsCountForPost } from '../../../apollo/mutations/posts/commentsForPost'
 import { Comment } from '../../../graphql/types/models'
 
 
@@ -36,6 +36,19 @@ export function useCreateComment ({ postId }: { postId: string | null }) {
         })
     }
 
+    const updateCommentsForPostIncrementCount = (postId: string) => {
+        client.cache.updateQuery({
+            query: GET_COMMENTS_FOR_POST,
+            variables: { postId }
+        }, (commentsForPost: GetCommentsForPostQueryType | null) => {
+            if (commentsForPost) {
+                return incrementCommentsCountForPost({
+                    commentsForPost,
+                }).commentsForPost
+            }
+        })
+    }
+
     const handleCreateComment = (comment: string, onSuccess?: () => void) => {
         createComment({
             variables: {
@@ -58,6 +71,8 @@ export function useCreateComment ({ postId }: { postId: string | null }) {
                             likesCount: 0,
                         }
                     )
+                } else {
+                    updateCommentsForPostIncrementCount(postId as string)
                 }
                 if (onSuccess) {
                     onSuccess()
