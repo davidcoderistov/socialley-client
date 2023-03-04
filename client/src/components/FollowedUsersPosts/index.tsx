@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
-import { useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { useInfiniteScroll } from '../../hooks/misc'
 import {
     useLikeComment,
@@ -8,19 +8,17 @@ import {
     useUpdatePostAddLikingUser,
     useUpdatePostRemoveLikingUser,
     useComments,
+    useCreateComment,
 } from '../../hooks/graphql/posts'
 import {
     GET_FOLLOWED_USERS_POSTS,
     GET_FIRST_USER_WHO_LIKED_POST,
-    GET_COMMENTS_FOR_POST,
 } from '../../graphql/queries/posts'
 import {
     GetFollowedUsersPostsQueryType,
     GetFirstUserWhoLikedPostQueryType,
-    GetCommentsForPostQueryType,
 } from '../../graphql/types/queries/posts'
-import { FollowedUserPost, Comment } from '../../graphql/types/models'
-import { CreateCommentMutationType } from '../../graphql/types/mutations/posts'
+import { FollowedUserPost } from '../../graphql/types/models'
 import Box, { BoxProps } from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Post from '../Post'
@@ -31,7 +29,6 @@ import {
     UNLIKE_POST,
     MARK_USER_POST_AS_FAVORITE,
     UNMARK_USER_POST_AS_FAVORITE,
-    CREATE_COMMENT,
 } from '../../graphql/mutations/posts'
 import {
     updateFollowedUserPostLikedStatus,
@@ -40,17 +37,12 @@ import {
     updateFollowedUserPostFavoriteLoadingStatus,
     incrementFollowedUserPostCommentsCount,
 } from '../../apollo/mutations/posts/followedUsersPosts'
-import {
-    addCommentForPost,
-} from '../../apollo/mutations/posts/commentsForPost'
 import { useSnackbar } from 'notistack'
 
 
 export default function FollowedUsersPosts (props: BoxProps) {
 
     const [loggedInUser] = useLoggedInUser()
-
-    const client = useApolloClient()
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -251,56 +243,18 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }
     }
 
-    const [createComment, createCommentData] = useMutation<CreateCommentMutationType>(CREATE_COMMENT)
-
-    const updateCommentsForPostAddComment = (postId: string, comment: Comment) => {
-        client.cache.updateQuery({
-            query: GET_COMMENTS_FOR_POST,
-            variables: { postId }
-        }, (commentsForPost: GetCommentsForPostQueryType | null) => {
-            if (commentsForPost) {
-                return addCommentForPost({
-                    commentsForPost,
-                    comment,
-                }).commentsForPost
-            }
-        })
-    }
+    const { createComment, createCommentData } = useCreateComment({ postId: viewingPostId })
 
     const handlePostComment = (comment: string) => {
-        const postId = viewingPostId as string
-        createComment({
-            variables: {
-                comment: {
-                    postId,
-                    text: comment,
-                }
-            }
-        }).then(data => {
-            const createComment = data.data?.createComment
-            if (createComment) {
-                if (!hasMoreComments) {
-                    updateCommentsForPostAddComment(
-                        postId,
-                        {
-                            ...createComment,
-                            user: {...loggedInUser},
-                            liked: false,
-                            isLikedLoading: false,
-                            likesCount: 0,
-                        }
-                    )
-                }
+        createComment(
+            comment,
+            () => {
                 followedUsersPosts.updateQuery(followedUsersPosts => incrementFollowedUserPostCommentsCount({
                     followedUsersPosts,
-                    postId,
+                    postId: viewingPostId as string,
                 }).followedUsersPosts)
-            } else {
-                enqueueSnackbar(`Comment could not be posted`, { variant: 'error' })
             }
-        }).catch(() => {
-            enqueueSnackbar(`Comment could not be posted`, { variant: 'error' })
-        })
+        )
     }
 
     return (
