@@ -6,6 +6,7 @@ import {
     useLikeComment,
     useUnlikeComment,
     useUpdatePostAddLikingUser,
+    useUpdatePostRemoveLikingUser,
 } from '../../hooks/graphql/posts'
 import {
     GET_FOLLOWED_USERS_POSTS,
@@ -235,26 +236,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     const updatePostQueryAddLikingUser = useUpdatePostAddLikingUser()
 
-    const updatePostQueryRemoveLikingUser = (postId: string): GetUsersWhoLikedPostQueryType | null => {
-        let usersWhoLikedPostResult = null
-        client.cache.updateQuery({
-            query: GET_USERS_WHO_LIKED_POST,
-            variables: { postId }
-        }, (usersWhoLikedPost: GetUsersWhoLikedPostQueryType | null) => {
-            if (usersWhoLikedPost) {
-                usersWhoLikedPostResult = usersWhoLikedPost
-                const result = usersWhoLikedPostMutations.removeUserWhoLikedPost({
-                    usersWhoLikedPost,
-                    userId: loggedInUser._id
-                })
-                if (result.success) {
-                    usersWhoLikedPostResult = result.usersWhoLikedPost
-                    return result.usersWhoLikedPost
-                }
-            }
-        })
-        return usersWhoLikedPostResult
-    }
+    const updatePostQueryRemoveLikingUser = useUpdatePostRemoveLikingUser()
 
     const handleViewPost = (postId: string) => {
         setViewingPostId(postId)
