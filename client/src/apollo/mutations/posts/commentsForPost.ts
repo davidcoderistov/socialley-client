@@ -78,3 +78,27 @@ export function addCommentForPost (options: AddCommentForPostOptions): AddCommen
         success: true,
     }
 }
+
+interface IncrementCommentsCountForPostOptions {
+    commentsForPost: GetCommentsForPostQueryType
+}
+
+interface IncrementCommentsCountForPostReturnValue {
+    commentsForPost: GetCommentsForPostQueryType
+    success: boolean
+}
+
+export function incrementCommentsCountForPost (options: IncrementCommentsCountForPostOptions): IncrementCommentsCountForPostReturnValue {
+    const { commentsForPost } = options
+
+    return {
+        commentsForPost: {
+            ...commentsForPost,
+            getCommentsForPost: {
+                ...commentsForPost.getCommentsForPost,
+                total: commentsForPost.getCommentsForPost.total + 1
+            }
+        },
+        success: true,
+    }
+}
