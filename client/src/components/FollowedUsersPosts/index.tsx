@@ -2,7 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useQuery, useLazyQuery, useMutation, useApolloClient } from '@apollo/client'
 import { useInfiniteScroll } from '../../hooks/misc'
-import { useLikeComment, useUnlikeComment } from '../../hooks/graphql/posts'
+import {
+    useLikeComment,
+    useUnlikeComment,
+    useUpdatePostAddLikingUser,
+} from '../../hooks/graphql/posts'
 import {
     GET_FOLLOWED_USERS_POSTS,
     GET_USERS_WHO_LIKED_POST,
@@ -229,25 +233,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }
     }
 
-    const updatePostQueryAddLikingUser = (postId: string) => {
-        client.cache.updateQuery({
-            query: GET_USERS_WHO_LIKED_POST,
-            variables: { postId }
-        }, (usersWhoLikedPost: GetUsersWhoLikedPostQueryType | null) => {
-            if (usersWhoLikedPost) {
-                return usersWhoLikedPostMutations.addUserWhoLikedPost({
-                    usersWhoLikedPost,
-                    userWhoLikedPost: {
-                        followableUser: {
-                            user: loggedInUser,
-                            following: true,
-                        },
-                        isFollowingLoading: false,
-                    }
-                }).usersWhoLikedPost
-            }
-        })
-    }
+    const updatePostQueryAddLikingUser = useUpdatePostAddLikingUser()
 
     const updatePostQueryRemoveLikingUser = (postId: string): GetUsersWhoLikedPostQueryType | null => {
         let usersWhoLikedPostResult = null
