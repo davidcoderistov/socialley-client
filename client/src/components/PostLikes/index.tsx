@@ -173,6 +173,7 @@ export default function PostLikes (props: Props) {
                             component='span'
                             fontWeight='600'
                             sx={{ cursor: 'pointer' }}
+                            onClick={handleViewLikingUsers}
                         >
                             { props.user.username }
                         </Box>&nbsp;
