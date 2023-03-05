@@ -102,7 +102,7 @@ export default function UserPostsFeed ({ boxProps = {}, dense = false, shouldSki
 
     const handleLikePost = (postId: string, liked: boolean) => {
         if (liked) {
-            likePost(postId)
+            likePost(postId, postViewDetails as PostViewDetails)
         } else {
             unlikePost(postId, postViewDetails as PostViewDetails)
         }
