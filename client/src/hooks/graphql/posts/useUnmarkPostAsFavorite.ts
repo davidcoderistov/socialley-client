@@ -3,6 +3,7 @@ import { useSnackbar } from 'notistack'
 import { UNMARK_USER_POST_AS_FAVORITE } from '../../../graphql/mutations/posts'
 import { useUpdatePostDetailsFavoriteLoadingStatus } from './useUpdatePostDetailsFavoriteLoadingStatus'
 import { useUpdatePostDetailsFavoriteStatus } from './useUpdatePostDetailsFavoriteStatus'
+import { useRemoveFavoritePostForUser } from './useRemoveFavoritePostForUser'
 
 
 export function useUnmarkPostAsFavorite () {
@@ -13,6 +14,7 @@ export function useUnmarkPostAsFavorite () {
 
     const updatePostDetailsFavoriteLoadingStatus = useUpdatePostDetailsFavoriteLoadingStatus()
     const updatePostDetailsFavoriteStatus = useUpdatePostDetailsFavoriteStatus()
+    const removeFavoritePostForUser = useRemoveFavoritePostForUser()
 
     return (postId: string) => {
         updatePostDetailsFavoriteLoadingStatus(postId, true)
@@ -22,6 +24,7 @@ export function useUnmarkPostAsFavorite () {
             }
         }).then(() => {
             updatePostDetailsFavoriteStatus(postId, false)
+            removeFavoritePostForUser(postId)
         }).catch(() => {
             updatePostDetailsFavoriteLoadingStatus(postId, false)
             enqueueSnackbar(`Could not unmark this post as favorite`, { variant: 'error' })
