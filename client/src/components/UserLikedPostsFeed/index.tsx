@@ -113,7 +113,7 @@ export default function UserLikedPostsFeed ({ boxProps = {}, dense = false, shou
 
     const handleBookmarkPost = (postId: string, favorite: boolean) => {
         if (favorite) {
-            markPostAsFavorite(postId)
+            markPostAsFavorite(postId, postViewDetails as PostViewDetails)
         } else {
             unmarkPostAsFavorite(postId)
         }
