@@ -41,7 +41,37 @@ export function updatePostDetailsLikedStatus (options: UpdatePostDetailsLikedSta
     }
 }
 
-export default {
-    updatePostDetailsLikedLoadingStatus,
-    updatePostDetailsLikedStatus,
+interface UpdatePostDetailsFavoriteLoadingStatusOptions {
+    postDetails: GetPostDetailsQueryType
+    isFavoriteLoading: boolean
+}
+
+export function updatePostDetailsFavoriteLoadingStatus (options: UpdatePostDetailsFavoriteLoadingStatusOptions): GetPostDetailsQueryType {
+    const { postDetails, isFavoriteLoading } = options
+
+    return {
+        ...postDetails,
+        getPostDetails: {
+            ...postDetails.getPostDetails,
+            isFavoriteLoading,
+        }
+    }
+}
+
+interface UpdatePostDetailsFavoriteStatusOptions {
+    postDetails: GetPostDetailsQueryType
+    favorite: boolean
+}
+
+export function updatePostDetailsFavoriteStatus (options: UpdatePostDetailsFavoriteStatusOptions): GetPostDetailsQueryType {
+    const { postDetails, favorite } = options
+
+    return {
+        ...postDetails,
+        getPostDetails: {
+            ...postDetails.getPostDetails,
+            favorite,
+            isFavoriteLoading: false,
+        }
+    }
 }
