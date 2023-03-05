@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react'
 import { useApolloClient, useMutation } from '@apollo/client'
 import { useSnackbar } from 'notistack'
-import { GET_FOLLOWED_USERS_POSTS } from '../../graphql/queries/posts'
-import { GetFollowedUsersPostsQueryType } from '../../graphql/types/queries/posts'
+import { GET_FOLLOWED_USERS_POSTS, GET_POSTS_FOR_USER } from '../../graphql/queries/posts'
+import { GetFollowedUsersPostsQueryType, GetPostsForUserQueryType } from '../../graphql/types/queries/posts'
 import { CREATE_POST } from '../../graphql/mutations/posts'
 import { CreatePostMutationType } from '../../graphql/types/mutations/posts'
 import Dialog from '@mui/material/Dialog'
@@ -17,6 +17,7 @@ import ThumbnailPicker from './ThumbnailPicker'
 import PostPreview from './PostPreview'
 import { createFileFromBase64 } from '../../utils'
 import { addFollowedUserPost } from '../../apollo/mutations/posts/followedUsersPosts'
+import { addPostForUser } from '../../apollo/mutations/posts/postsForUser'
 
 
 interface CreatePostModalProps {
@@ -107,6 +108,17 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                                 followedUsersPosts,
                                 postDetails,
                             }).followedUsersPosts
+                        }
+                    }
+                )
+                client.cache.updateQuery(
+                    { query: GET_POSTS_FOR_USER },
+                    (postsForUser: GetPostsForUserQueryType | null) => {
+                        if (postsForUser) {
+                            return addPostForUser({
+                                postsForUser,
+                                post: postDetails.post,
+                            })
                         }
                     }
                 )
