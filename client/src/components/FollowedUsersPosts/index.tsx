@@ -9,6 +9,10 @@ import {
     useUpdatePostRemoveLikingUser,
     useComments,
     useCreateComment,
+    useAddLikedPostForUser,
+    useRemoveLikedPostForUser,
+    useAddFavoritePostForUser,
+    useRemoveFavoritePostForUser,
 } from '../../hooks/graphql/posts'
 import {
     GET_FOLLOWED_USERS_POSTS,
@@ -101,6 +105,11 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }).finally(() => setIsFollowedUsersPostsInitialLoading(false))
     }, [])
 
+    const addLikedPostForUser = useAddLikedPostForUser()
+    const removeLikedPostForUser = useRemoveLikedPostForUser()
+    const addFavoritePostForUser = useAddFavoritePostForUser()
+    const removeFavoritePostForUser = useRemoveFavoritePostForUser()
+
     const [getFirstLikingUser] = useLazyQuery<GetFirstUserWhoLikedPostQueryType>(GET_FIRST_USER_WHO_LIKED_POST)
 
     const [likePost] = useMutation(LIKE_POST)
@@ -131,6 +140,10 @@ export default function FollowedUsersPosts (props: BoxProps) {
             }).then(() => {
                 updatePostQueryAddLikingUser(postId)
                 updateQueryFollowedUserPostLikedStatus(postId, liked, loggedInUser)
+                const followedUserPost = followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.postDetails.post._id === postId)
+                if (followedUserPost) {
+                    addLikedPostForUser(followedUserPost.postDetails.post)
+                }
             }).catch(() => {
                 updateQueryFollowedUserPostLikedLoadingStatus(postId, false)
                 enqueueSnackbar(`Could not like this post`, { variant: 'error' })
@@ -163,6 +176,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     }
                     updateQueryFollowedUserPostLikedStatus(postId, liked, null)
                 }
+                removeLikedPostForUser(postId)
             }).catch(() => {
                 updateQueryFollowedUserPostLikedLoadingStatus(postId, false)
                 enqueueSnackbar(`Could not unlike this post`, { variant: 'error' })
@@ -196,6 +210,10 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 }
             }).then(() => {
                 updateQueryFollowedUserPostFavoriteStatus(postId, favorite)
+                const followedUserPost = followedUsersPosts.data?.getFollowedUsersPosts.data.find(followedUserPost => followedUserPost.postDetails.post._id === postId)
+                if (followedUserPost) {
+                    addFavoritePostForUser(followedUserPost.postDetails.post)
+                }
             }).catch(() => {
                 updateQueryFollowedUserPostFavoriteLoadingStatus(postId, false)
                 enqueueSnackbar(`Could not mark this post as favorite`, { variant: 'error' })
@@ -207,6 +225,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 }
             }).then(() => {
                 updateQueryFollowedUserPostFavoriteStatus(postId, favorite)
+                removeFavoritePostForUser(postId)
             }).catch(() => {
                 updateQueryFollowedUserPostFavoriteLoadingStatus(postId, false)
                 enqueueSnackbar(`Could not unmark this post as favorite`, { variant: 'error' })
