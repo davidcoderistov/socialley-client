@@ -6,6 +6,7 @@ import { UNLIKE_POST } from '../../../graphql/mutations/posts'
 import { useUpdatePostDetailsLikedLoadingStatus } from './useUpdatePostDetailsLikedLoadingStatus'
 import { useUpdatePostDetailsLikedStatus } from './useUpdatePostDetailsLikedStatus'
 import { useUpdatePostRemoveLikingUser } from './useUpdatePostRemoveLikingUser'
+import { useRemoveLikedPostForUser } from './useRemoveLikedPostForUser'
 import { PostDetails } from '../../../types'
 
 
@@ -20,6 +21,7 @@ export function useUnlikePost () {
     const updatePostDetailsLikedLoadingStatus = useUpdatePostDetailsLikedLoadingStatus()
     const updatePostDetailsLikedStatus = useUpdatePostDetailsLikedStatus()
     const updatePostRemoveLikingUser = useUpdatePostRemoveLikingUser()
+    const removeLikedPostForUser = useRemoveLikedPostForUser()
 
     return (postId: string, postDetails: PostDetails) => {
         updatePostDetailsLikedLoadingStatus(postId, true)
@@ -47,6 +49,7 @@ export function useUnlikePost () {
                 }
                 updatePostDetailsLikedStatus(postId, false, null)
             }
+            removeLikedPostForUser(postId)
         }).catch(() => {
             updatePostDetailsLikedLoadingStatus(postId, false)
             enqueueSnackbar(`Could not unlike this post`, { variant: 'error' })
