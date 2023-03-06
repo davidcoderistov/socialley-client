@@ -5,6 +5,7 @@ import {
     Reply,
     AddCircleOutline,
     AccountCircle,
+    Search,
 } from '@mui/icons-material'
 
 
@@ -14,7 +15,7 @@ const Container = styled(Box)({
     padding: '8px',
 })
 
-export type NavType = 'home' | 'messages' | 'profile' | 'create'
+export type NavType = 'home' | 'messages' | 'profile' | 'create' | 'search'
 
 interface NavItemProps {
     active: boolean
@@ -50,12 +51,16 @@ export default function NavItem ({ active, hovered, type }: NavItemProps) {
                 { type === 'profile' && (
                     <AccountCircle sx={iconSx}/>
                 )}
+                { type === 'search' && (
+                    <Search sx={iconSx}/>
+                )}
             </ListItemIcon>
             <Typography noWrap marginY='4px' fontSize={15} sx={{ color: '#FFFFFF' }}>
                 { type === 'home' && 'Home '}
                 { type === 'messages' && 'Messages' }
                 { type === 'create' && 'Create' }
                 { type === 'profile' && 'Profile' }
+                { type === 'search' && 'Search' }
             </Typography>
         </Container>
     )

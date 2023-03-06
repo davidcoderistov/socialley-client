@@ -68,6 +68,10 @@ export default function Dashboard (props: Props) {
         setIsCreatePostModalOpen(false)
     }
 
+    const handleOpenSearchDrawer = () => {
+
+    }
+
     return (
         <ThemeProvider theme={mdTheme}>
             <Box sx={{ display: 'flex' }}>
@@ -86,6 +90,7 @@ export default function Dashboard (props: Props) {
                     <Divider />
                     <List component='nav' sx={{ paddingX: '12px' }}>
                         <NavLink to='/' type='home' />
+                        <NavLink isNotLink type='search' onClick={handleOpenSearchDrawer} />
                         <NavLink to='/messages' type='messages' />
                         <NavLink isNotLink type='create' onClick={handleOpenCreatePostModal} />
                         <NavLink to='/profile' type='profile' />
