@@ -20,10 +20,11 @@ export type NavType = 'home' | 'messages' | 'profile' | 'create' | 'search'
 interface NavItemProps {
     active: boolean
     hovered: boolean
+    bordered?: boolean
     type: NavType
 }
 
-export default function NavItem ({ active, hovered, type }: NavItemProps) {
+export default function NavItem ({ active, hovered, type, bordered = false }: NavItemProps) {
 
     const hoveredNotActive = hovered && !active
 
@@ -35,9 +36,20 @@ export default function NavItem ({ active, hovered, type }: NavItemProps) {
     return (
         <Container sx={{
             marginY: '12px',
+            position: 'relative',
             ...hoveredNotActive && { borderRadius: '20px', backgroundColor: '#0f0f0f' },
             ...active && { borderRadius: '20px', backgroundColor: '#161616' }
         }}>
+            { bordered && (
+                <Box
+                    position='absolute'
+                    border='1px solid #FFFFFF'
+                    borderRadius='50%'
+                    width='36px'
+                    height='36px'
+                    left='5px'
+                />
+            )}
             <ListItemIcon sx={{ minWidth: '40px' }}>
                 { type === 'home' && (
                     <Home sx={iconSx}/>

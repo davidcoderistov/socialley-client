@@ -14,6 +14,7 @@ interface LinkProps {
     to: string
     type: NavType
     isNotLink?: never
+    bordered?: boolean
     onClick?: never
 }
 
@@ -21,12 +22,13 @@ interface NotLinkProps {
     to?: never
     type: NavType
     isNotLink: true
+    bordered?: boolean
     onClick: () => void
 }
 
 export type NavLinkProps = LinkProps | NotLinkProps
 
-export default function NavLink ({ to, isNotLink, onClick, type }: NavLinkProps) {
+export default function NavLink ({ to, isNotLink, onClick, type, bordered = false }: NavLinkProps) {
 
     const [isHovered, setIsHovered] = useState(false)
 
@@ -62,6 +64,7 @@ export default function NavLink ({ to, isNotLink, onClick, type }: NavLinkProps)
             <NavItem
                 active={false}
                 hovered={isHovered}
+                bordered={bordered}
                 type={type} />
         </Box>
     )
