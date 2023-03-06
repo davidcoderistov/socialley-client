@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
@@ -8,6 +8,8 @@ import UserActionButton from '../UserActionButton'
 import FollowButton from '../FollowButton'
 import FollowingButton from '../FollowingButton'
 import UserAvatar from '../UserAvatar'
+import FollowingUsersModal from '../FollowingUsersModal'
+import FollowerUsersModal from '../FollowerUsersModal'
 
 
 interface LoggedInUserProfileProps {
@@ -77,6 +79,9 @@ type Props = LoggedInUserProfileProps | UserProfileDetailsProps | UserProfileLoa
 
 export default function UserProfileDetails (props: Props) {
 
+    const [isFollowingUsersModalOpen, setIsFollowingUsersModalOpen] = useState(false)
+    const [isFollowerUsersModalOpen, setIsFollowerUsersModalOpen] = useState(false)
+
     const handleFollowUser = () => {
         if (!props.loading && !props.isLoggedInUserProfile) {
             props.onFollowUser(props._id)
@@ -87,6 +92,26 @@ export default function UserProfileDetails (props: Props) {
         if (!props.loading && !props.isLoggedInUserProfile) {
             props.onUnfollowUser(props._id)
         }
+    }
+
+    const handleViewFollowingUsers = () => {
+        if (!props.loading) {
+            setIsFollowingUsersModalOpen(true)
+        }
+    }
+
+    const handleCloseFollowingUsersModal = () => {
+        setIsFollowingUsersModalOpen(false)
+    }
+
+    const handleViewFollowerUsers = () => {
+        if (!props.loading) {
+            setIsFollowerUsersModalOpen(true)
+        }
+    }
+
+    const handleCloseFollowerUsersModal = () => {
+        setIsFollowerUsersModalOpen(false)
     }
 
     return (
@@ -264,7 +289,8 @@ export default function UserProfileDetails (props: Props) {
                         marginRight='40px'
                         display='list-item'
                         fontSize='16px'
-                        sx={{ cursor: 'pointer' }}
+                        sx={{ ...!props.loading && { cursor: 'pointer' } }}
+                        onClick={handleViewFollowerUsers}
                     >
                         <Box
                             component='div'
@@ -291,7 +317,7 @@ export default function UserProfileDetails (props: Props) {
                                             { props.followersCount }
                                         </Box>
                                     </Box>
-                                    followers
+                                    { props.followersCount === 1 ? 'follower' : 'followers' }
                                 </>
                             ) }
                         </Box>
@@ -301,7 +327,8 @@ export default function UserProfileDetails (props: Props) {
                         marginRight='40px'
                         display='list-item'
                         fontSize='16px'
-                        sx={{ cursor: 'pointer' }}
+                        sx={{ ...!props.loading && { cursor: 'pointer' } }}
+                        onClick={handleViewFollowingUsers}
                     >
                         <Box
                             component='div'
@@ -360,7 +387,8 @@ export default function UserProfileDetails (props: Props) {
                             display='block'
                             marginTop='14px'
                             padding='0'
-                            sx={{ verticalAlign: 'baseline' }}
+                            sx={{ verticalAlign: 'baseline', cursor: 'pointer' }}
+                            onClick={handleViewFollowerUsers}
                         >
                             <Box
                                 component='div'
@@ -381,6 +409,14 @@ export default function UserProfileDetails (props: Props) {
                     )}
                 </Box>
             </Box>
+            <FollowingUsersModal
+                open={isFollowingUsersModalOpen}
+                userId={props._id ?? null}
+                onClose={handleCloseFollowingUsersModal} />
+            <FollowerUsersModal
+                open={isFollowerUsersModalOpen}
+                userId={props._id ?? null}
+                onClose={handleCloseFollowerUsersModal} />
         </Box>
     )
 }
