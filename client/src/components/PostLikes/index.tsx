@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
+import { useRemoveFollowedUserPost } from '../../hooks/graphql/posts'
 import Box from '@mui/material/Box'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { useSnackbar } from 'notistack'
@@ -88,6 +89,8 @@ export default function PostLikes (props: Props) {
         })
     }
 
+    const removeFollowedUserPost = useRemoveFollowedUserPost()
+
     const handleFollowUser = (userId: string) => {
         updatePostQueryFollowingLoadingStatus(userId, true)
         followUser({
@@ -110,6 +113,7 @@ export default function PostLikes (props: Props) {
             }
         }).then(() => {
             updatePostQueryFollowingStatus(userId, false)
+            removeFollowedUserPost(userId)
         }).catch(() => {
             updatePostQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not unfollow user', { variant: 'error' })
