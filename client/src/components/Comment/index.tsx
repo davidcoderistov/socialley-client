@@ -1,6 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, {useState, useMemo, useEffect} from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { useRemoveFollowedUserPost } from '../../hooks/graphql/posts'
 import { useSnackbar } from 'notistack'
 import Box from '@mui/material/Box'
 import Skeleton from '@mui/material/Skeleton'
@@ -110,8 +109,6 @@ export default function Comment (props: CommentProps) {
         })
     }
 
-    const removeFollowedUserPost = useRemoveFollowedUserPost()
-
     const handleFollowUser = (userId: string) => {
         updateCommentQueryFollowingLoadingStatus(userId, true)
         followUser({
@@ -134,7 +131,6 @@ export default function Comment (props: CommentProps) {
             }
         }).then(() => {
             updateCommentQueryFollowingStatus(userId, false)
-            removeFollowedUserPost(userId)
         }).catch(() => {
             updateCommentQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not unfollow user', { variant: 'error' })
