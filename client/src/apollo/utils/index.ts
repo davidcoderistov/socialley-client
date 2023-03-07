@@ -6,6 +6,7 @@ import {
     Comment,
     FollowingUser,
     FollowerUser,
+    SearchedUser,
 } from '../../graphql/types/models'
 import {
     GetFollowedUsersPostsQueryType,
@@ -17,6 +18,7 @@ import {
     GetSuggestedUsersQueryType,
     GetFollowingForUserQueryType,
     GetFollowersForUserQueryType,
+    GetSearchedUsersQueryType,
 } from '../../graphql/types/queries/users'
 
 
@@ -258,6 +260,38 @@ export function updateOneFollowerUser (options: UpdateOneFollowerUserOptions): U
 
     return {
         followerUsers: followerUsersResult,
+        success,
+    }
+}
+
+interface UpdateOneSearchedUserOptions {
+    searchedUsers: GetSearchedUsersQueryType
+    userId: string
+    mapper: (searchedUser: SearchedUser) => SearchedUser
+}
+
+interface UpdateOneSearchedUserReturnValue {
+    searchedUsers: GetSearchedUsersQueryType
+    success: boolean
+}
+
+export function updateOneSearchedUser (options: UpdateOneSearchedUserOptions): UpdateOneSearchedUserReturnValue {
+    const { searchedUsers, userId, mapper } = options
+
+    let success = false
+    const searchedUsersResult = {
+        ...searchedUsers,
+        getSearchedUsers: searchedUsers.getSearchedUsers.map(searchedUser => {
+            if (searchedUser.followableUser.user._id === userId) {
+                success = true
+                return mapper(searchedUser)
+            }
+            return searchedUser
+        })
+    }
+
+    return {
+        searchedUsers: searchedUsersResult,
         success,
     }
 }
