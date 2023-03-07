@@ -1,16 +1,22 @@
-import React from 'react'
+import React, { useEffect, useContext } from 'react'
+import AppContext from '../../config/context'
 import { useQuery } from '@apollo/client'
 import { useFollowSuggestedUser } from '../../hooks/graphql/users'
 import { GET_SUGGESTED_USERS } from '../../graphql/queries/users'
 import { GetSuggestedUsersQueryType } from '../../graphql/types/queries/users'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import CircularProgress from '@mui/material/CircularProgress'
 import FollowUserDetails from '../../components/FollowUserDetails'
 
 
 export default function SuggestedUsersPage () {
 
-    const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS)
+    const { isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited } = useContext(AppContext)
+
+    const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS, {
+        fetchPolicy: 'cache-only'
+    })
 
     const [{ followUser, unfollowUser }] = useFollowSuggestedUser()
 
@@ -21,6 +27,30 @@ export default function SuggestedUsersPage () {
     const handleUnfollowUser = (userId: string) => {
         unfollowUser(userId)
     }
+
+    useEffect(() => {
+        if (!isSuggestedUsersPageVisited) {
+            suggestedUsers.fetchMore({
+                variables: {
+                    offset: 5,
+                    limit: 10,
+                },
+                updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetSuggestedUsersQueryType }) {
+                    return {
+                        ...existing,
+                        getSuggestedUsers: {
+                            ...existing.getSuggestedUsers,
+                            data: [
+                                ...existing.getSuggestedUsers.data,
+                                ...fetchMoreResult.getSuggestedUsers.data,
+                            ]
+                        }
+                    }
+                }
+            })
+            setIsSuggestedUsersPageVisited(true)
+        }
+    }, [isSuggestedUsersPageVisited])
 
     return (
         <Box
@@ -91,8 +121,8 @@ export default function SuggestedUsersPage () {
                             position='relative'
                             paddingY='0'
                         >
-                            { suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.length > 0 ?
-                                suggestedUsers.data.getSuggestedUsers.map(suggestedUser => (
+                            { suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.total > 0 ?
+                                suggestedUsers.data.getSuggestedUsers.data.map(suggestedUser => (
                                     <FollowUserDetails
                                         key={suggestedUser.followableUser.user._id}
                                         user={{...suggestedUser, ...suggestedUser.followableUser, ...suggestedUser.followableUser.user}}
@@ -103,6 +133,26 @@ export default function SuggestedUsersPage () {
                         </Box>
                     </Box>
                 </Box>
+                { suggestedUsers.loading && (
+                    <Box
+                        component='div'
+                        display='flex'
+                        flexDirection='column'
+                        justifyContent='center'
+                        alignItems='center'
+                    >
+                        <Box
+                            component='div'
+                            display='flex'
+                            flexDirection='row'
+                            justifyContent='center'
+                            alignItems='flex-start'
+                            height='50px'
+                        >
+                            <CircularProgress size={30} sx={{ color: '#FFFFFF', mt: 1 }} />
+                        </Box>
+                    </Box>
+                )}
             </Box>
         </Box>
     )

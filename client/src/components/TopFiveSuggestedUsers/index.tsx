@@ -15,7 +15,10 @@ export default function TopFiveSuggestedUsers () {
 
     const navigate = useNavigate()
 
-    const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS)
+    const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(
+        GET_SUGGESTED_USERS,
+        { variables: { offset: 0, limit: 5 }}
+    )
 
     const [{ followUser, unfollowUser }] = useFollowSuggestedUser()
 
@@ -49,9 +52,9 @@ export default function TopFiveSuggestedUsers () {
                     color='#A8A8A8'
                     noWrap
                 >
-                    { suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.length > 0 && 'Suggestions for you' }
+                    { suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.total > 0 && 'Suggestions for you' }
                 </Typography>
-                { suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.length > 5 && (
+                { suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.total > 5 && (
                     <Button
                         variant='text'
                         sx={{
@@ -72,8 +75,8 @@ export default function TopFiveSuggestedUsers () {
                     key={index}
                     isUserLoading={true}
                     dense />
-            )) : suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.length > 0 ?
-                suggestedUsers.data.getSuggestedUsers.slice(0, 5).map(suggestedUser => (
+            )) : suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.total > 0 ?
+                suggestedUsers.data.getSuggestedUsers.data.map(suggestedUser => (
                     <FollowUserDetails
                         key={suggestedUser.followableUser.user._id}
                         user={{...suggestedUser, ...suggestedUser.followableUser, ...suggestedUser.followableUser.user}}
