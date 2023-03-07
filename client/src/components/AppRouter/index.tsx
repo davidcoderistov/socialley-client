@@ -22,6 +22,7 @@ import SessionModal from '../SessionModal'
 export default function AppRouter () {
 
     const [loggedInUser, setUser] = useState<User | null>(null)
+    const [isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited] = useState(false)
     const [sessionModalOpen, setSessionModalOpen] = useState(false)
 
     const [refresh] = useMutation<RefreshMutationType>(REFRESH)
@@ -132,11 +133,11 @@ export default function AppRouter () {
                     LOADING
                 </div>
             ) : loggedInUser ? (
-                <AppContext.Provider value={{ loggedInUser, setLoggedInUser }}>
+                <AppContext.Provider value={{ loggedInUser, setLoggedInUser, isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited }}>
                     <SignedInRouter />
                 </AppContext.Provider>
             ) : (
-                <AppContext.Provider value={{ loggedInUser, setLoggedInUser }}>
+                <AppContext.Provider value={{ loggedInUser, setLoggedInUser, isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited }}>
                     <Routes>
                         <Route path='/login' element={
                             <LoginPage />
