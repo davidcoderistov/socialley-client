@@ -102,3 +102,21 @@ export const GET_USER_DETAILS = gql`
         }
     }
 `
+
+export const GET_SEARCHED_USERS = gql`
+    query getSearchedUsers ($searchQuery: String!) {
+        getSearchedUsers (searchQuery: $searchQuery) {
+            followableUser {
+                user {
+                    _id
+                    firstName
+                    lastName
+                    username
+                    avatarURL
+                }
+                following
+            }
+            isFollowingLoading @client
+        }
+    }
+`

@@ -26,6 +26,11 @@ export interface SuggestedUser {
     isFollowingLoading: boolean
 }
 
+export interface SearchedUser {
+    followableUser: FollowableUser
+    isFollowingLoading: boolean
+}
+
 export interface Follow {
     _id: string
     followingUserId: string
