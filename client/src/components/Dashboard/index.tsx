@@ -11,6 +11,7 @@ import {
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles'
 import NavLink from './NavLink'
 import CreatePostModal from '../CreatePostModal'
+import SearchDrawer from '../SearchDrawer'
 import { useLocation } from 'react-router-dom'
 
 
@@ -54,6 +55,9 @@ interface Props {
 
 export default function Dashboard (props: Props) {
 
+    const [isAppDrawerOpen, setIsAppDrawerOpen] = useState(true)
+    const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false)
+
     const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false)
 
     const location = useLocation()
@@ -69,14 +73,22 @@ export default function Dashboard (props: Props) {
     }
 
     const handleOpenSearchDrawer = () => {
+        setIsAppDrawerOpen(false)
+        setIsSearchDrawerOpen(true)
+    }
 
+    const handleClickApp = () => {
+        if (isSearchDrawerOpen) {
+            setIsAppDrawerOpen(true)
+            setIsSearchDrawerOpen(false)
+        }
     }
 
     return (
         <ThemeProvider theme={mdTheme}>
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex' }} onClick={handleClickApp}>
                 <CssBaseline />
-                <Drawer variant='permanent' open={true} PaperProps={{ sx: { backgroundColor: 'black', borderRight: '1px solid #232323' }}}>
+                <Drawer variant='permanent' open={isAppDrawerOpen} PaperProps={{ sx: { backgroundColor: 'black', borderRight: '1px solid #232323' }}}>
                     <Toolbar
                         sx={{
                             pt: [4],
@@ -84,18 +96,19 @@ export default function Dashboard (props: Props) {
                         }}
                     >
                         <Typography noWrap variant='h5' color='#FFFFFF' sx={{ fontFamily: 'Bosca' }}>
-                            Socialley
+                            { isAppDrawerOpen && 'Socialley' }
                         </Typography>
                     </Toolbar>
                     <Divider />
                     <List component='nav' sx={{ paddingX: '12px' }}>
                         <NavLink to='/' type='home' />
-                        <NavLink isNotLink type='search' onClick={handleOpenSearchDrawer} />
+                        <NavLink isNotLink type='search' bordered={isSearchDrawerOpen} onClick={handleOpenSearchDrawer} />
                         <NavLink to='/messages' type='messages' />
                         <NavLink isNotLink type='create' onClick={handleOpenCreatePostModal} />
                         <NavLink to='/profile' type='profile' />
                     </List>
                 </Drawer>
+                <SearchDrawer open={isSearchDrawerOpen} />
                 <Box
                     component='main'
                     sx={{
