@@ -14,24 +14,27 @@ export const GET_USERS_BY_SEARCH_QUERY = gql`
 `
 
 export const GET_SUGGESTED_USERS = gql`
-    query getSuggestedUsers {
-        getSuggestedUsers {
-            followableUser {
-                user {
-                    _id
-                    firstName
-                    lastName
-                    username
-                    avatarURL
+    query getSuggestedUsers ($offset: Int!, $limit: Int!) {
+        getSuggestedUsers (offset: $offset, limit: $limit) {
+            data {
+                followableUser {
+                    user {
+                        _id
+                        firstName
+                        lastName
+                        username
+                        avatarURL
+                    }
+                    following
                 }
-                following
+                latestFollower {
+                    _id
+                    username
+                }
+                followedCount
+                isFollowingLoading @client
             }
-            latestFollower {
-                _id
-                username
-            }
-            followedCount
-            isFollowingLoading @client
+            total
         }
     }
 `

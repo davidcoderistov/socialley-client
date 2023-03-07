@@ -144,13 +144,16 @@ export function updateOneSuggestedUser (options: UpdateOneSuggestedUserOptions):
     let success = false
     const suggestedUsersResult = {
         ...suggestedUsers,
-        getSuggestedUsers: suggestedUsers.getSuggestedUsers.map(suggestedUser => {
-            if (suggestedUser.followableUser.user._id === userId) {
-                success = true
-                return mapper(suggestedUser)
-            }
-            return suggestedUser
-        })
+        getSuggestedUsers: {
+            ...suggestedUsers.getSuggestedUsers,
+            data: suggestedUsers.getSuggestedUsers.data.map(suggestedUser => {
+                if (suggestedUser.followableUser.user._id === userId) {
+                    success = true
+                    return mapper(suggestedUser)
+                }
+                return suggestedUser
+            })
+        }
     }
 
     return {

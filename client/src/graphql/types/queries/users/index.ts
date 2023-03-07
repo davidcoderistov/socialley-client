@@ -6,7 +6,10 @@ export interface GetUsersBySearchQueryQueryType {
 }
 
 export interface GetSuggestedUsersQueryType {
-    getSuggestedUsers: SuggestedUser[]
+    getSuggestedUsers: {
+        data: SuggestedUser[]
+        total: number
+    }
 }
 
 export interface GetFollowingForUserQueryType {
