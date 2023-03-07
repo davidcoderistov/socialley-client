@@ -183,6 +183,15 @@ const cache = new InMemoryCache({
                 }
             }
         },
+        SearchedUser: {
+            fields: {
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
+                }
+            }
+        },
     }
 })
 
