@@ -1,4 +1,4 @@
-import React, {  useRef, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client'
 import { useSnackbar } from 'notistack'
 import { GET_SEARCHED_USERS } from '../../graphql/queries/users'
@@ -52,11 +52,23 @@ export default function SearchDrawer (props: SearchDrawerProps) {
     const { enqueueSnackbar } = useSnackbar()
 
     const inputRef = useRef<HTMLInputElement>(null)
+    const [inputKey, setInputKey] = useState(9999)
 
     const [getSearchedUsers, searchedUsers] = useLazyQuery<GetSearchedUsersQueryType>(GET_SEARCHED_USERS, {
         notifyOnNetworkStatusChange: true })
 
     const _getSearchedUsers = useMemo(() => _debounce(getSearchedUsers, 500), [])
+
+    useEffect(() => {
+        const searchQuery = inputRef?.current?.value.trim()
+        if (!props.open && searchQuery && searchQuery.length > 0) {
+            setInputKey(inputKey + 1)
+            getSearchedUsers({
+                variables: { searchQuery: '' },
+                fetchPolicy: 'cache-only'
+            })
+        }
+    }, [props.open, inputRef, getSearchedUsers])
 
     const handleChangeSearchQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchQuery = event.target.value.trim()
@@ -170,6 +182,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
             </Toolbar>
             <Divider />
             <InputBase
+                key={inputKey}
                 inputRef={inputRef}
                 sx={{
                     color: '#FFFFFF',
