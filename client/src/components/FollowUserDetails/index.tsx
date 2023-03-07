@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -6,6 +6,7 @@ import Skeleton from '@mui/material/Skeleton'
 import UserAvatar from '../UserAvatar'
 import FollowButton from '../FollowButton'
 import FollowingButton from '../FollowingButton'
+import UnfollowUserModal from '../UnfollowUserModal'
 
 
 interface User {
@@ -44,6 +45,8 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
 
     const [loggedInUser] = useLoggedInUser()
 
+    const [userToUnfollow, setUserToUnfollow] = useState<User | null>(null)
+
     const handleFollowUser = () => {
         if (!isUserLoading && user) {
             onFollowUser(user._id)
@@ -52,9 +55,18 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
 
     const handleUnfollowUser = () => {
         if (!isUserLoading && user) {
+            setUserToUnfollow(null)
             onUnfollowUser(user._id)
         }
     }
+
+    const handleOpenUnfollowUserModal = () => {
+        if (!isUserLoading && user) {
+            setUserToUnfollow(user)
+        }
+    }
+
+    const handleCloseUnfollowUserModal = () => setUserToUnfollow(null)
 
     const loadingBackgroundColor = dark ? '#000000' : '#262626'
 
@@ -155,13 +167,20 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                 <FollowingButton
                     contained={!dense}
                     loading={user.isFollowingLoading}
-                    onClick={handleUnfollowUser} />
+                    onClick={handleOpenUnfollowUserModal} />
             ) : (
                 <FollowButton
                     contained={!dense}
                     loading={user.isFollowingLoading}
                     onClick={handleFollowUser} />
             ) : null }
+            { userToUnfollow && (
+                <UnfollowUserModal
+                    open={true}
+                    user={userToUnfollow}
+                    onUnfollowUser={handleUnfollowUser}
+                    onCloseModal={handleCloseUnfollowUserModal} />
+            )}
         </Box>
     )
 }
