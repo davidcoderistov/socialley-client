@@ -85,6 +85,9 @@ const cache = new InMemoryCache({
                 getFavoritePostsForUser: {
                     keyArgs: false,
                 },
+                getSuggestedUsers: {
+                    keyArgs: false,
+                }
             }
         },
         FullMessage: {
