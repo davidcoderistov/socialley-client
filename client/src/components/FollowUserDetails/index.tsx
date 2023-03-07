@@ -126,7 +126,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                             animation='wave'
                             width='120px'
                             {...dense && { height: '17px' }} />
-                    ) : !dense ? (
+                    ) : !dense || (!!user && !user.hasOwnProperty('followedCount')) ? (
                         <Typography
                             color='#8E8E8E'
                             fontSize={14}
