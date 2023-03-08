@@ -20,12 +20,13 @@ import { PostDetails as PostViewDetails } from '../../types'
 
 
 interface UserPostsFeedProps {
+    userId: string
     boxProps?: BoxProps
     dense?: boolean
     shouldSkipQuery?: boolean
 }
 
-export default function UserPostsFeed ({ boxProps = {}, dense = false, shouldSkipQuery = false }: UserPostsFeedProps) {
+export default function UserPostsFeed ({ userId, boxProps = {}, dense = false, shouldSkipQuery = false }: UserPostsFeedProps) {
 
     const [viewingPostId, setViewingPostId] = useState<string | null>(null)
 
@@ -38,7 +39,7 @@ export default function UserPostsFeed ({ boxProps = {}, dense = false, shouldSki
 
     useEffect(() => {
         if (!shouldSkipQuery && !userPosts.called) {
-            getUserPosts({ variables: { offset: 0, limit: 10 } })
+            getUserPosts({ variables: { userId, offset: 0, limit: 10 } })
         }
     }, [shouldSkipQuery])
 
@@ -58,7 +59,7 @@ export default function UserPostsFeed ({ boxProps = {}, dense = false, shouldSki
 
     const handleFetchMorePosts = () => {
         userPosts.fetchMore({
-            variables: { offset: posts.length },
+            variables: { userId, offset: posts.length },
             updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetPostsForUserQueryType }) {
                 return {
                     ...existing,

@@ -108,6 +108,7 @@ export default function MyProfile () {
                 width='75%'
             >
                 <UserPostsFeed
+                    userId={loggedInUser._id}
                     boxProps={{ marginBottom: '40px', ...tabIndex !== 0 && { display: 'none' } }}
                     dense
                     shouldSkipQuery={tabIndex !== 0} />

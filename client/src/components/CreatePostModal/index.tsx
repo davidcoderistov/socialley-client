@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useApolloClient, useMutation } from '@apollo/client'
+import { useLoggedInUser } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
 import { GET_FOLLOWED_USERS_POSTS, GET_POSTS_FOR_USER } from '../../graphql/queries/posts'
 import { GetFollowedUsersPostsQueryType, GetPostsForUserQueryType } from '../../graphql/types/queries/posts'
@@ -28,6 +29,8 @@ interface CreatePostModalProps {
 export default function CreatePostModal (props: CreatePostModalProps) {
 
     const client = useApolloClient()
+
+    const [loggedInUser] = useLoggedInUser()
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -112,7 +115,7 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                     }
                 )
                 client.cache.updateQuery(
-                    { query: GET_POSTS_FOR_USER },
+                    { query: GET_POSTS_FOR_USER, variables: { userId: loggedInUser._id }},
                     (postsForUser: GetPostsForUserQueryType | null) => {
                         if (postsForUser) {
                             return addPostForUser({
