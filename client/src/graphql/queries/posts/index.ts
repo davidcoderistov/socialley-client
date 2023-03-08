@@ -113,8 +113,8 @@ export const GET_USERS_WHO_LIKED_COMMENT = gql`
 `
 
 export const GET_POSTS_FOR_USER = gql`
-    query getPostsForUser ($offset: Int!, $limit: Int!) {
-        getPostsForUser (offset: $offset, limit: $limit) {
+    query getPostsForUser ($userId: String!, $offset: Int!, $limit: Int!) {
+        getPostsForUser (userId: $userId, offset: $offset, limit: $limit) {
             data {
                 _id
                 photoURL
