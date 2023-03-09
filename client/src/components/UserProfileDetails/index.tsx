@@ -10,6 +10,7 @@ import FollowingButton from '../FollowingButton'
 import UserAvatar from '../UserAvatar'
 import FollowingUsersModal from '../FollowingUsersModal'
 import FollowerUsersModal from '../FollowerUsersModal'
+import UnfollowUserModal from '../UnfollowUserModal'
 
 
 interface LoggedInUserProfileProps {
@@ -19,6 +20,7 @@ interface LoggedInUserProfileProps {
     username: string
     firstName: string
     lastName: string
+    avatarURL: string | null
     postsCount: number
     followersCount: number
     followingCount: number
@@ -39,6 +41,7 @@ interface UserProfileDetailsProps {
     username: string
     firstName: string
     lastName: string
+    avatarURL: string | null
     postsCount: number
     followersCount: number
     followingCount: number
@@ -62,6 +65,7 @@ interface UserProfileLoadingDetailsProps {
     username?: never
     firstName?: never
     lastName?: never
+    avatarURL?: never
     postsCount?: never
     followersCount?: never
     followingCount?: never
@@ -75,9 +79,19 @@ interface UserProfileLoadingDetailsProps {
     onClickOptions?: never
 }
 
+interface UnfollowUser {
+    _id: string
+    firstName: string
+    lastName: string
+    username: string
+    avatarURL: string | null
+}
+
 type Props = LoggedInUserProfileProps | UserProfileDetailsProps | UserProfileLoadingDetailsProps
 
 export default function UserProfileDetails (props: Props) {
+
+    const [userToUnfollow, setUserToUnfollow] = useState<UnfollowUser | null>(null)
 
     const [isFollowingUsersModalOpen, setIsFollowingUsersModalOpen] = useState(false)
     const [isFollowerUsersModalOpen, setIsFollowerUsersModalOpen] = useState(false)
@@ -88,8 +102,23 @@ export default function UserProfileDetails (props: Props) {
         }
     }
 
+    const handleOpenUnfollowUserModal = () => {
+        if (!props.loading) {
+            setUserToUnfollow({
+                _id: props._id,
+                firstName: props.firstName,
+                lastName: props.lastName,
+                username: props.username,
+                avatarURL: props.avatarURL,
+            })
+        }
+    }
+
+    const handleCloseUnfollowUserModal = () => setUserToUnfollow(null)
+
     const handleUnfollowUser = () => {
         if (!props.loading && !props.isLoggedInUserProfile) {
+            setUserToUnfollow(null)
             props.onUnfollowUser(props._id)
         }
     }
@@ -220,7 +249,7 @@ export default function UserProfileDetails (props: Props) {
                                     <FollowingButton
                                         contained={true}
                                         loading={props.isFollowingLoading}
-                                        onClick={handleUnfollowUser} />
+                                        onClick={handleOpenUnfollowUserModal} />
                                 ) : (
                                     <FollowButton
                                         contained={true}
@@ -426,6 +455,13 @@ export default function UserProfileDetails (props: Props) {
                 open={isFollowerUsersModalOpen}
                 userId={props._id ?? null}
                 onClose={handleCloseFollowerUsersModal} />
+            { userToUnfollow && (
+                <UnfollowUserModal
+                    open={true}
+                    user={userToUnfollow}
+                    onUnfollowUser={handleUnfollowUser}
+                    onCloseModal={handleCloseUnfollowUserModal} />
+            )}
         </Box>
     )
 }
