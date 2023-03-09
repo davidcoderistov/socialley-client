@@ -29,6 +29,7 @@ interface LoadingStateProps {
     user?: never
     onFollowUser?: never
     onUnfollowUser?: never
+    onClickUser?: never
 }
 
 interface UserStateProps {
@@ -38,11 +39,12 @@ interface UserStateProps {
     user: User
     onFollowUser: (userId: string) => void
     onUnfollowUser: (userId: string) => void
+    onClickUser?: (userId: string) => void
 }
 
 type Props = UserStateProps | LoadingStateProps
 
-export default function FollowUserDetails ({ user, dense = false, dark = false, isUserLoading, onFollowUser, onUnfollowUser }: Props) {
+export default function FollowUserDetails ({ user, dense = false, dark = false, isUserLoading, onFollowUser, onUnfollowUser, onClickUser }: Props) {
 
     const navigate = useProfileNavigate()
 
@@ -74,6 +76,9 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
     const handleClickUser = () => {
         if (!isUserLoading && user) {
             navigate(user._id)
+            if (onClickUser) {
+                onClickUser(user._id)
+            }
         }
     }
 
