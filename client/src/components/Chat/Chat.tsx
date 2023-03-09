@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useProfileNavigate } from '../../hooks/misc'
 import { Message } from '../../graphql/types/models'
 import { MessageUser } from '../../types'
 import Box from '@mui/material/Box'
@@ -114,6 +115,8 @@ interface ChatProps {
 
 export default function Chat ({ user }: ChatProps) {
 
+    const navigate = useProfileNavigate()
+
     const [message, setMessage] = useState('')
     const [uploadKey, setUploadKey] = useState(0)
 
@@ -170,6 +173,10 @@ export default function Chat ({ user }: ChatProps) {
 
     const onFetchMore = () => {
         fetchMoreChatMessages(user._id, data?.chatMessagesOffset ?? 0)
+    }
+
+    const handleClickUser = () => {
+        navigate(user._id)
     }
 
     return (
@@ -274,7 +281,9 @@ export default function Chat ({ user }: ChatProps) {
                                         firstName={user.firstName}
                                         lastName={user.lastName}
                                         size={24}
-                                        fontSize={12} />
+                                        fontSize={12}
+                                        clickable
+                                        onClick={handleClickUser} />
                                 </Box>
                                 <Box
                                     component='div'
@@ -288,6 +297,8 @@ export default function Chat ({ user }: ChatProps) {
                                     display='flex'
                                     boxSizing='border-box'
                                     position='relative'
+                                    sx={{ cursor: 'pointer' }}
+                                    onClick={handleClickUser}
                                 >
                                     <Typography
                                         variant='body1'
