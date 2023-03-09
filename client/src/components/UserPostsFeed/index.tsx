@@ -38,10 +38,10 @@ export default function UserPostsFeed ({ userId, boxProps = {}, dense = false, s
     const [getUserPosts, userPosts] = useLazyQuery<GetPostsForUserQueryType>(GET_POSTS_FOR_USER)
 
     useEffect(() => {
-        if (!shouldSkipQuery && !userPosts.called) {
+        if (!shouldSkipQuery) {
             getUserPosts({ variables: { userId, offset: 0, limit: 10 } })
         }
-    }, [shouldSkipQuery])
+    }, [shouldSkipQuery, userId])
 
     const posts = useMemo(() => {
         if (userPosts.data) {
