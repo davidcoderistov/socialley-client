@@ -157,7 +157,7 @@ export default function UserLikedPostsFeed ({ boxProps = {}, dense = false, shou
                 <PostView
                     postDetails={postViewDetails}
                     isPostDetailsLoading={postDetails.loading}
-                    onClickUser={() => {}}
+                    onClickUser={handleCloseViewPost}
                     onFollowUser={() => {}}
                     onLikePost={handleLikePost}
                     onBookmarkPost={handleBookmarkPost}

@@ -314,7 +314,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 <PostView
                     postDetails={{...viewingPost, ...viewingPost.postDetails, ...viewingPost.postDetails.post, user: {...viewingPost.postDetails.user, following: false, isFollowingLoading: false}}}
                     isPostDetailsLoading={false}
-                    onClickUser={() => {}}
+                    onClickUser={handleCloseViewPost}
                     onFollowUser={() => {}}
                     onLikePost={handleLikePost}
                     onBookmarkPost={handleBookmarkPost}
