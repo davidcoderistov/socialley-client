@@ -386,7 +386,7 @@ export default function UserProfileDetails (props: Props) {
                             <Skeleton sx={{ backgroundColor: '#2C3539' }} animation='wave' width='100px' />
                         ) : `${props.firstName} ${props.lastName}` }
                     </Typography>
-                    { !props.loading && !props.isLoggedInUserProfile && props.following && (
+                    { !props.loading && !props.isLoggedInUserProfile && (
                         <Box
                             component='div'
                             border='0'
