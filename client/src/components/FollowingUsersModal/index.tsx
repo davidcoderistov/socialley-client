@@ -129,6 +129,7 @@ export default function FollowingUsersModal (props: Props) {
                 followingUsers.data.getFollowingForUser.data.length < followingUsers.data.getFollowingForUser.total : false}
             onFetchMoreUsers={handleFetchMoreUsers}
             onFollowUser={handleFollowUser}
-            onUnfollowUser={handleUnfollowUser} />
+            onUnfollowUser={handleUnfollowUser}
+            onClickUser={props.onClose} />
     )
 }

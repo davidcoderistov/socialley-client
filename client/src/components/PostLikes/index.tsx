@@ -208,7 +208,8 @@ export default function PostLikes (props: Props) {
                     usersWhoLikedPost.data.getUsersWhoLikedPost.data.length < usersWhoLikedPost.data.getUsersWhoLikedPost.total : false}
                 onFetchMoreUsers={handleFetchMoreUsers}
                 onFollowUser={handleFollowUser}
-                onUnfollowUser={handleUnfollowUser} />
+                onUnfollowUser={handleUnfollowUser}
+                onClickUser={handleCloseUserLikesModal} />
         </>
     )
 }

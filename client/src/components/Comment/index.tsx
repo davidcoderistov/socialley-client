@@ -380,7 +380,8 @@ export default function Comment (props: CommentProps) {
                     usersWhoLikedComment.data.getUsersWhoLikedComment.data.length < usersWhoLikedComment.data.getUsersWhoLikedComment.total : false}
                 onFetchMoreUsers={handleFetchMoreUsers}
                 onFollowUser={handleFollowUser}
-                onUnfollowUser={handleUnfollowUser} />
+                onUnfollowUser={handleUnfollowUser}
+                onClickUser={handleCloseUserLikesModal} />
         </Box>
     )
 }
