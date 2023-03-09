@@ -62,7 +62,8 @@ export default function Dashboard (props: Props) {
 
     const location = useLocation()
 
-    const backgroundColor = location.pathname === '/' || location.pathname === '/profile' ? '#000000' : '#121212'
+    const backgroundColor =
+        location.pathname === '/' || location.pathname === '/profile' || location.pathname.startsWith('/users') ? '#000000' : '#121212'
 
     const handleOpenCreatePostModal = () => {
         setIsCreatePostModalOpen(true)
