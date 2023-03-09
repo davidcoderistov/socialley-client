@@ -110,6 +110,12 @@ export default function UserProfileDetails (props: Props) {
         }
     }
 
+    const handleViewMutualFollowers = () => {
+        if (!props.loading && !props.isLoggedInUserProfile && props.mutualFollowersCount > 0 && props.latestMutualFollower) {
+            setIsFollowerUsersModalOpen(true)
+        }
+    }
+
     const handleCloseFollowerUsersModal = () => {
         setIsFollowerUsersModalOpen(false)
     }
@@ -279,7 +285,7 @@ export default function UserProfileDetails (props: Props) {
                                             { props.postsCount }
                                         </Box>
                                     </Box>
-                                    posts
+                                    { props.postsCount === 1 ? 'post' : 'posts' }
                                 </>
                             )}
                         </Box>
@@ -387,8 +393,11 @@ export default function UserProfileDetails (props: Props) {
                             display='block'
                             marginTop='14px'
                             padding='0'
-                            sx={{ verticalAlign: 'baseline', cursor: 'pointer' }}
-                            onClick={handleViewFollowerUsers}
+                            sx={{
+                                verticalAlign: 'baseline',
+                                ...props.mutualFollowersCount > 0 && props.latestMutualFollower && { cursor: 'pointer' },
+                            }}
+                            onClick={handleViewMutualFollowers}
                         >
                             <Box
                                 component='div'
