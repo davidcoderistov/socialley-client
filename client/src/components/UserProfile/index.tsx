@@ -107,6 +107,7 @@ export default function UserProfile (props: UserProfileProps) {
                         username={user.followableUser.user.username}
                         firstName={user.followableUser.user.firstName}
                         lastName={user.followableUser.user.lastName}
+                        avatarURL={user.followableUser.user.avatarURL}
                         postsCount={user.postsCount}
                         followersCount={user.followersCount}
                         followingCount={user.followingCount}
