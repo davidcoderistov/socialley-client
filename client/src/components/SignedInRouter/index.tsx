@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import Dashboard from '../Dashboard'
 import HomePage from '../../pages/HomePage'
 import MessagesPage from '../../pages/MessagesPage'
-import ProfilePage from '../../pages/ProfilePage'
+import MyProfilePage from '../../pages/MyProfilePage'
 import SuggestedUsersPage from '../../pages/SuggestedUsersPage'
 import { useLatestMessages, useReceiveMessage } from '../../hooks/graphql/messages'
 
@@ -32,7 +32,7 @@ export default function SignedInRouter () {
                         fetchMoreMessages={fetchMoreMessages} />
                 } />
                 <Route path='/profile' element={
-                    <ProfilePage />
+                    <MyProfilePage />
                 } />
                 <Route path='/suggested-users' element={
                     <SuggestedUsersPage />

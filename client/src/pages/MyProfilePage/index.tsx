@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import MyProfile from '../../components/MyProfile'
 
 
-export default function ProfilePage () {
+export default function MyProfilePage () {
 
     return (
         <Box color='#FFFFFF' width='100%' marginTop='40px'>
