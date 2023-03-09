@@ -1,4 +1,5 @@
 import React from 'react'
+import { useProfileNavigate } from '../../hooks/misc'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
@@ -46,10 +47,13 @@ type Props = StaticProps | LoadingProps
 
 export default function PostUserView (props: Props) {
 
+    const navigate = useProfileNavigate()
+
     const ago = !props.loading ? getTimeElapsed(props.post.createdAt) : ''
 
     const handleClickUser = () => {
         if (!props.loading) {
+            navigate(props.user._id)
             props.onClickUser(props.user._id)
         }
     }
@@ -103,7 +107,9 @@ export default function PostUserView (props: Props) {
                         size={40}
                         fontSize={16}
                         firstName={props.user.firstName}
-                        lastName={props.user.lastName} />
+                        lastName={props.user.lastName}
+                        clickable
+                        onClick={handleClickUser} />
                 )}
                 <Box
                     component='div'
