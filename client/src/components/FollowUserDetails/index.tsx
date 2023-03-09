@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useProfileNavigate } from '../../hooks/misc'
 import { useLoggedInUser } from '../../hooks/misc'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -44,7 +44,7 @@ type Props = UserStateProps | LoadingStateProps
 
 export default function FollowUserDetails ({ user, dense = false, dark = false, isUserLoading, onFollowUser, onUnfollowUser }: Props) {
 
-    const navigate = useNavigate()
+    const navigate = useProfileNavigate()
 
     const [loggedInUser] = useLoggedInUser()
 
@@ -73,7 +73,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
 
     const handleClickUser = () => {
         if (!isUserLoading && user) {
-            navigate(`/users/${user._id}`)
+            navigate(user._id)
         }
     }
 
