@@ -43,9 +43,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 interface SearchDrawerProps {
     open: boolean
-    onClose: () => void
 }
-
 
 export default function SearchDrawer (props: SearchDrawerProps) {
 
@@ -245,8 +243,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                             user={{ ...searchedUser, ...searchedUser.followableUser, ...searchedUser.followableUser.user }}
                             dense
                             onFollowUser={handleFollowUser}
-                            onUnfollowUser={handleUnfollowUser}
-                            onClickUser={props.onClose} />
+                            onUnfollowUser={handleUnfollowUser} />
                     ))}
                 </Box>
             </Box>

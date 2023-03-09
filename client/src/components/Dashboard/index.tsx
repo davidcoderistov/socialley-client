@@ -78,14 +78,10 @@ export default function Dashboard (props: Props) {
         setIsSearchDrawerOpen(true)
     }
 
-    const handleCloseSearchDrawer = () => {
-        setIsAppDrawerOpen(true)
-        setIsSearchDrawerOpen(false)
-    }
-
     const handleClickApp = () => {
         if (isSearchDrawerOpen) {
-            handleCloseSearchDrawer()
+            setIsAppDrawerOpen(true)
+            setIsSearchDrawerOpen(false)
         }
     }
 
@@ -113,7 +109,7 @@ export default function Dashboard (props: Props) {
                         <NavLink to='/profile' type='profile' />
                     </List>
                 </Drawer>
-                <SearchDrawer open={isSearchDrawerOpen} onClose={handleCloseSearchDrawer} />
+                <SearchDrawer open={isSearchDrawerOpen} />
                 <Box
                     component='main'
                     sx={{
