@@ -117,7 +117,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                         lastName={user.lastName}
                         size={dense ? 36 : 44}
                         fontSize={dense ? 14 : 16}
-                        clickable={true}
+                        clickable
                         onClick={handleClickUser}
                         backgroundColor={dark ? '#616161' : '#262626'} />
                 )}
