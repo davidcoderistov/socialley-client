@@ -10,15 +10,23 @@ interface Props {
     size?: number
     fontSize?: number
     backgroundColor?: string
+    clickable?: boolean
+    onClick?: () => void
 }
 
-export default function UserAvatar ({ firstName, lastName, size = 56, fontSize, backgroundColor = '#2C3539' }: Props) {
+export default function UserAvatar ({ firstName, lastName, size = 56, fontSize, backgroundColor = '#2C3539', clickable = false, onClick }: Props) {
 
     const firstInitial = useMemo(() => getInitial(firstName), [firstName])
     const secondInitial = useMemo(() => getInitial(lastName), [lastName])
 
+    const handleClick = () => {
+        if (clickable && onClick) {
+            onClick()
+        }
+    }
+
     return (
-        <Avatar sx={{ width: size, height: size, backgroundColor, ...fontSize && { fontSize }}}>
+        <Avatar sx={{ width: size, height: size, backgroundColor, ...fontSize && { fontSize }, ...clickable && { cursor: 'pointer' }}} onClick={handleClick}>
             {firstInitial}{secondInitial}
         </Avatar>
     )
