@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 import { useSnackbar } from 'notistack'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { GET_FOLLOWERS_FOR_USER } from '../../graphql/queries/users'
@@ -18,10 +18,11 @@ export default function FollowerUsersModal (props: Props) {
 
     const { enqueueSnackbar } = useSnackbar()
 
-    const [isInitialLoading, setIsInitialLoading] = useState(false)
+    const [isLoadingMore, setIsLoadingMore] = useState(false)
 
-    const [getFollowerUsers, followerUsers] = useLazyQuery<GetFollowersForUserQueryType>(GET_FOLLOWERS_FOR_USER, {
-        notifyOnNetworkStatusChange: true,
+    const followerUsers = useQuery<GetFollowersForUserQueryType>(GET_FOLLOWERS_FOR_USER, {
+        variables: { userId: props.userId, offset: 0, limit: 10 },
+        skip: !props.open || !props.userId,
     })
 
     const [followUser] = useMutation(FOLLOW_USER)
@@ -29,6 +30,7 @@ export default function FollowerUsersModal (props: Props) {
 
     const handleFetchMoreUsers = () => {
         if (followerUsers.data) {
+            setIsLoadingMore(true)
             followerUsers.fetchMore({
                 variables: {
                     offset: followerUsers.data.getFollowersForUser.data.length,
@@ -46,7 +48,7 @@ export default function FollowerUsersModal (props: Props) {
                         }
                     }
                 }
-            }).catch(console.log)
+            }).catch(console.log).finally(() => setIsLoadingMore(false))
         }
     }
 
@@ -99,19 +101,6 @@ export default function FollowerUsersModal (props: Props) {
     }
 
     useEffect(() => {
-        if (!followerUsers.called && props.open && props.userId) {
-            setIsInitialLoading(true)
-            getFollowerUsers({
-                variables: {
-                    userId: props.userId,
-                    offset: 0,
-                    limit: 10,
-                },
-            }).finally(() => setIsInitialLoading(false))
-        }
-    }, [props.open, props.userId])
-
-    useEffect(() => {
         if (followerUsers.error) {
             enqueueSnackbar('Follower users could not be retrieved', { variant: 'error' })
         }
@@ -123,8 +112,8 @@ export default function FollowerUsersModal (props: Props) {
             open={props.open}
             onCloseModal={props.onClose}
             users={followerUsers.data?.getFollowersForUser.data.map(followerUser => ({...followerUser, ...followerUser.followableUser, ...followerUser.followableUser.user})) ?? []}
-            isInitialLoading={isInitialLoading}
-            isMoreLoading={followerUsers.loading}
+            isInitialLoading={followerUsers.loading}
+            isMoreLoading={isLoadingMore}
             hasMoreUsers={followerUsers.data ?
                 followerUsers.data.getFollowersForUser.data.length < followerUsers.data.getFollowersForUser.total : false}
             onFetchMoreUsers={handleFetchMoreUsers}
