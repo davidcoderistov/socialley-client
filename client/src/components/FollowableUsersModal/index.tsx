@@ -25,6 +25,7 @@ interface Props {
     onFetchMoreUsers: () => void
     onFollowUser: (userId: string) => void
     onUnfollowUser: (userId: string) => void
+    onClickUser: (userId: string) => void
 }
 
 export default function FollowableUsersModal (props: Props) {
@@ -66,7 +67,8 @@ export default function FollowableUsersModal (props: Props) {
                 hasMoreUsers={props.hasMoreUsers}
                 onFetchMoreUsers={props.onFetchMoreUsers}
                 onFollowUser={props.onFollowUser}
-                onUnfollowUser={props.onUnfollowUser} />
+                onUnfollowUser={props.onUnfollowUser}
+                onClickUser={props.onClickUser} />
         </Dialog>
     )
 }

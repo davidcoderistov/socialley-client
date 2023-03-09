@@ -25,6 +25,7 @@ interface Props {
     onFetchMoreUsers: () => void
     onFollowUser: (userId: string) => void
     onUnfollowUser: (userId: string) => void
+    onClickUser: (userId: string) => void
 }
 
 export default function UserList (props: Props) {
@@ -88,6 +89,7 @@ export default function UserList (props: Props) {
                                 user={user}
                                 onFollowUser={props.onFollowUser}
                                 onUnfollowUser={handleOpenUnfollowUserModal}
+                                onClickUser={props.onClickUser}
                             />
                         )) }
                     </InfiniteScroll>
