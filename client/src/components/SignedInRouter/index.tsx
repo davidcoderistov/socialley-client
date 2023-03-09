@@ -4,6 +4,7 @@ import Dashboard from '../Dashboard'
 import HomePage from '../../pages/HomePage'
 import MessagesPage from '../../pages/MessagesPage'
 import MyProfilePage from '../../pages/MyProfilePage'
+import UserProfilePage from '../../pages/UserProfilePage'
 import SuggestedUsersPage from '../../pages/SuggestedUsersPage'
 import { useLatestMessages, useReceiveMessage } from '../../hooks/graphql/messages'
 
@@ -33,6 +34,9 @@ export default function SignedInRouter () {
                 } />
                 <Route path='/profile' element={
                     <MyProfilePage />
+                } />
+                <Route path='/users/:id' element={
+                    <UserProfilePage />
                 } />
                 <Route path='/suggested-users' element={
                     <SuggestedUsersPage />
