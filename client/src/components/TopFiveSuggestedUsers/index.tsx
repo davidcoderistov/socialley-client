@@ -76,7 +76,7 @@ export default function TopFiveSuggestedUsers () {
                     isUserLoading={true}
                     dense />
             )) : suggestedUsers.data && suggestedUsers.data.getSuggestedUsers.total > 0 ?
-                suggestedUsers.data.getSuggestedUsers.data.map(suggestedUser => (
+                suggestedUsers.data.getSuggestedUsers.data.slice(0, 5).map(suggestedUser => (
                     <FollowUserDetails
                         key={suggestedUser.followableUser.user._id}
                         user={{...suggestedUser, ...suggestedUser.followableUser, ...suggestedUser.followableUser.user}}
