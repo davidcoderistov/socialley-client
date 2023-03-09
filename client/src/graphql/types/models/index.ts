@@ -141,4 +141,5 @@ export interface UserDetails {
     followersCount: number
     latestFollower: Pick<User, '_id' | 'username'> | null
     followedCount: number
+    isFollowingLoading: boolean
 }

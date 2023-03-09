@@ -102,6 +102,7 @@ export const GET_USER_DETAILS = gql`
                 username
             }
             followedCount
+            isFollowingLoading @client
         }
     }
 `

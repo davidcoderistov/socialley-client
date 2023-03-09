@@ -195,6 +195,15 @@ const cache = new InMemoryCache({
                 }
             }
         },
+        UserDetails: {
+            fields: {
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
+                }
+            }
+        },
     }
 })
 
