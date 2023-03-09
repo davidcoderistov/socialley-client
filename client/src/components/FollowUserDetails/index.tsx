@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useLoggedInUser } from '../../hooks/misc'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -43,6 +44,8 @@ type Props = UserStateProps | LoadingStateProps
 
 export default function FollowUserDetails ({ user, dense = false, dark = false, isUserLoading, onFollowUser, onUnfollowUser }: Props) {
 
+    const navigate = useNavigate()
+
     const [loggedInUser] = useLoggedInUser()
 
     const [userToUnfollow, setUserToUnfollow] = useState<User | null>(null)
@@ -67,6 +70,12 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
     }
 
     const handleCloseUnfollowUserModal = () => setUserToUnfollow(null)
+
+    const handleClickUser = () => {
+        if (!isUserLoading && user) {
+            navigate(`/users/${user._id}`)
+        }
+    }
 
     const loadingBackgroundColor = dark ? '#000000' : '#262626'
 
@@ -108,6 +117,8 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                         lastName={user.lastName}
                         size={dense ? 36 : 44}
                         fontSize={dense ? 14 : 16}
+                        clickable={true}
+                        onClick={handleClickUser}
                         backgroundColor={dark ? '#616161' : '#262626'} />
                 )}
                 <Box
@@ -128,6 +139,8 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                             color='#FFFFFF'
                             fontSize={14}
                             noWrap
+                            sx={{ cursor: 'pointer' }}
+                            onClick={handleClickUser}
                         >
                             { user.username }
                         </Typography>
