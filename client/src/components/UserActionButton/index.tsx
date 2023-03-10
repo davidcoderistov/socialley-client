@@ -8,7 +8,7 @@ interface UserActionButtonProps {
     minWidth?: number
     contained: boolean
     loading: boolean
-    onClick: () => void
+    onClick: (event: React.MouseEvent) => void
 }
 
 export default function UserActionButton (props: UserActionButtonProps) {
