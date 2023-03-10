@@ -14,6 +14,7 @@ import InputBase from '@mui/material/InputBase'
 import { styled } from '@mui/material/styles'
 import { Search } from '@mui/icons-material'
 import FollowUserDetails from '../FollowUserDetails'
+import SearchHistory from '../SearchHistory'
 import _range from 'lodash/range'
 import _debounce from 'lodash/debounce'
 import searchedUsersMutations from '../../apollo/mutations/users/searchedUsers'
@@ -224,40 +225,44 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                 position='relative'
                 sx={{ overflowX: 'hidden', overflowY: 'auto' }}
             >
-                <Box
-                    component='div'
-                    border='0'
-                    flexGrow='1'
-                    fontSize='100%'
-                    left='0'
-                    margin='0'
-                    position='absolute'
-                    width='100%'
-                    paddingLeft={searchedUsers.loading ? '9px' : '0'}
-                    sx={{ overflowX: 'hidden', overflowY: 'auto', verticalAlign: 'baseline' }}
-                >
-                    { searchedUsers.loading ? _range(7).map(index => (
-                        <FollowUserDetails
-                            key={index}
-                            isUserLoading={true} />
-                    )) : users.map(searchedUser => (
-                        <Box
-                            key={searchedUser.followableUser.user._id}
-                            component='div'
-                            paddingLeft='24px'
-                            paddingRight='8px'
-                            sx={{ '&:hover': { backgroundColor: '#121212' }, cursor: 'pointer' }}
-                            onClick={() => handleClickUser(searchedUser.followableUser.user._id)}
-                        >
+                { searchQuery.trim().length > 0 ? (
+                    <Box
+                        component='div'
+                        border='0'
+                        flexGrow='1'
+                        fontSize='100%'
+                        left='0'
+                        margin='0'
+                        position='absolute'
+                        width='100%'
+                        paddingLeft={searchedUsers.loading ? '9px' : '0'}
+                        sx={{ overflowX: 'hidden', overflowY: 'auto', verticalAlign: 'baseline' }}
+                    >
+                        { searchedUsers.loading ? _range(7).map(index => (
                             <FollowUserDetails
-                                user={{ ...searchedUser, ...searchedUser.followableUser, ...searchedUser.followableUser.user }}
-                                dense
-                                clickable={false}
-                                onFollowUser={handleFollowUser}
-                                onUnfollowUser={handleUnfollowUser} />
-                        </Box>
-                    ))}
-                </Box>
+                                key={index}
+                                isUserLoading={true} />
+                        )) : users.map(searchedUser => (
+                            <Box
+                                key={searchedUser.followableUser.user._id}
+                                component='div'
+                                paddingLeft='24px'
+                                paddingRight='8px'
+                                sx={{ '&:hover': { backgroundColor: '#121212' }, cursor: 'pointer' }}
+                                onClick={() => handleClickUser(searchedUser.followableUser.user._id)}
+                            >
+                                <FollowUserDetails
+                                    user={{ ...searchedUser, ...searchedUser.followableUser, ...searchedUser.followableUser.user }}
+                                    dense
+                                    clickable={false}
+                                    onFollowUser={handleFollowUser}
+                                    onUnfollowUser={handleUnfollowUser} />
+                            </Box>
+                        ))}
+                    </Box>
+                ): (
+                    <SearchHistory skipFetch={!props.open} />
+                )}
             </Box>
         </Drawer>
     )
