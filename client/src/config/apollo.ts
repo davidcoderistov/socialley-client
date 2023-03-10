@@ -87,6 +87,11 @@ const cache = new InMemoryCache({
                 },
                 getSuggestedUsers: {
                     keyArgs: false,
+                },
+                getSearchedUsersForUser: {
+                    merge (_, incoming) {
+                        return incoming
+                    }
                 }
             }
         },
