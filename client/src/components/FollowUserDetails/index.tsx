@@ -26,6 +26,7 @@ interface LoadingStateProps {
     isUserLoading: true
     dense?: boolean
     dark?: boolean
+    clickable?: boolean
     user?: never
     onFollowUser?: never
     onUnfollowUser?: never
@@ -36,15 +37,16 @@ interface UserStateProps {
     isUserLoading?: never
     dense?: boolean
     dark?: boolean
+    clickable?: boolean
     user: User
-    onFollowUser: (userId: string) => void
+    onFollowUser: (userId: string, event: React.MouseEvent) => void
     onUnfollowUser: (userId: string) => void
     onClickUser?: (userId: string) => void
 }
 
 type Props = UserStateProps | LoadingStateProps
 
-export default function FollowUserDetails ({ user, dense = false, dark = false, isUserLoading, onFollowUser, onUnfollowUser, onClickUser }: Props) {
+export default function FollowUserDetails ({ user, dense = false, dark = false, clickable = true, isUserLoading, onFollowUser, onUnfollowUser, onClickUser }: Props) {
 
     const navigate = useProfileNavigate()
 
@@ -52,9 +54,9 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
 
     const [userToUnfollow, setUserToUnfollow] = useState<User | null>(null)
 
-    const handleFollowUser = () => {
+    const handleFollowUser = (event: React.MouseEvent) => {
         if (!isUserLoading && user) {
-            onFollowUser(user._id)
+            onFollowUser(user._id, event)
         }
     }
 
@@ -65,8 +67,9 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
         }
     }
 
-    const handleOpenUnfollowUserModal = () => {
+    const handleOpenUnfollowUserModal = (event: React.MouseEvent) => {
         if (!isUserLoading && user) {
+            event.stopPropagation()
             setUserToUnfollow(user)
         }
     }
@@ -74,7 +77,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
     const handleCloseUnfollowUserModal = () => setUserToUnfollow(null)
 
     const handleClickUser = () => {
-        if (!isUserLoading && user) {
+        if (!isUserLoading && user && clickable) {
             navigate(user._id)
             if (onClickUser) {
                 onClickUser(user._id)
@@ -122,7 +125,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                         lastName={user.lastName}
                         size={dense ? 36 : 44}
                         fontSize={dense ? 14 : 16}
-                        clickable
+                        clickable={clickable}
                         onClick={handleClickUser}
                         backgroundColor={dark ? '#616161' : '#262626'} />
                 )}
@@ -144,7 +147,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                             color='#FFFFFF'
                             fontSize={14}
                             noWrap
-                            sx={{ cursor: 'pointer' }}
+                            sx={{ ...clickable && { cursor: 'pointer' } }}
                             onClick={handleClickUser}
                         >
                             { user.username }
