@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client'
+import { useProfileNavigate } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
 import { GET_SEARCHED_USERS } from '../../graphql/queries/users'
 import { GetSearchedUsersQueryType } from '../../graphql/types/queries/users'
@@ -48,6 +49,8 @@ interface SearchDrawerProps {
 export default function SearchDrawer (props: SearchDrawerProps) {
 
     const client = useApolloClient()
+
+    const navigate = useProfileNavigate()
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -128,7 +131,8 @@ export default function SearchDrawer (props: SearchDrawerProps) {
         })
     }
 
-    const handleFollowUser = (userId: string) => {
+    const handleFollowUser = (userId: string, event: React.MouseEvent) => {
+        event.stopPropagation()
         const searchQuery = inputRef?.current?.value.trim()
         if (searchQuery && searchQuery.length > 0) {
             updateSearchedUserFollowingLoadingStatus(userId, true, searchQuery)
@@ -160,6 +164,10 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                 enqueueSnackbar('Could not unfollow user', { variant: 'error' })
             })
         }
+    }
+
+    const handleClickUser = (userId: string) => {
+        navigate(userId)
     }
 
     return (
@@ -229,8 +237,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                     margin='0'
                     position='absolute'
                     width='100%'
-                    paddingLeft={searchedUsers.loading ? '9px' : '24px'}
-                    paddingRight='8px'
+                    paddingLeft={searchedUsers.loading ? '9px' : '0'}
                     sx={{ overflowX: 'hidden', overflowY: 'auto', verticalAlign: 'baseline' }}
                 >
                     { searchedUsers.loading ? _range(7).map(index => (
@@ -238,12 +245,21 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                             key={index}
                             isUserLoading={true} />
                     )) : users.map(searchedUser => (
-                        <FollowUserDetails
+                        <Box
                             key={searchedUser.followableUser.user._id}
-                            user={{ ...searchedUser, ...searchedUser.followableUser, ...searchedUser.followableUser.user }}
-                            dense
-                            onFollowUser={handleFollowUser}
-                            onUnfollowUser={handleUnfollowUser} />
+                            component='div'
+                            paddingLeft='24px'
+                            paddingRight='8px'
+                            sx={{ '&:hover': { backgroundColor: '#121212' }, cursor: 'pointer' }}
+                            onClick={() => handleClickUser(searchedUser.followableUser.user._id)}
+                        >
+                            <FollowUserDetails
+                                user={{ ...searchedUser, ...searchedUser.followableUser, ...searchedUser.followableUser.user }}
+                                dense
+                                clickable={false}
+                                onFollowUser={handleFollowUser}
+                                onUnfollowUser={handleUnfollowUser} />
+                        </Box>
                     ))}
                 </Box>
             </Box>
