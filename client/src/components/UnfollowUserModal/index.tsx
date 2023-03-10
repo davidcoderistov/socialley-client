@@ -25,6 +25,10 @@ export default function UnfollowUserModal (props: Props) {
 
     const handleUnfollowUser = () => props.onUnfollowUser(props.user._id)
 
+    const handleClickModal = (event: React.MouseEvent) => {
+        event.stopPropagation()
+    }
+
     return (
         <Dialog
             open={props.open}
@@ -37,6 +41,7 @@ export default function UnfollowUserModal (props: Props) {
                     paddingBottom: '10px',
                 }
             }}
+            onClick={handleClickModal}
         >
             <Box
                 component='div'
