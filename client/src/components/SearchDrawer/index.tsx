@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client'
 import { useProfileNavigate } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
-import { GET_SEARCHED_USERS } from '../../graphql/queries/users'
-import { GetSearchedUsersQueryType } from '../../graphql/types/queries/users'
-import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
+import { GET_SEARCHED_USERS, GET_SEARCHED_USERS_FOR_USER } from '../../graphql/queries/users'
+import { GetSearchedUsersQueryType, GetSearchedUsersForUserQueryType } from '../../graphql/types/queries/users'
+import { FOLLOW_USER, UNFOLLOW_USER, MARK_USER_AS_SEARCHED } from '../../graphql/mutations/users'
 import MuiDrawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -18,6 +18,7 @@ import SearchHistory from '../SearchHistory'
 import _range from 'lodash/range'
 import _debounce from 'lodash/debounce'
 import searchedUsersMutations from '../../apollo/mutations/users/searchedUsers'
+import { addSearchedUser } from '../../apollo/mutations/users/searchedUsersForUser'
 
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -164,8 +165,25 @@ export default function SearchDrawer (props: SearchDrawerProps) {
         }
     }
 
+    const [markUserAsSearched] = useMutation(MARK_USER_AS_SEARCHED)
+
     const handleClickUser = (userId: string) => {
         navigate(userId)
+
+        const searchedUser = users.find(user => user.followableUser.user._id === userId)
+        if (searchedUser) {
+            client.cache.updateQuery({
+                query: GET_SEARCHED_USERS_FOR_USER
+            }, (searchedUsersForUser: GetSearchedUsersForUserQueryType | null) => {
+                if (searchedUsersForUser) {
+                    return addSearchedUser({
+                        searchedUsersForUser,
+                        searchedUser: searchedUser.followableUser.user,
+                    })
+                }
+            })
+            markUserAsSearched({ variables: { searchedUserId: userId }})
+        }
     }
 
     return (
