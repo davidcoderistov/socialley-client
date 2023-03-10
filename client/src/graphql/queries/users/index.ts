@@ -124,3 +124,15 @@ export const GET_SEARCHED_USERS = gql`
         }
     }
 `
+
+export const GET_SEARCHED_USERS_FOR_USER = gql`
+    query getSearchedUsersForUser {
+        getSearchedUsersForUser {
+            _id
+            firstName
+            lastName
+            username
+            avatarURL
+        }
+    }
+`

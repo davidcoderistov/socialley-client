@@ -33,3 +33,7 @@ export interface GetUserDetailsQueryType {
 export interface GetSearchedUsersQueryType {
     getSearchedUsers: SearchedUser[]
 }
+
+export interface GetSearchedUsersForUserQueryType {
+    getSearchedUsersForUser: User[]
+}
