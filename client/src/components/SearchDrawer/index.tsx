@@ -176,13 +176,13 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                 query: GET_SEARCHED_USERS_FOR_USER
             }, (searchedUsersForUser: GetSearchedUsersForUserQueryType | null) => {
                 if (!searchedUsersForUser || searchedUsersForUser.getSearchedUsersForUser.length === 0 || searchedUsersForUser.getSearchedUsersForUser[0]._id !== userId) {
-                    markUserAsSearched({ variables: { searchedUserId: userId }});
+                    markUserAsSearched({ variables: { searchedUserId: userId }})
                 }
                 if (searchedUsersForUser) {
                     return addSearchedUser({
                         searchedUsersForUser,
                         searchedUser: searchedUser.followableUser.user,
-                    });
+                    })
                 }
             })
         }
