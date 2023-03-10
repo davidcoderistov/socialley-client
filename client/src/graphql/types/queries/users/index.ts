@@ -35,5 +35,5 @@ export interface GetSearchedUsersQueryType {
 }
 
 export interface GetSearchedUsersForUserQueryType {
-    getSearchedUsersForUser: User[]
+    getSearchedUsersForUser: Omit<User, 'email'>[]
 }
