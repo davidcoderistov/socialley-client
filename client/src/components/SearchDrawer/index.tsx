@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client'
 import { useProfileNavigate } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
@@ -54,8 +54,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
 
     const { enqueueSnackbar } = useSnackbar()
 
-    const inputRef = useRef<HTMLInputElement>(null)
-    const [inputKey, setInputKey] = useState(9999)
+    const [searchQuery, setSearchQuery] = useState('')
 
     const [getSearchedUsers, searchedUsers] = useLazyQuery<GetSearchedUsersQueryType>(GET_SEARCHED_USERS, {
         notifyOnNetworkStatusChange: true })
@@ -63,17 +62,17 @@ export default function SearchDrawer (props: SearchDrawerProps) {
     const _getSearchedUsers = useMemo(() => _debounce(getSearchedUsers, 500), [])
 
     useEffect(() => {
-        const searchQuery = inputRef?.current?.value.trim()
         if (!props.open && searchQuery && searchQuery.length > 0) {
-            setInputKey(inputKey + 1)
+            setSearchQuery('')
             getSearchedUsers({
                 variables: { searchQuery: '' },
                 fetchPolicy: 'cache-only'
             })
         }
-    }, [props.open, inputRef, getSearchedUsers])
+    }, [props.open, searchQuery, getSearchedUsers])
 
     const handleChangeSearchQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value)
         const searchQuery = event.target.value.trim()
         if (searchQuery.length > 0) {
             _getSearchedUsers({
@@ -133,7 +132,6 @@ export default function SearchDrawer (props: SearchDrawerProps) {
 
     const handleFollowUser = (userId: string, event: React.MouseEvent) => {
         event.stopPropagation()
-        const searchQuery = inputRef?.current?.value.trim()
         if (searchQuery && searchQuery.length > 0) {
             updateSearchedUserFollowingLoadingStatus(userId, true, searchQuery)
             followUser({
@@ -150,7 +148,6 @@ export default function SearchDrawer (props: SearchDrawerProps) {
     }
 
     const handleUnfollowUser = (userId: string) => {
-        const searchQuery = inputRef?.current?.value.trim()
         if (searchQuery && searchQuery.length > 0) {
             updateSearchedUserFollowingLoadingStatus(userId, true, searchQuery)
             unfollowUser({
@@ -190,8 +187,6 @@ export default function SearchDrawer (props: SearchDrawerProps) {
             </Toolbar>
             <Divider />
             <InputBase
-                key={inputKey}
-                inputRef={inputRef}
                 sx={{
                     color: '#FFFFFF',
                     backgroundColor: '#262626',
@@ -208,6 +203,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                     },
                 }}
                 startAdornment={<Search sx={{ marginRight: '5px', color: '#7A7C7F' }}/>}
+                value={searchQuery}
                 onChange={handleChangeSearchQuery}
                 placeholder='Search'
                 autoFocus
