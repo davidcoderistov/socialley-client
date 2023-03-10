@@ -14,8 +14,10 @@ export function addSearchedUser (options: AddSearchedUserOptions): GetSearchedUs
         ...searchedUsersForUser,
         getSearchedUsersForUser: [
             searchedUser,
-            ...searchedUsersForUser.getSearchedUsersForUser.length >= 10 ?
-                searchedUsersForUser.getSearchedUsersForUser.slice(0, 10) : searchedUsersForUser.getSearchedUsersForUser
+            ...searchedUsersForUser.getSearchedUsersForUser.findIndex(user => user._id === searchedUser._id) >= 0 ?
+                searchedUsersForUser.getSearchedUsersForUser.filter(user => user._id !== searchedUser._id) :
+                    searchedUsersForUser.getSearchedUsersForUser.length >= 10 ?
+                        searchedUsersForUser.getSearchedUsersForUser.slice(0, 9) : searchedUsersForUser.getSearchedUsersForUser
         ]
     }
 }
