@@ -5,7 +5,7 @@ import UserActionButton from '../UserActionButton'
 interface FollowButtonProps {
     contained: boolean
     loading: boolean
-    onClick: () => void
+    onClick: (event: React.MouseEvent) => void
 }
 
 export default function FollowButton (props: FollowButtonProps) {
