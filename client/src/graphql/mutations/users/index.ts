@@ -16,3 +16,27 @@ export const UNFOLLOW_USER = gql`
         }
     }
 `
+
+export const MARK_USER_AS_SEARCHED = gql`
+    mutation markUserAsSearched($searchedUserId: String!) {
+        markUserAsSearched(searchedUserId: $searchedUserId) {
+            _id
+        }
+    }
+`
+
+export const MARK_USER_AS_UNSEARCHED = gql`
+    mutation markUserAsUnsearched($searchedUserId: String!) {
+        markUserAsUnsearched(searchedUserId: $searchedUserId) {
+            _id
+        }
+    }
+`
+
+export const CLEAR_SEARCH_HISTORY = gql`
+    mutation clearSearchHistory {
+        clearSearchHistory {
+            deletedCount
+        }
+    }
+`
