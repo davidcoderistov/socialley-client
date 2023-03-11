@@ -63,7 +63,7 @@ export default function Dashboard (props: Props) {
     const location = useLocation()
 
     const backgroundColor =
-        location.pathname === '/' || location.pathname === '/profile' || location.pathname.startsWith('/users') ? '#000000' : '#121212'
+        location.pathname === '/' || location.pathname === '/profile' || location.pathname === '/explore' || location.pathname.startsWith('/users') ? '#000000' : '#121212'
 
     const handleOpenCreatePostModal = () => {
         setIsCreatePostModalOpen(true)
@@ -104,6 +104,7 @@ export default function Dashboard (props: Props) {
                     <List component='nav' sx={{ paddingX: '12px' }}>
                         <NavLink to='/' type='home' />
                         <NavLink isNotLink type='search' bordered={isSearchDrawerOpen} onClick={handleOpenSearchDrawer} />
+                        <NavLink to='/explore' type='explore' />
                         <NavLink to='/messages' type='messages' />
                         <NavLink isNotLink type='create' onClick={handleOpenCreatePostModal} />
                         <NavLink to='/profile' type='profile' />
