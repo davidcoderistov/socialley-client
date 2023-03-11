@@ -57,3 +57,10 @@ export interface GetFavoritePostsForUserQueryType {
 export interface GetPostDetailsQueryType {
     getPostDetails: PostDetails
 }
+
+export interface GetSuggestedPostsQueryType {
+    getSuggestedPosts: {
+        data: Omit<Post, 'createdAt'>[]
+        total: number
+    }
+}

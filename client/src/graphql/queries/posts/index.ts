@@ -180,3 +180,16 @@ export const GET_POST_DETAILS = gql`
         }
     }
 `
+
+export const GET_SUGGESTED_POSTS = gql`
+    query getSuggestedPosts ($offset: Int!, $limit: Int!) {
+        getSuggestedPosts (offset: $offset, limit: $limit) {
+            data {
+                _id
+                photoURL
+                videoURL
+            }
+            total
+        }
+    }
+`
