@@ -31,7 +31,7 @@ export default function SuggestedPostsFeed ({ boxProps = {} }: { boxProps?: BoxP
     const suggestedPosts = useQuery<GetSuggestedPostsQueryType>(GET_SUGGESTED_POSTS, {
         variables: {
             offset: 0,
-            limit: 12,
+            limit: 6,
         }
     })
 
