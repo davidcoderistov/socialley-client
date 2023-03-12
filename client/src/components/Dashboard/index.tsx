@@ -12,6 +12,7 @@ import { styled, createTheme, ThemeProvider } from '@mui/material/styles'
 import NavLink from './NavLink'
 import CreatePostModal from '../CreatePostModal'
 import SearchDrawer from '../SearchDrawer'
+import NotificationsDrawer from '../NotificationsDrawer'
 import { useLocation } from 'react-router-dom'
 
 
@@ -57,6 +58,7 @@ export default function Dashboard (props: Props) {
 
     const [isAppDrawerOpen, setIsAppDrawerOpen] = useState(true)
     const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false)
+    const [isNotificationsDrawerOpen, setIsNotificationsDrawerOpen] = useState(false)
 
     const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false)
 
@@ -78,10 +80,18 @@ export default function Dashboard (props: Props) {
         setIsSearchDrawerOpen(true)
     }
 
+    const handleOpenNotificationsDrawer = () => {
+        setIsAppDrawerOpen(false)
+        setIsNotificationsDrawerOpen(true)
+    }
+
     const handleClickApp = () => {
         if (isSearchDrawerOpen) {
             setIsAppDrawerOpen(true)
             setIsSearchDrawerOpen(false)
+        } else if (isNotificationsDrawerOpen) {
+            setIsAppDrawerOpen(true)
+            setIsNotificationsDrawerOpen(false)
         }
     }
 
@@ -106,11 +116,13 @@ export default function Dashboard (props: Props) {
                         <NavLink isNotLink type='search' bordered={isSearchDrawerOpen} onClick={handleOpenSearchDrawer} />
                         <NavLink to='/explore' type='explore' />
                         <NavLink to='/messages' type='messages' />
+                        <NavLink isNotLink type='notifications' bordered={isSearchDrawerOpen} onClick={handleOpenNotificationsDrawer} />
                         <NavLink isNotLink type='create' onClick={handleOpenCreatePostModal} />
                         <NavLink to='/profile' type='profile' />
                     </List>
                 </Drawer>
                 <SearchDrawer open={isSearchDrawerOpen} />
+                <NotificationsDrawer open={isNotificationsDrawerOpen} />
                 <Box
                     component='main'
                     sx={{
