@@ -116,7 +116,7 @@ export default function Dashboard (props: Props) {
                         <NavLink isNotLink type='search' bordered={isSearchDrawerOpen} onClick={handleOpenSearchDrawer} />
                         <NavLink to='/explore' type='explore' />
                         <NavLink to='/messages' type='messages' />
-                        <NavLink isNotLink type='notifications' bordered={isSearchDrawerOpen} onClick={handleOpenNotificationsDrawer} />
+                        <NavLink isNotLink type='notifications' bordered={isNotificationsDrawerOpen} onClick={handleOpenNotificationsDrawer} />
                         <NavLink isNotLink type='create' onClick={handleOpenCreatePostModal} />
                         <NavLink to='/profile' type='profile' />
                     </List>
