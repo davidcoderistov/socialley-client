@@ -193,3 +193,26 @@ export const GET_SUGGESTED_POSTS = gql`
         }
     }
 `
+
+export const GET_POST_LIKE_NOTIFICATIONS_FOR_USER = gql`
+    query getPostLikeNotificationsForUser ($offset: Int!, $limit: Int!) {
+        getPostLikeNotificationsForUser (offset: $offset, limit: $limit) {
+            data {
+                _id
+                user {
+                    _id
+                    firstName
+                    lastName
+                    username
+                    avatarURL
+                }
+                post {
+                    _id
+                    photoURL
+                }
+                createdAt
+            }
+            total
+        }
+    }
+`

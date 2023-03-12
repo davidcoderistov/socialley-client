@@ -143,3 +143,10 @@ export interface UserDetails {
     followedCount: number
     isFollowingLoading: boolean
 }
+
+export interface PostLikeNotification {
+    _id: string
+    user: Omit<User, 'email'>
+    post: Pick<Post, '_id' | 'photoURL'>
+    createdAt: number
+}
