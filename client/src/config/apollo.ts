@@ -209,6 +209,15 @@ const cache = new InMemoryCache({
                 }
             }
         },
+        FollowNotification: {
+            fields: {
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
+                }
+            }
+        },
     }
 })
 

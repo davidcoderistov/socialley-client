@@ -1,4 +1,4 @@
-import { User, SuggestedUser, FollowingUser, FollowerUser, UserDetails, SearchedUser } from '../../models'
+import { User, SuggestedUser, FollowingUser, FollowerUser, UserDetails, SearchedUser, FollowNotification } from '../../models'
 
 
 export interface GetUsersBySearchQueryQueryType {
@@ -36,4 +36,11 @@ export interface GetSearchedUsersQueryType {
 
 export interface GetSearchedUsersForUserQueryType {
     getSearchedUsersForUser: Omit<User, 'email'>[]
+}
+
+export interface GetFollowNotificationsForUserQueryType {
+    getFollowNotificationsForUser: {
+        data: FollowNotification[]
+        total: number
+    }
 }

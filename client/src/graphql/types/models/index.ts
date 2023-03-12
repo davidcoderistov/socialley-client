@@ -157,3 +157,10 @@ export interface PostCommentNotification {
     post: Pick<Post, '_id' | 'photoURL'>
     createdAt: number
 }
+
+export interface FollowNotification {
+    _id: string
+    followableUser: FollowableUser
+    createdAt: number
+    isFollowingLoading: boolean
+}

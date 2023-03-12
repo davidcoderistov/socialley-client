@@ -136,3 +136,26 @@ export const GET_SEARCHED_USERS_FOR_USER = gql`
         }
     }
 `
+
+export const GET_FOLLOW_NOTIFICATIONS_FOR_USER = gql`
+    query getFollowNotificationsForUser ($offset: Int!, $limit: Int!) {
+        getFollowNotificationsForUser (offset: $offset, limit: $limit) {
+            data {
+                _id
+                followableUser {
+                    user {
+                        _id
+                        firstName
+                        lastName
+                        username
+                        avatarURL
+                    }
+                    following
+                }
+                createdAt
+                isFollowingLoading @client
+            }
+            total
+        }
+    }
+`
