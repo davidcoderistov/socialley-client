@@ -216,3 +216,26 @@ export const GET_POST_LIKE_NOTIFICATIONS_FOR_USER = gql`
         }
     }
 `
+
+export const GET_POST_COMMENT_NOTIFICATIONS_FOR_USER = gql`
+    query getPostCommentNotificationsForUser ($offset: Int!, $limit: Int!) {
+        getPostCommentNotificationsForUser (offset: $offset, limit: $limit) {
+            data {
+                _id
+                user {
+                    _id
+                    firstName
+                    lastName
+                    username
+                    avatarURL
+                }
+                post {
+                    _id
+                    photoURL
+                }
+                createdAt
+            }
+            total
+        }
+    }
+`

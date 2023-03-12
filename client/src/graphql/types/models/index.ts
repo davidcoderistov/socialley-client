@@ -150,3 +150,10 @@ export interface PostLikeNotification {
     post: Pick<Post, '_id' | 'photoURL'>
     createdAt: number
 }
+
+export interface PostCommentNotification {
+    _id: string
+    user: Omit<User, 'email'>
+    post: Pick<Post, '_id' | 'photoURL'>
+    createdAt: number
+}

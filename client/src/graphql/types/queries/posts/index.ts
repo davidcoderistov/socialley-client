@@ -1,4 +1,4 @@
-import { User, FollowedUserPost, UserWhoLikedPost, Comment, UserWhoLikedComment, Post, PostDetails, PostLikeNotification } from '../../models'
+import { User, FollowedUserPost, UserWhoLikedPost, Comment, UserWhoLikedComment, Post, PostDetails, PostLikeNotification, PostCommentNotification } from '../../models'
 
 
 export interface GetFollowedUsersPostsQueryType {
@@ -68,6 +68,13 @@ export interface GetSuggestedPostsQueryType {
 export interface GetPostLikeNotificationsForUserQueryType {
     getPostLikeNotificationsForUser: {
         data: PostLikeNotification[]
+        total: number
+    }
+}
+
+export interface GetPostCommentNotificationsForUserQueryType {
+    getPostCommentNotificationsForUser: {
+        data: PostCommentNotification[]
         total: number
     }
 }
