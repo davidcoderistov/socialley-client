@@ -23,6 +23,13 @@ import _range from 'lodash/range'
 
 interface AllNotificationsProps {
     shouldSkipQuery: boolean
+    visible: boolean
+    onClickPostLikeNotification: (postId: string) => void
+    onClickPostCommentNotification: (postId: string) => void
+    onClickPostFollowNotification: (userId: string) => void
+    onClickSeeAllLikes: () => void
+    onClickSeeAllComments: () => void
+    onClickSeeAllFollowings: () => void
 }
 
 export default function AllNotifications (props: AllNotificationsProps) {
@@ -116,7 +123,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                 margin='0'
                 position='absolute'
                 width='100%'
-                sx={{ overflowX: 'hidden', overflowY: 'auto', verticalAlign: 'baseline' }}
+                sx={{ overflowX: 'hidden', overflowY: 'auto', verticalAlign: 'baseline', ...!props.visible && { display: 'none'}}}
             >
                 { postLikeNotifications.loading || postCommentNotifications.loading || followNotifications.loading ? (
                     <Box
@@ -135,7 +142,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                             <TopThreeNotifications
                                 title='Likes'
                                 showSeeAll={!postLikeNotifications.loading && likesTotal > 3}
-                                onClickSeeAll={() => {}}
+                                onClickSeeAll={props.onClickSeeAllLikes}
                             >
                                 { postLikeNotifications.loading ? _range(3).map(index => (
                                     <Notification
@@ -147,6 +154,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                                         component='div'
                                         paddingRight='8px'
                                         sx={{ '&:hover': { backgroundColor: '#121212' }, cursor: 'pointer' }}
+                                        onClick={() => props.onClickPostLikeNotification(like.post._id)}
                                     >
                                         <Notification
                                             key={like._id}
@@ -162,7 +170,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                             <TopThreeNotifications
                                 title='Comments'
                                 showSeeAll={!postCommentNotifications.loading && commentsTotal > 3}
-                                onClickSeeAll={() => {}}
+                                onClickSeeAll={props.onClickSeeAllComments}
                             >
                                 { postCommentNotifications.loading ? _range(3).map(index => (
                                     <Notification
@@ -174,6 +182,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                                         component='div'
                                         paddingRight='8px'
                                         sx={{ '&:hover': { backgroundColor: '#121212' }, cursor: 'pointer' }}
+                                        onClick={() => props.onClickPostCommentNotification(comment.post._id)}
                                     >
                                         <Notification
                                             key={comment._id}
@@ -189,7 +198,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                             <TopThreeNotifications
                                 title='Followings'
                                 showSeeAll={!followNotifications.loading && followsTotal > 3}
-                                onClickSeeAll={() => {}}
+                                onClickSeeAll={props.onClickSeeAllFollowings}
                             >
                                 { followNotifications.loading ? _range(3).map(index => (
                                     <Notification
@@ -201,6 +210,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                                         component='div'
                                         paddingRight='8px'
                                         sx={{ '&:hover': { backgroundColor: '#121212' }, cursor: 'pointer' }}
+                                        onClick={() => props.onClickPostFollowNotification(follow.followableUser.user._id)}
                                     >
                                         <Notification
                                             key={follow._id}
@@ -216,7 +226,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                     </>
                 ): null}
             </Box>
-            { !postLikeNotifications.loading && likes.length === 0 &&
+            { props.visible && !postLikeNotifications.loading && likes.length === 0 &&
                 !postCommentNotifications.loading && comments.length === 0 &&
                 !followNotifications.loading && follows.length === 0 && (
                     <Box
