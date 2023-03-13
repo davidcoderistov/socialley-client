@@ -77,16 +77,26 @@ export default function Dashboard (props: Props) {
 
     const handleOpenSearchDrawer = (event: React.MouseEvent) => {
         event.stopPropagation()
-        setIsAppDrawerOpen(false)
-        setIsNotificationsDrawerOpen(false)
-        setIsSearchDrawerOpen(true)
+        if (isSearchDrawerOpen) {
+            setIsAppDrawerOpen(true)
+            setIsSearchDrawerOpen(false)
+        } else {
+            setIsAppDrawerOpen(false)
+            setIsNotificationsDrawerOpen(false)
+            setIsSearchDrawerOpen(true)
+        }
     }
 
     const handleOpenNotificationsDrawer = (event: React.MouseEvent) => {
         event.stopPropagation()
-        setIsAppDrawerOpen(false)
-        setIsSearchDrawerOpen(false)
-        setIsNotificationsDrawerOpen(true)
+        if (isNotificationsDrawerOpen) {
+            setIsAppDrawerOpen(true)
+            setIsNotificationsDrawerOpen(false)
+        } else {
+            setIsAppDrawerOpen(false)
+            setIsSearchDrawerOpen(false)
+            setIsNotificationsDrawerOpen(true)
+        }
     }
 
     const handleClickApp = () => {
