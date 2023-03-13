@@ -92,6 +92,15 @@ const cache = new InMemoryCache({
                     merge (_, incoming) {
                         return incoming
                     }
+                },
+                getPostLikeNotificationsForUser: {
+                    keyArgs: false,
+                },
+                getPostCommentNotificationsForUser: {
+                    keyArgs: false,
+                },
+                getFollowNotificationsForUser: {
+                    keyArgs: false,
                 }
             }
         },
