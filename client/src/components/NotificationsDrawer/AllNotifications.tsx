@@ -1,6 +1,10 @@
 import React, { useMemo } from 'react'
 import { useQuery } from '@apollo/client'
 import {
+    useFollowNotificationUser,
+    useUnfollowNotificationUser,
+} from '../../hooks/graphql/users'
+import {
     GET_POST_LIKE_NOTIFICATIONS_FOR_USER,
     GET_POST_COMMENT_NOTIFICATIONS_FOR_USER
 } from '../../graphql/queries/posts'
@@ -22,6 +26,9 @@ interface AllNotificationsProps {
 }
 
 export default function AllNotifications (props: AllNotificationsProps) {
+
+    const followUser = useFollowNotificationUser()
+    const unfollowUser = useUnfollowNotificationUser()
 
     const postLikeNotifications = useQuery<GetPostLikeNotificationsForUserQueryType>(GET_POST_LIKE_NOTIFICATIONS_FOR_USER, {
         variables: {
@@ -88,6 +95,15 @@ export default function AllNotifications (props: AllNotificationsProps) {
         }
         return 0
     }, [followNotifications.loading, followNotifications.error, followNotifications.data])
+
+    const handleFollowUser = (userId: string, event: React.MouseEvent) => {
+        event.stopPropagation()
+        followUser(userId)
+    }
+
+    const handleUnfollowUser = (userId: string) => {
+        unfollowUser(userId)
+    }
 
     return (
         <>
@@ -189,10 +205,10 @@ export default function AllNotifications (props: AllNotificationsProps) {
                                         <Notification
                                             key={follow._id}
                                             type='follow'
-                                            user={{...follow.followableUser,...follow.followableUser.user, isFollowingLoading: false}}
+                                            user={{...follow.followableUser, ...follow.followableUser.user, isFollowingLoading: follow.isFollowingLoading}}
                                             createdAt={follow.createdAt}
-                                            onFollowUser={() => {}}
-                                            onUnfollowUser={() => {}} />
+                                            onFollowUser={handleFollowUser}
+                                            onUnfollowUser={handleUnfollowUser} />
                                     </Box>
                                 ))}
                             </TopThreeNotifications>
