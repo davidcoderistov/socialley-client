@@ -41,7 +41,8 @@ export default function UserActionButton (props: UserActionButtonProps) {
                 },
                 '.MuiLoadingButton-loadingIndicator': {
                     color: primary ? '#0095F6' : '#DBDBDB',
-                }
+                },
+                paddingX: 0
             }}
             loading={props.loading}
             onClick={props.onClick}
