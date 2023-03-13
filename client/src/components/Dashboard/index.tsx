@@ -75,13 +75,17 @@ export default function Dashboard (props: Props) {
         setIsCreatePostModalOpen(false)
     }
 
-    const handleOpenSearchDrawer = () => {
+    const handleOpenSearchDrawer = (event: React.MouseEvent) => {
+        event.stopPropagation()
         setIsAppDrawerOpen(false)
+        setIsNotificationsDrawerOpen(false)
         setIsSearchDrawerOpen(true)
     }
 
-    const handleOpenNotificationsDrawer = () => {
+    const handleOpenNotificationsDrawer = (event: React.MouseEvent) => {
+        event.stopPropagation()
         setIsAppDrawerOpen(false)
+        setIsSearchDrawerOpen(false)
         setIsNotificationsDrawerOpen(true)
     }
 

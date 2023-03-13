@@ -23,7 +23,7 @@ interface NotLinkProps {
     type: NavType
     isNotLink: true
     bordered?: boolean
-    onClick: () => void
+    onClick: (event: React.MouseEvent) => void
 }
 
 export type NavLinkProps = LinkProps | NotLinkProps
