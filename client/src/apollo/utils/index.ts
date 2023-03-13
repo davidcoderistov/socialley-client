@@ -7,6 +7,7 @@ import {
     FollowingUser,
     FollowerUser,
     SearchedUser,
+    FollowNotification,
 } from '../../graphql/types/models'
 import {
     GetFollowedUsersPostsQueryType,
@@ -19,6 +20,7 @@ import {
     GetFollowingForUserQueryType,
     GetFollowersForUserQueryType,
     GetSearchedUsersQueryType,
+    GetFollowNotificationsForUserQueryType,
 } from '../../graphql/types/queries/users'
 
 
@@ -295,6 +297,41 @@ export function updateOneSearchedUser (options: UpdateOneSearchedUserOptions): U
 
     return {
         searchedUsers: searchedUsersResult,
+        success,
+    }
+}
+
+interface UpdateOneFollowNotificationOptions {
+    followNotificationsForUser: GetFollowNotificationsForUserQueryType
+    userId: string
+    mapper: (followNotification: FollowNotification) => FollowNotification
+}
+
+interface UpdateOneFollowNotificationReturnValue {
+    followNotificationsForUser: GetFollowNotificationsForUserQueryType
+    success: boolean
+}
+
+export function updateOneFollowNotification (options: UpdateOneFollowNotificationOptions): UpdateOneFollowNotificationReturnValue {
+    const { followNotificationsForUser, userId, mapper } = options
+
+    let success = false
+    const followNotificationsResult = {
+        ...followNotificationsForUser,
+        getFollowNotificationsForUser: {
+            ...followNotificationsForUser.getFollowNotificationsForUser,
+            data: followNotificationsForUser.getFollowNotificationsForUser.data.map(followNotification => {
+                if (followNotification.followableUser.user._id === userId) {
+                    success = true
+                    return mapper(followNotification)
+                }
+                return followNotification
+            })
+        }
+    }
+
+    return {
+        followNotificationsForUser: followNotificationsResult,
         success,
     }
 }
