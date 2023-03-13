@@ -1,18 +1,48 @@
-import { useCallback, useRef, RefCallback } from 'react'
+import { useCallback, useRef } from 'react'
+import _debounce from 'lodash/debounce'
 
 
-export const useInfiniteScroll = <T extends Element>(callback: () => void): RefCallback<T> => {
-    const observer = useRef<IntersectionObserver | undefined>()
-    return useCallback(
-        (node: T) => {
-            if (observer.current) observer.current.disconnect()
-            observer.current = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting) {
+export const useInfiniteScroll = <T extends Element>(
+    callback: () => void,
+    rootMargin = '0px',
+    threshold = 1,
+    debounceInterval = 500
+): ((node: T | null) => void) => {
+    const observer = useRef<IntersectionObserver | null>(null)
+    const handleIntersect = useCallback(
+        (entries: IntersectionObserverEntry[]) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting || entry.intersectionRatio > 0) {
                     callback()
                 }
             })
-            if (node) observer.current.observe(node)
         },
         [callback]
+    )
+    const debouncedHandleIntersect = useCallback(
+        _debounce(handleIntersect, debounceInterval),
+        [handleIntersect, debounceInterval]
+    )
+    const cleanupObserver = useCallback(() => {
+        if (observer.current) {
+            observer.current.disconnect()
+            observer.current = null
+        }
+    }, [])
+    return useCallback(
+        (node: T | null) => {
+            cleanupObserver()
+            if (node) {
+                observer.current = new IntersectionObserver(
+                    debouncedHandleIntersect,
+                    {
+                        rootMargin,
+                        threshold,
+                    }
+                )
+                observer.current.observe(node)
+            }
+        },
+        [rootMargin, threshold, cleanupObserver, debouncedHandleIntersect]
     )
 }
