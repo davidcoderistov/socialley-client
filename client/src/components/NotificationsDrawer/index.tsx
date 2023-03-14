@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles'
 import AllNotifications from './AllNotifications'
 import PostLikeNotifications from './PostLikeNotifications'
 import PostCommentNotifications from './PostCommentNotifications'
-import FollowNotifications from './FollowNotifications'
+import FollowNotifications from '../FollowNotifications'
 
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
