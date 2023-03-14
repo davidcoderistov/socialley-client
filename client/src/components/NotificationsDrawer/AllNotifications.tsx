@@ -26,7 +26,7 @@ interface AllNotificationsProps {
     visible: boolean
     onClickPostLikeNotification: (postId: string) => void
     onClickPostCommentNotification: (postId: string) => void
-    onClickPostFollowNotification: (userId: string) => void
+    onClickFollowNotification: (userId: string) => void
     onClickSeeAllLikes: () => void
     onClickSeeAllComments: () => void
     onClickSeeAllFollowings: () => void
@@ -210,7 +210,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
                                         component='div'
                                         paddingRight='8px'
                                         sx={{ '&:hover': { backgroundColor: '#121212' }, cursor: 'pointer' }}
-                                        onClick={() => props.onClickPostFollowNotification(follow.followableUser.user._id)}
+                                        onClick={() => props.onClickFollowNotification(follow.followableUser.user._id)}
                                     >
                                         <Notification
                                             key={follow._id}
