@@ -63,7 +63,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
 
     const likes = useMemo(() => {
         if (!postLikeNotifications.loading && !postLikeNotifications.error && postLikeNotifications.data) {
-            return postLikeNotifications.data.getPostLikeNotificationsForUser.data
+            return postLikeNotifications.data.getPostLikeNotificationsForUser.data.slice(0, 3)
         }
         return []
     }, [postLikeNotifications.loading, postLikeNotifications.error, postLikeNotifications.data])
@@ -77,7 +77,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
 
     const comments = useMemo(() => {
         if (!postCommentNotifications.loading && !postCommentNotifications.error && postCommentNotifications.data) {
-            return postCommentNotifications.data.getPostCommentNotificationsForUser.data
+            return postCommentNotifications.data.getPostCommentNotificationsForUser.data.slice(0, 3)
         }
         return []
     }, [postCommentNotifications.loading, postCommentNotifications.error, postCommentNotifications.data])
@@ -91,7 +91,7 @@ export default function AllNotifications (props: AllNotificationsProps) {
 
     const follows = useMemo(() => {
         if (!followNotifications.loading && !followNotifications.error && followNotifications.data) {
-            return followNotifications.data.getFollowNotificationsForUser.data
+            return followNotifications.data.getFollowNotificationsForUser.data.slice(0, 3)
         }
         return []
     }, [followNotifications.loading, followNotifications.error, followNotifications.data])
