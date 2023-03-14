@@ -34,10 +34,15 @@ export default function PostView (props: Props) {
 
     const isImg = !props.postDetails?.videoURL
 
+    const handleClickBackdrop = (event: React.MouseEvent) => {
+        event.stopPropagation()
+    }
+
     return (
         <Backdrop
             sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={true}
+            onClick={handleClickBackdrop}
         >
             <Box
                 component='div'
