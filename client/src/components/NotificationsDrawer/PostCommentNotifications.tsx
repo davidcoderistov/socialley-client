@@ -1,11 +1,14 @@
 import React, { useMemo } from 'react'
 import { useInfiniteScroll } from '../../hooks/misc'
-import { useQuery } from '@apollo/client'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import { GET_POST_COMMENT_NOTIFICATIONS_FOR_USER } from '../../graphql/queries/posts'
 import { GetPostCommentNotificationsForUserQueryType } from '../../graphql/types/queries/posts'
+import { POST_COMMENTED_SUBSCRIPTION } from '../../graphql/subscriptions/posts'
+import { PostCommentedSubscriptionType } from '../../graphql/types/subscriptions/posts'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Notification from '../Notification'
+import { addPostCommentNotification } from '../../apollo/mutations/posts/postCommentNotificationsForUser'
 
 
 interface PostCommentNotificationsProps {
@@ -14,6 +17,8 @@ interface PostCommentNotificationsProps {
 }
 
 export default function PostCommentNotifications (props: PostCommentNotificationsProps) {
+
+    const client = useApolloClient()
 
     const postCommentNotifications = useQuery<GetPostCommentNotificationsForUserQueryType>(GET_POST_COMMENT_NOTIFICATIONS_FOR_USER)
 
@@ -50,6 +55,24 @@ export default function PostCommentNotifications (props: PostCommentNotification
     }
 
     const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMorePostCommentNotifications)
+
+    useSubscription<PostCommentedSubscriptionType>(POST_COMMENTED_SUBSCRIPTION, {
+        onData ({ data }) {
+            if (!data.error && data.data) {
+                const postCommentNotification = data.data.postCommented
+                client.cache.updateQuery({
+                    query: GET_POST_COMMENT_NOTIFICATIONS_FOR_USER
+                }, (postCommentNotificationsForUser: GetPostCommentNotificationsForUserQueryType | null) => {
+                    if (postCommentNotificationsForUser) {
+                        return addPostCommentNotification({
+                            postCommentNotificationsForUser,
+                            postCommentNotification,
+                        }).postCommentNotificationsForUser
+                    }
+                })
+            }
+        }
+    })
 
     return (
         <Box
