@@ -1,11 +1,15 @@
-import React, { useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useInfiniteScroll } from '../../hooks/misc'
-import { useQuery } from '@apollo/client'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import { GET_POST_LIKE_NOTIFICATIONS_FOR_USER } from '../../graphql/queries/posts'
 import { GetPostLikeNotificationsForUserQueryType } from '../../graphql/types/queries/posts'
+import { POST_LIKED_SUBSCRIPTION } from '../../graphql/subscriptions/posts'
+import { PostLikedSubscriptionType } from '../../graphql/types/subscriptions/posts'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Notification from '../Notification'
+import { addPostLikeNotification } from '../../apollo/mutations/posts/postLikeNotificationsForUser'
+import _uniqWith from 'lodash/uniqWith'
 
 
 interface PostLikeNotificationsProps {
@@ -14,6 +18,12 @@ interface PostLikeNotificationsProps {
 }
 
 export default function PostLikeNotifications (props: PostLikeNotificationsProps) {
+
+    const client = useApolloClient()
+
+    const [offset, setOffset] = useState(3)
+    const [likesTotal, setLikesTotal] = useState(0)
+    const [isLikesTotalSet, setIsLikesTotalSet] = useState(false)
 
     const postLikeNotifications = useQuery<GetPostLikeNotificationsForUserQueryType>(GET_POST_LIKE_NOTIFICATIONS_FOR_USER)
 
@@ -24,32 +34,52 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
         return []
     }, [postLikeNotifications.loading, postLikeNotifications.error, postLikeNotifications.data])
 
-    const likesTotal = useMemo(() => {
-        if (!postLikeNotifications.loading && !postLikeNotifications.error && postLikeNotifications.data) {
-            return postLikeNotifications.data.getPostLikeNotificationsForUser.total
+    useEffect(() => {
+        if (!postLikeNotifications.loading && !postLikeNotifications.error && postLikeNotifications.data && !isLikesTotalSet) {
+            setLikesTotal(postLikeNotifications.data.getPostLikeNotificationsForUser.total)
+            setIsLikesTotalSet(true)
         }
-        return 0
-    }, [postLikeNotifications.loading, postLikeNotifications.error, postLikeNotifications.data])
+    }, [postLikeNotifications.loading, postLikeNotifications.error, postLikeNotifications.data, isLikesTotalSet])
 
     const fetchMorePostLikeNotifications = () => {
+        const limit = likes.length > 3 ? 5 : 10
         postLikeNotifications.fetchMore({
-            variables: { offset: likes.length, limit: likes.length > 3 ? 5 : 10 },
+            variables: { offset, limit },
             updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetPostLikeNotificationsForUserQueryType }) {
                 return {
                     ...existing,
                     getPostLikeNotificationsForUser: {
                         ...existing.getPostLikeNotificationsForUser,
-                        data: [
+                        data: _uniqWith([
                             ...existing.getPostLikeNotificationsForUser.data,
                             ...fetchMoreResult.getPostLikeNotificationsForUser.data,
-                        ]
+                        ], (first, second) =>
+                            first.post._id === second.post._id && first.user._id === second.user._id)
                     }
                 }
             }
-        })
+        }).then(() => setOffset(offset + limit))
     }
 
     const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMorePostLikeNotifications)
+
+    useSubscription<PostLikedSubscriptionType>(POST_LIKED_SUBSCRIPTION, {
+        onData ({ data }) {
+            if (!data.error && data.data) {
+                const postLikeNotification = data.data.postLiked
+                client.cache.updateQuery({
+                    query: GET_POST_LIKE_NOTIFICATIONS_FOR_USER
+                }, (postLikeNotificationsForUser: GetPostLikeNotificationsForUserQueryType | null) => {
+                    if (postLikeNotificationsForUser) {
+                        return addPostLikeNotification({
+                            postLikeNotificationsForUser,
+                            postLikeNotification,
+                        }).postLikeNotificationsForUser
+                    }
+                })
+            }
+        }
+    })
 
     return (
         <Box
@@ -79,7 +109,7 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
                         createdAt={like.createdAt} />
                 </Box>
             )) }
-            { likes.length < likesTotal && (
+            { offset < likesTotal && (
                 <Box
                     ref={infiniteScrollRef}
                     component='div'
