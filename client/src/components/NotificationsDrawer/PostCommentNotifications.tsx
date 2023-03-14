@@ -31,7 +31,7 @@ export default function PostCommentNotifications (props: PostCommentNotification
         return 0
     }, [postCommentNotifications.loading, postCommentNotifications.error, postCommentNotifications.data])
 
-    const fetchMorePostLikeNotifications = () => {
+    const fetchMorePostCommentNotifications = () => {
         postCommentNotifications.fetchMore({
             variables: { offset: comments.length, limit: comments.length > 3 ? 5 : 10 },
             updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetPostCommentNotificationsForUserQueryType }) {
@@ -49,7 +49,7 @@ export default function PostCommentNotifications (props: PostCommentNotification
         })
     }
 
-    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMorePostLikeNotifications)
+    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMorePostCommentNotifications)
 
     return (
         <Box
