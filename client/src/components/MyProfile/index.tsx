@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
+import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
 import { GET_USER_DETAILS } from '../../graphql/queries/users'
 import { GetUserDetailsQueryType } from '../../graphql/types/queries/users'
@@ -15,6 +16,8 @@ import UserLikedPostsFeed from '../UserLikedPostsFeed'
 export default function MyProfile () {
 
     const [loggedInUser] = useLoggedInUser()
+
+    const { id: postId } = useParams()
 
     const userDetails = useQuery<GetUserDetailsQueryType>(GET_USER_DETAILS, { variables: { userId: loggedInUser._id }})
 
@@ -110,6 +113,7 @@ export default function MyProfile () {
             >
                 <UserPostsFeed
                     userId={loggedInUser._id}
+                    postId={postId}
                     boxProps={{ marginBottom: '40px', ...tabIndex !== 0 && { display: 'none' } }}
                     dense
                     shouldSkipQuery={tabIndex !== 0} />

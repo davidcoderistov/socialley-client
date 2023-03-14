@@ -39,6 +39,9 @@ export default function SignedInRouter () {
                 <Route path='/profile' element={
                     <MyProfilePage />
                 } />
+                <Route path='/profile/:id' element={
+                    <MyProfilePage />
+                } />
                 <Route path='/users/:id' element={
                     <UserProfilePage />
                 } />

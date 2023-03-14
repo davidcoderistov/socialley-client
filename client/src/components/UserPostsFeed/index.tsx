@@ -9,12 +9,13 @@ import PostDetailsView from '../PostDetailsView'
 
 interface UserPostsFeedProps {
     userId: string
+    postId?: string | null
     boxProps?: BoxProps
     dense?: boolean
     shouldSkipQuery?: boolean
 }
 
-export default function UserPostsFeed ({ userId, boxProps = {}, dense = false, shouldSkipQuery = false }: UserPostsFeedProps) {
+export default function UserPostsFeed ({ userId, postId = null, boxProps = {}, dense = false, shouldSkipQuery = false }: UserPostsFeedProps) {
 
     const [viewingPostId, setViewingPostId] = useState<string | null>(null)
 
@@ -25,6 +26,12 @@ export default function UserPostsFeed ({ userId, boxProps = {}, dense = false, s
             getUserPosts({ variables: { userId, offset: 0, limit: 10 } })
         }
     }, [shouldSkipQuery, userId])
+
+    useEffect(() => {
+        if (postId) {
+            setViewingPostId(postId)
+        }
+    }, [postId])
 
     const posts = useMemo(() => {
         if (userPosts.data) {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useProfileNavigate } from '../../hooks/misc'
 import MuiDrawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
@@ -43,6 +44,7 @@ interface SearchDrawerProps {
 
 export default function NotificationsDrawer (props: SearchDrawerProps) {
 
+    const navigate = useNavigate()
     const profileNavigate = useProfileNavigate()
 
     const [step, setStep] = useState<number | null>(null)
@@ -52,11 +54,11 @@ export default function NotificationsDrawer (props: SearchDrawerProps) {
     }
 
     const handleClickPostLikeNotification = (postId: string) => {
-
+        navigate(`/profile/${postId}`)
     }
 
     const handleClickPostCommentNotification = (postId: string) => {
-
+        navigate(`/profile/${postId}`)
     }
 
     const handleClickFollowNotification = (userId: string) => {
