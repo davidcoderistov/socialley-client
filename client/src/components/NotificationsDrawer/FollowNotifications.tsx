@@ -1,12 +1,16 @@
-import React, { useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useInfiniteScroll } from '../../hooks/misc'
 import { useFollowNotificationUser, useUnfollowNotificationUser } from '../../hooks/graphql/users'
-import { useQuery } from '@apollo/client'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import { GET_FOLLOW_NOTIFICATIONS_FOR_USER } from '../../graphql/queries/users'
 import { GetFollowNotificationsForUserQueryType } from '../../graphql/types/queries/users'
+import { USER_FOLLOWED_SUBSCRIPTION } from '../../graphql/subscriptions/users'
+import { UserFollowedSubscriptionType } from '../../graphql/types/subscriptions/users'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Notification from '../Notification'
+import followNotificationsForUserMutations from '../../apollo/mutations/users/followNotificationsForUser'
+import _uniqBy from 'lodash/uniqBy'
 
 
 interface FollowNotificationsProps {
@@ -15,6 +19,12 @@ interface FollowNotificationsProps {
 }
 
 export default function FollowNotifications (props: FollowNotificationsProps) {
+
+    const client = useApolloClient()
+
+    const [offset, setOffset] = useState(3)
+    const [followsTotal, setFollowsTotal] = useState(0)
+    const [isFollowsTotalSet, setIsFollowsTotalSet] = useState(false)
 
     const followUser = useFollowNotificationUser()
     const unfollowUser = useUnfollowNotificationUser()
@@ -28,29 +38,30 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
         return []
     }, [followNotifications.loading, followNotifications.error, followNotifications.data])
 
-    const followsTotal = useMemo(() => {
-        if (!followNotifications.loading && !followNotifications.error && followNotifications.data) {
-            return followNotifications.data.getFollowNotificationsForUser.total
+    useEffect(() => {
+        if (!followNotifications.loading && !followNotifications.error && followNotifications.data && !isFollowsTotalSet) {
+            setFollowsTotal(followNotifications.data.getFollowNotificationsForUser.total)
+            setIsFollowsTotalSet(true)
         }
-        return 0
-    }, [followNotifications.loading, followNotifications.error, followNotifications.data])
+    }, [followNotifications.loading, followNotifications.error, followNotifications.data, isFollowsTotalSet])
 
     const fetchMoreFollowNotifications = () => {
+        const limit = follows.length > 3 ? 5 : 10
         followNotifications.fetchMore({
-            variables: { offset: follows.length, limit: follows.length > 3 ? 5 : 10 },
+            variables: { offset, limit },
             updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetFollowNotificationsForUserQueryType }) {
                 return {
                     ...existing,
                     getFollowNotificationsForUser: {
                         ...existing.getFollowNotificationsForUser,
-                        data: [
+                        data: _uniqBy([
                             ...existing.getFollowNotificationsForUser.data,
                             ...fetchMoreResult.getFollowNotificationsForUser.data,
-                        ]
+                        ], followNotification => followNotification.followableUser.user._id)
                     }
                 }
             }
-        })
+        }).then(() => setOffset(offset + limit))
     }
 
     const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMoreFollowNotifications)
@@ -63,6 +74,24 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
     const handleUnfollowUser = (userId: string) => {
         unfollowUser(userId)
     }
+
+    useSubscription<UserFollowedSubscriptionType>(USER_FOLLOWED_SUBSCRIPTION, {
+        onData ({ data }) {
+            if (!data.error && data.data) {
+                const followNotification = data.data.userFollowed
+                client.cache.updateQuery({
+                    query: GET_FOLLOW_NOTIFICATIONS_FOR_USER
+                }, (followNotificationsForUser: GetFollowNotificationsForUserQueryType | null) => {
+                    if (followNotificationsForUser) {
+                        return followNotificationsForUserMutations.addFollowNotification({
+                            followNotificationsForUser,
+                            followNotification,
+                        }).followNotificationsForUser
+                    }
+                })
+            }
+        }
+    })
 
     return (
         <Box
@@ -93,7 +122,7 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
                         onUnfollowUser={handleUnfollowUser} />
                 </Box>
             )) }
-            { follows.length < followsTotal && (
+            { offset < followsTotal && (
                 <Box
                     ref={infiniteScrollRef}
                     component='div'
