@@ -6,7 +6,6 @@ import { GetPostLikeNotificationsForUserQueryType } from '../../graphql/types/qu
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Notification from '../Notification'
-import { PostLikeNotification } from '../../graphql/types/models'
 
 
 interface PostLikeNotificationsProps {
@@ -16,9 +15,9 @@ interface PostLikeNotificationsProps {
 
 export default function PostLikeNotifications (props: PostLikeNotificationsProps) {
 
-    const postLikeNotifications = useQuery(GET_POST_LIKE_NOTIFICATIONS_FOR_USER)
+    const postLikeNotifications = useQuery<GetPostLikeNotificationsForUserQueryType>(GET_POST_LIKE_NOTIFICATIONS_FOR_USER)
 
-    const likes: PostLikeNotification[] = useMemo(() => {
+    const likes = useMemo(() => {
         if (!postLikeNotifications.loading && !postLikeNotifications.error && postLikeNotifications.data) {
             return postLikeNotifications.data.getPostLikeNotificationsForUser.data
         }
