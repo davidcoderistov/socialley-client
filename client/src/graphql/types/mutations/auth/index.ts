@@ -24,3 +24,7 @@ export interface EditUserMutationType {
 export interface ChangePasswordMutationType {
     changePassword: AuthUser
 }
+
+export interface ChangeProfilePhotoMutationType {
+    changeProfilePhoto: AuthUser
+}
