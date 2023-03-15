@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react'
 import Avatar from '@mui/material/Avatar'
+import ImageDisplay from '../ImageDisplay'
 import { getInitial } from '../../utils'
+import Box from "@mui/material/Box";
 
 
 interface Props {
@@ -14,7 +16,7 @@ interface Props {
     onClick?: () => void
 }
 
-export default function UserAvatar ({ firstName, lastName, size = 56, fontSize, backgroundColor = '#2C3539', clickable = false, onClick }: Props) {
+export default function UserAvatar ({ firstName, lastName, photoURL, size = 56, fontSize, backgroundColor = '#2C3539', clickable = false, onClick }: Props) {
 
     const firstInitial = useMemo(() => getInitial(firstName), [firstName])
     const secondInitial = useMemo(() => getInitial(lastName), [lastName])
@@ -25,7 +27,19 @@ export default function UserAvatar ({ firstName, lastName, size = 56, fontSize, 
         }
     }
 
-    return (
+    return photoURL ? (
+        <Box
+            component='div'
+            flex={`0 0 ${size}px`}
+            height={`${size}px`}
+        >
+            <ImageDisplay
+                url={photoURL}
+                rounded
+                aspectRatioPercentage={100}
+                minHeight={0} />
+        </Box>
+    ): (
         <Avatar sx={{ width: size, height: size, backgroundColor, ...fontSize && { fontSize }, ...clickable && { cursor: 'pointer' }}} onClick={handleClick}>
             {firstInitial}{secondInitial}
         </Avatar>
