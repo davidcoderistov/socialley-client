@@ -84,6 +84,8 @@ export default function Login (props: Props) {
                         </Grid>
                         <Grid item xs={12}>
                             <PasswordInput
+                                id='password'
+                                label='Password'
                                 {...register('password')}
                                 error={Boolean(errors.password)}
                                 errorMessage={errors.password?.message as string ?? ''} />
