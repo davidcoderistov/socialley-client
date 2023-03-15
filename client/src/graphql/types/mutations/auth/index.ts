@@ -20,3 +20,7 @@ export interface LogoutMutationType {
 export interface EditUserMutationType {
     editUser: AuthUser
 }
+
+export interface ChangePasswordMutationType {
+    changePassword: AuthUser
+}

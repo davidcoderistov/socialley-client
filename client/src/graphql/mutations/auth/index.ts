@@ -65,3 +65,19 @@ export const EDIT_USER = gql`
         }
     }
 `
+
+export const CHANGE_PASSWORD = gql`
+    mutation changePassword($changePassword: ChangePasswordOptions) {
+        changePassword(changePassword: $changePassword) {
+            user {
+                _id
+                firstName
+                lastName
+                username
+                email
+                avatarURL
+            }
+            accessToken
+        }
+    }
+`
