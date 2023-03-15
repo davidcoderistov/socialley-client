@@ -10,6 +10,7 @@ interface StaticProps {
     bordered?: boolean
     tile?: boolean
     aspectRatioPercentage?: number
+    rounded?: boolean
 }
 
 interface ClickableProps extends StaticProps {
@@ -24,7 +25,7 @@ interface NonClickableProps extends StaticProps {
 
 type Props = ClickableProps | NonClickableProps
 
-export default function ImageDisplay ({ url, backgroundColor = '#262626', minHeight = 450, aspectRatioPercentage = 125, bordered = false, tile = true, clickable, onClick }: Props) {
+export default function ImageDisplay ({ url, backgroundColor = '#262626', minHeight = 450, aspectRatioPercentage = 125, bordered = false, tile = true, rounded = false, clickable, onClick }: Props) {
 
     const handleClick = () => {
         if (clickable && onClick) {
@@ -50,7 +51,8 @@ export default function ImageDisplay ({ url, backgroundColor = '#262626', minHei
             border={bordered ? '2px solid #FFFFFF' : '0'}
             sx={{
                 ...clickable && { cursor: 'pointer' },
-                ...!tile && { borderRadius: '10px' }
+                ...!tile && { borderRadius: '10px' },
+                ...rounded && { borderRadius: '50%' },
             }}
             onClick={handleClick}
         >
