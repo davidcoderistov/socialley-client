@@ -8,5 +8,5 @@ export function useLoggedInUser () {
     const context = useContext(AppContext)
     const loggedInUser = context.loggedInUser as User
 
-    return [loggedInUser] as const
+    return [loggedInUser, context.setLoggedInUser] as const
 }
