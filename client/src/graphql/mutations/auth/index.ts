@@ -49,3 +49,19 @@ export const LOGOUT = gql`
         }
     }
 `
+
+export const EDIT_USER = gql`
+    mutation editUser($user: EditUserOptions) {
+        editUser(user: $user) {
+            user {
+                _id
+                firstName
+                lastName
+                username
+                email
+                avatarURL
+            }
+            accessToken
+        }
+    }
+`

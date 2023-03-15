@@ -16,3 +16,7 @@ export interface RefreshMutationType {
 export interface LogoutMutationType {
     logout: Pick<User, '_id' | 'username'>
 }
+
+export interface EditUserMutationType {
+    editUser: AuthUser
+}
