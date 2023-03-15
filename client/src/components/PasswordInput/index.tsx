@@ -6,11 +6,13 @@ import { Visibility, VisibilityOff } from '@mui/icons-material'
 
 
 interface Props {
+    id: string
+    label: string
     error: boolean
     errorMessage: string
 }
 
-const PasswordInput = React.forwardRef<HTMLInputElement, Props>(({ error, errorMessage, ...rest }, ref) => {
+const PasswordInput = React.forwardRef<HTMLInputElement, Props>(({ id, label, error, errorMessage, ...rest }, ref) => {
 
     const [showPassword, setShowPassword] = useState(false)
 
@@ -34,10 +36,10 @@ const PasswordInput = React.forwardRef<HTMLInputElement, Props>(({ error, errorM
             helperText={error && errorMessage ? errorMessage : ''}
             required
             fullWidth
-            id='password'
-            label='Password'
+            id={id}
+            label={label}
             type={showPassword ? 'text': 'password'}
-            autoComplete='current-password'
+            autoComplete={id}
             InputProps={{
                 endAdornment: (
                     <InputAdornment position='end'>
