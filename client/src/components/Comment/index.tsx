@@ -217,7 +217,8 @@ export default function Comment (props: CommentProps) {
                                     size={40}
                                     fontSize={16}
                                     firstName={props.comment.user.firstName}
-                                    lastName={props.comment.user.lastName} />
+                                    lastName={props.comment.user.lastName}
+                                    photoURL={props.comment.user.avatarURL} />
                             )}
                             <Box
                                 component='div'
