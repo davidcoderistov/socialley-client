@@ -93,7 +93,7 @@ const getNodeMessages = (user: MessageUser, messages: Message[], messagesCount: 
                         messageType={messageType}
                         message={message.message}
                         showAvatar={showAvatar}
-                        user={{ firstName: user.firstName, lastName: user.lastName }} />
+                        user={{ firstName: user.firstName, lastName: user.lastName, photoURL: user.avatarURL }} />
                 )
             } else {
                 return (
@@ -102,7 +102,7 @@ const getNodeMessages = (user: MessageUser, messages: Message[], messagesCount: 
                         messageType={messageType}
                         photoURL={message.photoURL}
                         showAvatar={showAvatar}
-                        user={{ firstName: user.firstName, lastName: user.lastName }} />
+                        user={{ firstName: user.firstName, lastName: user.lastName, photoURL: user.avatarURL }} />
                 )
             }
         }

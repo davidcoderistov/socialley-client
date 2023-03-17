@@ -9,7 +9,7 @@ type MessageType = 'sent' | 'received'
 interface User {
     firstName: string
     lastName: string
-    photoURL?: string
+    photoURL?: string | null
 }
 
 interface Props {

@@ -8,7 +8,7 @@ type MessageType = 'sent' | 'received'
 interface User {
     firstName: string
     lastName: string
-    photoURL?: string
+    photoURL?: string | null
 }
 
 interface Props {
@@ -62,6 +62,7 @@ export default function Message (props: Props) {
                         <UserAvatar
                             firstName={props.user.firstName}
                             lastName={props.user.lastName}
+                            photoURL={props.user.photoURL}
                             size={24}
                             fontSize={12} />
                     ) : (
