@@ -66,6 +66,7 @@ export default function SearchHistoryUser ({ user, isUserLoading, onClickUser, o
                 alignItems='center'
                 columnGap='10px'
                 minWidth={0}
+                width='100%'
             >
                 { isUserLoading ? (
                     <Box
@@ -84,6 +85,7 @@ export default function SearchHistoryUser ({ user, isUserLoading, onClickUser, o
                     <UserAvatar
                         firstName={user.firstName}
                         lastName={user.lastName}
+                        photoURL={user?.avatarURL}
                         size={36}
                         fontSize={14}
                         clickable={false}
