@@ -70,6 +70,7 @@ export default function UserListItem ({ user, onClick, loading }: Props) {
                 <UserAvatar
                     firstName={user.firstName}
                     lastName={user.lastName}
+                    photoURL={user?.avatarURL}
                     size={48} />
             )}
             <Box
