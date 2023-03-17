@@ -280,7 +280,8 @@ export default function Chat ({ user }: ChatProps) {
                                     <UserAvatar
                                         firstName={user.firstName}
                                         lastName={user.lastName}
-                                        size={24}
+                                        photoURL={user.avatarURL}
+                                        size={40}
                                         fontSize={12}
                                         clickable
                                         onClick={handleClickUser} />
