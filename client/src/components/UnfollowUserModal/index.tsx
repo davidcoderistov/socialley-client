@@ -70,6 +70,7 @@ export default function UnfollowUserModal (props: Props) {
                 <UserAvatar
                     firstName={props.user.firstName}
                     lastName={props.user.lastName}
+                    photoURL={props.user.avatarURL}
                     size={80}
                     backgroundColor='#616161'
                 />
