@@ -41,25 +41,27 @@ type ChatMessage = {
 
 const timestampMessages = (messages: Message[], messagesCount: number): ChatMessage[] => {
     const messagesCopy: ChatMessage[] = Array.from(messages)
-    let separatorsCount = 0
-    for (let i = 0; i < messages.length - 1; ++i) {
-        const first = moment(messages[i].createdAt)
-        const second = moment(messages[i+1].createdAt)
-        if (second.diff(first, 'minutes') > 10) {
-            messagesCopy.splice(separatorsCount + i + 1, 0, {
-                key: `${i}-message-separator`,
-                createdAt: messages[i+1].createdAt,
+    if (messagesCount > 0) {
+        let separatorsCount = 0
+        for (let i = 0; i < messages.length - 1; ++i) {
+            const first = moment(messages[i].createdAt)
+            const second = moment(messages[i+1].createdAt)
+            if (second.diff(first, 'minutes') > 10) {
+                messagesCopy.splice(separatorsCount + i + 1, 0, {
+                    key: `${i}-message-separator`,
+                    createdAt: messages[i+1].createdAt,
+                    type: 'time'
+                })
+                ++separatorsCount
+            }
+        }
+        if (messages.length === messagesCount) {
+            messagesCopy.splice(0, 0, {
+                key: 'first-message-separator',
+                createdAt: messages[0].createdAt,
                 type: 'time'
             })
-            ++separatorsCount
         }
-    }
-    if (messages.length === messagesCount) {
-        messagesCopy.splice(0, 0, {
-            key: 'first-message-separator',
-            createdAt: messages[0].createdAt,
-            type: 'time'
-        })
     }
     return messagesCopy
 }
