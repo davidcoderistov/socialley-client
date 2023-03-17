@@ -189,6 +189,7 @@ export default function UserProfileDetails (props: Props) {
                         <UserAvatar
                             firstName={props.firstName}
                             lastName={props.lastName}
+                            photoURL={props.avatarURL}
                             size={150} />
                     )}
                 </Box>
