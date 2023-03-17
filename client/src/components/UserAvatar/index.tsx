@@ -31,6 +31,7 @@ export default function UserAvatar ({ firstName, lastName, photoURL, size = 56, 
         <Box
             component='div'
             flex={`0 0 ${size}px`}
+            width={`${size}px`}
             height={`${size}px`}
         >
             <ImageDisplay
