@@ -96,6 +96,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
             alignItems='center'
             paddingX={dense ? 0 : '15px'}
             paddingY={dense ? '5px' : '10px'}
+            columnGap='10px'
         >
             <Box
                 component='div'
@@ -105,6 +106,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                 alignItems='center'
                 columnGap='10px'
                 minWidth={0}
+                width='100%'
             >
                 { isUserLoading ? (
                     <Box
@@ -123,6 +125,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
                     <UserAvatar
                         firstName={user.firstName}
                         lastName={user.lastName}
+                        photoURL={user?.avatarURL}
                         size={dense ? 36 : 44}
                         fontSize={dense ? 14 : 16}
                         clickable={clickable}
