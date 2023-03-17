@@ -125,6 +125,7 @@ export default function Notification (props: Props) {
                     <UserAvatar
                         firstName={props.user.firstName}
                         lastName={props.user.lastName}
+                        photoURL={props.user.avatarURL}
                         size={36}
                         fontSize={14}
                         clickable={false}
