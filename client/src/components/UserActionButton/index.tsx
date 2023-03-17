@@ -32,7 +32,9 @@ export default function UserActionButton (props: UserActionButtonProps) {
                 },
                 '.MuiLoadingButton-loadingIndicator': {
                     color: primary ? '#FFFFFF' : '#000000',
-                }
+                },
+                ...props.text === 'Follow' && { paddingX: '20px' },
+                ...props.text === 'Following' && { paddingX: '24px' }
             } : {
                 textTransform: 'none',
                 color: primary ? '#0095F6' : '#DBDBDB',
