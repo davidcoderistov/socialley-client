@@ -64,8 +64,11 @@ export default function ChatMessageListItem (props: Props) {
     const message = useMemo(() => {
         if (props.message) {
             return props.message
+        } else if (props.photoURL) {
+            return props.sent ? 'You sent an attachment' : 'Sent you an attachment'
+        } else {
+            return null
         }
-        return props.sent ? 'You sent an attachment' : 'Sent you an attachment'
     }, [props.message, props.photoURL])
 
     const handleClick = () => {
@@ -133,7 +136,7 @@ export default function ChatMessageListItem (props: Props) {
                 >
                     { props.loading ? (
                         <Skeleton sx={{ backgroundColor: '#262626', width: '75%' }} animation='wave' />
-                    ) : (
+                    ) : message ? (
                         <>
                             <Typography
                                 variant='body2'
@@ -149,7 +152,7 @@ export default function ChatMessageListItem (props: Props) {
                                 color='#8E8E8E'
                             >{ ago }</Typography>
                         </>
-                    )}
+                    ) : null }
                 </Box>
             </Box>
         </Box>
