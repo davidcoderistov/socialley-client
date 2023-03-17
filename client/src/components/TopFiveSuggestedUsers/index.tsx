@@ -62,7 +62,9 @@ export default function TopFiveSuggestedUsers () {
                             color: '#FFFFFF',
                             '&:hover': {
                                 color: '#A8A8A8'
-                            }
+                            },
+                            paddingX: 0,
+                            minWidth: 0,
                         }}
                         onClick={handleClickSeeAll}
                     >
