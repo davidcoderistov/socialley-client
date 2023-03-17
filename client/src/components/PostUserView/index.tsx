@@ -108,6 +108,7 @@ export default function PostUserView (props: Props) {
                         fontSize={16}
                         firstName={props.user.firstName}
                         lastName={props.user.lastName}
+                        photoURL={props.user.avatarURL}
                         clickable
                         onClick={handleClickUser} />
                 )}
