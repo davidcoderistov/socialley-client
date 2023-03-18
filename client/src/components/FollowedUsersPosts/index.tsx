@@ -93,7 +93,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }
     }
 
-    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(handleFetchMoreFollowedUsersPosts)
+    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(handleFetchMoreFollowedUsersPosts, '50px', 0.1, 300)
 
     useEffect(() => {
         setIsFollowedUsersPostsInitialLoading(true)
