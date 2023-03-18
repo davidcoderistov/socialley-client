@@ -1,4 +1,5 @@
 import React, { useRef } from 'react'
+import { useLoggedInUser } from '../../hooks/misc'
 import Box, { BoxProps } from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import InputBase from '@mui/material/InputBase'
@@ -7,6 +8,8 @@ import Image from '../Image'
 
 
 const PostPreview = React.forwardRef((props: { url: string | null, containerProps?: BoxProps }, ref) => {
+
+    const [loggedInUser] = useLoggedInUser()
 
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -153,14 +156,17 @@ const PostPreview = React.forwardRef((props: { url: string | null, containerProp
                                 alignContent='stretch'
                                 boxSizing='border-box'
                                 position='relative'
-                                columnGap='5px'
+                                columnGap='10px'
                             >
                                 <UserAvatar
                                     size={40}
                                     fontSize={16}
-                                    firstName='David'
-                                    lastName='Ristov' />
-                                <Typography color='#FFFFFF'>davidristovv</Typography>
+                                    firstName={loggedInUser.firstName}
+                                    lastName={loggedInUser.lastName}
+                                    photoURL={loggedInUser.avatarURL} />
+                                <Typography color='#FFFFFF'>
+                                    { loggedInUser.username }
+                                </Typography>
                             </Box>
                             <Box
                                 component='div'
