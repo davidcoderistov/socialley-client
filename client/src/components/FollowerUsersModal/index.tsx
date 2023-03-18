@@ -39,7 +39,7 @@ export default function FollowerUsersModal (props: Props) {
                 updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetFollowersForUserQueryType }) {
                     return {
                         ...existing,
-                        getFollowingForUser: {
+                        getFollowersForUser: {
                             ...existing.getFollowersForUser,
                             data: [
                                 ...existing.getFollowersForUser.data,
