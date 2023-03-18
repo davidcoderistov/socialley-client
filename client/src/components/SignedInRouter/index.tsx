@@ -5,6 +5,7 @@ import HomePage from '../../pages/HomePage'
 import MessagesPage from '../../pages/MessagesPage'
 import MyProfilePage from '../../pages/MyProfilePage'
 import UserProfilePage from '../../pages/UserProfilePage'
+import UserProfileSettingsPage from '../../pages/UserProfileSettingsPage'
 import SuggestedUsersPage from '../../pages/SuggestedUsersPage'
 import SuggestedPostsPage from '../../pages/SuggestedPostsPage'
 import { useLatestMessages, useReceiveMessage } from '../../hooks/graphql/messages'
@@ -38,6 +39,9 @@ export default function SignedInRouter () {
                 } />
                 <Route path='/profile' element={
                     <MyProfilePage />
+                } />
+                <Route path='/profile/settings' element={
+                    <UserProfileSettingsPage />
                 } />
                 <Route path='/profile/:id' element={
                     <MyProfilePage />
