@@ -12,6 +12,8 @@ import CssBaseline from '@mui/material/CssBaseline'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
+import UserAvatar from '../UserAvatar'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import PasswordInput from '../PasswordInput'
 import { getValidationError } from '../../utils'
@@ -107,6 +109,36 @@ export default function ChangePassword () {
                 <Box component='form' onSubmit={handleSubmit(handleChangePassword)} noValidate sx={{ mt: 1 }}>
                     <ThemeProvider theme={darkTheme}>
                         <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Box
+                                    component='div'
+                                    display='flex'
+                                    flexDirection='row'
+                                    justifyContent='flex-start'
+                                    alignItems='center'
+                                    columnGap='10px'
+                                >
+                                    <UserAvatar
+                                        size={38}
+                                        firstName={loggedInUser.firstName}
+                                        lastName={loggedInUser.lastName}
+                                        photoURL={loggedInUser.avatarURL} />
+                                    <Box
+                                        component='div'
+                                        display='flex'
+                                        flexDirection='column'
+                                        justifyContent='center'
+                                        alignItems='flex-start'
+                                    >
+                                        <Typography
+                                            variant='body1'
+                                            color='#FFFFFF'
+                                        >
+                                            { loggedInUser.username }
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Grid>
                             <Grid item xs={12}>
                                 <PasswordInput
                                     id='oldPassword'
