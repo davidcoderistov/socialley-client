@@ -312,7 +312,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
             )}
             { viewingPost && (
                 <PostView
-                    postDetails={{...viewingPost, ...viewingPost.postDetails, ...viewingPost.postDetails.post, user: {...viewingPost.postDetails.user, following: false, isFollowingLoading: false}}}
+                    postDetails={{...viewingPost, ...viewingPost.postDetails, ...viewingPost.postDetails.post, user: {...viewingPost.postDetails.user, following: true, isFollowingLoading: false}}}
                     isPostDetailsLoading={false}
                     onClickUser={handleCloseViewPost}
                     onFollowUser={() => {}}
