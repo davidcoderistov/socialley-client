@@ -38,7 +38,7 @@ export default function PostsFeed ({ boxProps = {}, posts, isPostsLoading, hasMo
         onFetchMorePosts()
     }
 
-    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(handleFetchMorePosts)
+    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(handleFetchMorePosts, '50px', 0.1, 300)
 
     return (
         <Box component='div' {...boxProps}>
