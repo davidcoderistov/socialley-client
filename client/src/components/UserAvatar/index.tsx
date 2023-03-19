@@ -33,6 +33,8 @@ export default function UserAvatar ({ firstName, lastName, photoURL, size = 56, 
             flex={`0 0 ${size}px`}
             width={`${size}px`}
             height={`${size}px`}
+            sx={{ ...clickable && { cursor: 'pointer' } }}
+            onClick={handleClick}
         >
             <ImageDisplay
                 url={photoURL}
