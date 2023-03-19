@@ -75,3 +75,41 @@ export function updatePostDetailsFavoriteStatus (options: UpdatePostDetailsFavor
         }
     }
 }
+
+interface UpdatePostDetailsFollowingLoadingStatusOptions {
+    postDetails: GetPostDetailsQueryType
+    isFollowingLoading: boolean
+}
+
+export function updatePostDetailsFollowingLoadingStatus (options: UpdatePostDetailsFollowingLoadingStatusOptions): GetPostDetailsQueryType {
+    const { postDetails, isFollowingLoading } = options
+
+    return {
+        ...postDetails,
+        getPostDetails: {
+            ...postDetails.getPostDetails,
+            isFollowingLoading,
+        }
+    }
+}
+
+interface UpdatePostDetailsFollowingStatusOptions {
+    postDetails: GetPostDetailsQueryType
+    following: boolean
+}
+
+export function updatePostDetailsFollowingStatus (options: UpdatePostDetailsFollowingStatusOptions): GetPostDetailsQueryType {
+    const { postDetails, following } = options
+
+    return {
+        ...postDetails,
+        getPostDetails: {
+            ...postDetails.getPostDetails,
+            followableUser: {
+                ...postDetails.getPostDetails.followableUser,
+                following,
+            },
+            isFollowingLoading: false,
+        }
+    }
+}
