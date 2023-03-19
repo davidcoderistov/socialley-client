@@ -13,12 +13,15 @@ export const GET_FOLLOWED_USERS_POSTS = gql`
                         videoURL
                         createdAt
                     }
-                    user {
-                        _id
-                        firstName
-                        lastName
-                        username
-                        avatarURL
+                    followableUser {
+                        user {
+                            _id
+                            firstName
+                            lastName
+                            username
+                            avatarURL
+                        }
+                        following
                     }
                     firstLikeUser {
                         _id
@@ -161,12 +164,15 @@ export const GET_POST_DETAILS = gql`
                 videoURL
                 createdAt
             }
-            user {
-                _id
-                firstName
-                lastName
-                username
-                avatarURL
+            followableUser {
+                user {
+                    _id
+                    firstName
+                    lastName
+                    username
+                    avatarURL
+                }
+                following
             }
             firstLikeUser {
                 _id
