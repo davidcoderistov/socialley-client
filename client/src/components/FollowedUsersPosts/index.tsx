@@ -285,7 +285,16 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     { followedUsersPosts.data && followedUsersPosts.data.getFollowedUsersPosts.data.map(followedUserPost => (
                         <Post
                             key={followedUserPost.postDetails.post._id}
-                            post={{...followedUserPost, ...followedUserPost.postDetails, user: {...followedUserPost.postDetails.user, following: false, isFollowingLoading: false}, ...followedUserPost.postDetails.post}}
+                            post={{
+                                ...followedUserPost,
+                                ...followedUserPost.postDetails,
+                                user: {
+                                    ...followedUserPost.postDetails.followableUser.user,
+                                    following: followedUserPost.postDetails.followableUser.following,
+                                    isFollowingLoading: followedUserPost.postDetails.isFollowingLoading
+                                },
+                                ...followedUserPost.postDetails.post
+                            }}
                             onClickUser={() => {}}
                             onFollowUser={() => {}}
                             onLikePost={handleLikePost}
@@ -312,7 +321,16 @@ export default function FollowedUsersPosts (props: BoxProps) {
             )}
             { viewingPost && (
                 <PostView
-                    postDetails={{...viewingPost, ...viewingPost.postDetails, ...viewingPost.postDetails.post, user: {...viewingPost.postDetails.user, following: true, isFollowingLoading: false}}}
+                    postDetails={{
+                        ...viewingPost,
+                        ...viewingPost.postDetails,
+                        ...viewingPost.postDetails.post,
+                        user: {
+                            ...viewingPost.postDetails.followableUser.user,
+                            following: viewingPost.postDetails.followableUser.following,
+                            isFollowingLoading: viewingPost.postDetails.isFollowingLoading
+                        }
+                    }}
                     isPostDetailsLoading={false}
                     onClickUser={handleCloseViewPost}
                     onFollowUser={() => {}}

@@ -35,9 +35,9 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
                 ...postDetails.data.getPostDetails,
                 ...postDetails.data.getPostDetails.post,
                 user: {
-                    ...postDetails.data.getPostDetails.user,
-                    following: false,
-                    isFollowingLoading: false,
+                    ...postDetails.data.getPostDetails.followableUser.user,
+                    following: postDetails.data.getPostDetails.followableUser.following,
+                    isFollowingLoading: postDetails.data.getPostDetails.isFollowingLoading,
                 },
             }
         }
