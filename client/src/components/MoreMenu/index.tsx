@@ -8,7 +8,7 @@ import NavLink from '../Dashboard/NavLink'
 import LogoutModal from '../LogoutModal'
 
 
-export default function ProfileSettingsMenu () {
+export default function MoreMenu () {
 
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
 

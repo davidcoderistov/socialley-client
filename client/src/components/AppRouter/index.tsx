@@ -56,11 +56,11 @@ export default function AppRouter () {
     }
 
     useEffect(() => {
-        /*if (loggedInUser) {
+        if (loggedInUser) {
             setSessionModalTimeout(setTimeout(() => {
                 setSessionModalOpen(true)
             }, 5000))
-        }*/
+        }
     }, [loggedInUser])
 
     const getRefreshUser = (data: RefreshMutationType): User => {
