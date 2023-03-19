@@ -62,8 +62,7 @@ export default function MyProfile () {
                         postsCount={user.postsCount}
                         followersCount={user.followersCount}
                         followingCount={user.followingCount}
-                        onEditProfile={handleEditProfile}
-                        onClickOptions={() => {}} />
+                        onEditProfile={handleEditProfile} />
                 ) : null }
             </Box>
             <Box

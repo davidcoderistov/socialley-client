@@ -31,7 +31,6 @@ interface LoggedInUserProfileProps {
     onFollowUser?: never
     onUnfollowUser?: never
     onEditProfile: () => void
-    onClickOptions: () => void
 }
 
 interface UserProfileDetailsProps {
@@ -55,7 +54,6 @@ interface UserProfileDetailsProps {
     onFollowUser: (userId: string) => void
     onUnfollowUser: (userId: string) => void
     onEditProfile?: never
-    onClickOptions: () => void
 }
 
 interface UserProfileLoadingDetailsProps {
@@ -76,7 +74,6 @@ interface UserProfileLoadingDetailsProps {
     onFollowUser?: never
     onUnfollowUser?: never
     onEditProfile?: never
-    onClickOptions?: never
 }
 
 interface UnfollowUser {
@@ -257,20 +254,6 @@ export default function UserProfileDetails (props: Props) {
                                         loading={props.isFollowingLoading}
                                         onClick={handleFollowUser} />
                                 ) }
-                            </Box>
-                            <Box
-                                component='div'
-                                marginLeft='5px'
-                                flexShrink='0'
-                                display='block'
-                            >
-                                <IconButton sx={{ color: '#FFFFFF' }} onClick={props.onClickOptions}>
-                                    { props.isLoggedInUserProfile ? (
-                                        <Settings />
-                                    ) : (
-                                        <MoreHoriz />
-                                    )}
-                                </IconButton>
                             </Box>
                         </>
                     )}

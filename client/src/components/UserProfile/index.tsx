@@ -116,8 +116,7 @@ export default function UserProfile (props: UserProfileProps) {
                         latestMutualFollower={user.latestFollower}
                         mutualFollowersCount={user.followedCount}
                         onFollowUser={handleFollowUser}
-                        onUnfollowUser={handleUnfollowUser}
-                        onClickOptions={() => {}} />
+                        onUnfollowUser={handleUnfollowUser} />
                 ) : null }
             </Box>
             <Box
