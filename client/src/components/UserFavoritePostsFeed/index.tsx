@@ -45,7 +45,7 @@ export default function UserFavoritePostsFeed ({ boxProps = {}, dense = false, s
             updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetFavoritePostsForUserQueryType }) {
                 return {
                     ...existing,
-                    getPostsForUser: {
+                    getFavoritePostsForUser: {
                         ...existing.getFavoritePostsForUser,
                         data: [
                             ...existing.getFavoritePostsForUser.data,

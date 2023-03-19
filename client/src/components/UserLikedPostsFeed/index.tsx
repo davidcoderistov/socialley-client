@@ -45,7 +45,7 @@ export default function UserLikedPostsFeed ({ boxProps = {}, dense = false, shou
             updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetLikedPostsForUserQueryType }) {
                 return {
                     ...existing,
-                    getPostsForUser: {
+                    getLikedPostsForUser: {
                         ...existing.getLikedPostsForUser,
                         data: [
                             ...existing.getLikedPostsForUser.data,
