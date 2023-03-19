@@ -93,7 +93,8 @@ export interface Post {
 
 export interface PostDetails {
     post: Post
-    user: Omit<User, 'email'>
+    followableUser: FollowableUser
+    isFollowingLoading: boolean
     firstLikeUser: Pick<User, '_id' | 'username'> | null
     liked: boolean
     isLikedLoading: boolean
