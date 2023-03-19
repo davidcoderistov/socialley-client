@@ -35,12 +35,12 @@ export default function LogoutModal (props: Props) {
             client.clearStore().then(() => {
                 setLoading(false)
                 setLoggedInUser(null)
+                props.onCloseModal()
             })
         }).catch(() => {
             setLoading(false)
             enqueueSnackbar('Could not log out at this moment. Please try again later', { variant: 'error' })
         })
-        props.onCloseModal()
     }
 
     return (
