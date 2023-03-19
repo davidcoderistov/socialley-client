@@ -1,10 +1,11 @@
 import React from 'react'
+import { useLoggedInUser } from '../../hooks/misc'
 import { Box, ListItemIcon, Typography, styled } from '@mui/material'
+import UserAvatar from '../UserAvatar'
 import {
     Home,
     Reply,
     AddCircleOutline,
-    AccountCircle,
     Search,
     ExploreOutlined,
     FavoriteBorder,
@@ -28,6 +29,8 @@ interface NavItemProps {
 }
 
 export default function NavItem ({ active, hovered, type, bordered = false }: NavItemProps) {
+
+    const [loggedInUser] = useLoggedInUser()
 
     const hoveredNotActive = hovered && !active
 
@@ -64,7 +67,12 @@ export default function NavItem ({ active, hovered, type, bordered = false }: Na
                     <AddCircleOutline sx={iconSx} />
                 )}
                 { type === 'profile' && (
-                    <AccountCircle sx={iconSx}/>
+                    <UserAvatar
+                        size={30}
+                        fontSize={14}
+                        firstName={loggedInUser.firstName}
+                        lastName={loggedInUser.lastName}
+                        photoURL={loggedInUser.avatarURL} />
                 )}
                 { type === 'search' && (
                     <Search sx={iconSx}/>
