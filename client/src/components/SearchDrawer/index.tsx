@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client'
 import { useProfileNavigate } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
@@ -9,10 +9,11 @@ import MuiDrawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import InputBase from '@mui/material/InputBase'
 import { styled } from '@mui/material/styles'
-import { Search } from '@mui/icons-material'
+import { Search, Close } from '@mui/icons-material'
 import FollowUserDetails from '../FollowUserDetails'
 import SearchHistory from '../SearchHistory'
 import _range from 'lodash/range'
@@ -56,6 +57,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
 
     const { enqueueSnackbar } = useSnackbar()
 
+    const inputRef = useRef<HTMLInputElement>()
     const [searchQuery, setSearchQuery] = useState('')
 
     const [getSearchedUsers, searchedUsers] = useLazyQuery<GetSearchedUsersQueryType>(GET_SEARCHED_USERS, {
@@ -86,6 +88,11 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                 fetchPolicy: 'cache-only'
             })
         }
+    }
+
+    const handleClearSearchQuery = () => {
+        setSearchQuery('')
+        inputRef.current?.focus()
     }
 
     const users = useMemo(() => {
@@ -208,6 +215,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
             </Toolbar>
             <Divider />
             <InputBase
+                inputRef={inputRef}
                 sx={{
                     color: '#FFFFFF',
                     backgroundColor: '#262626',
@@ -224,6 +232,14 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                     },
                 }}
                 startAdornment={<Search sx={{ marginRight: '5px', color: '#7A7C7F' }}/>}
+                endAdornment={
+                    <IconButton
+                        sx={{ paddingY: 0, ...searchQuery.trim().length < 1 && { display: 'none' }}}
+                        onClick={handleClearSearchQuery}
+                    >
+                        <Close sx={{ color: '#FFFFFF' }} />
+                    </IconButton>
+                }
                 value={searchQuery}
                 onChange={handleChangeSearchQuery}
                 placeholder='Search'
