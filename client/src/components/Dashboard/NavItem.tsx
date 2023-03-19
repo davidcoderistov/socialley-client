@@ -8,6 +8,7 @@ import {
     Search,
     ExploreOutlined,
     FavoriteBorder,
+    FormatListBulleted,
 } from '@mui/icons-material'
 
 
@@ -17,7 +18,7 @@ const Container = styled(Box)({
     padding: '8px',
 })
 
-export type NavType = 'home' | 'messages' | 'profile' | 'create' | 'search' | 'explore' | 'notifications'
+export type NavType = 'home' | 'messages' | 'profile' | 'create' | 'search' | 'explore' | 'notifications' | 'more'
 
 interface NavItemProps {
     active: boolean
@@ -74,6 +75,9 @@ export default function NavItem ({ active, hovered, type, bordered = false }: Na
                 { type === 'notifications' && (
                     <FavoriteBorder sx={iconSx}/>
                 )}
+                { type === 'more' && (
+                    <FormatListBulleted sx={iconSx}/>
+                )}
             </ListItemIcon>
             <Typography noWrap marginY='4px' fontSize={15} sx={{ color: '#FFFFFF' }}>
                 { type === 'home' && 'Home '}
@@ -83,6 +87,7 @@ export default function NavItem ({ active, hovered, type, bordered = false }: Na
                 { type === 'search' && 'Search' }
                 { type === 'explore' && 'Explore' }
                 { type === 'notifications' && 'Notifications' }
+                { type === 'more' && 'More' }
             </Typography>
         </Container>
     )

@@ -13,6 +13,7 @@ import NavLink from './NavLink'
 import CreatePostModal from '../CreatePostModal'
 import SearchDrawer from '../SearchDrawer'
 import NotificationsDrawer from '../NotificationsDrawer'
+import MoreMenu from '../MoreMenu'
 import { useLocation } from 'react-router-dom'
 
 
@@ -134,6 +135,7 @@ export default function Dashboard (props: Props) {
                         <NavLink isNotLink type='create' onClick={handleOpenCreatePostModal} />
                         <NavLink to='/profile' type='profile' />
                     </List>
+                    <MoreMenu />
                 </Drawer>
                 <SearchDrawer open={isSearchDrawerOpen} />
                 <NotificationsDrawer open={isNotificationsDrawerOpen} />
