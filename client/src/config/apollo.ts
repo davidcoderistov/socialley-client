@@ -170,6 +170,11 @@ const cache = new InMemoryCache({
                     read (isFavoriteLoading = false) {
                         return isFavoriteLoading
                     }
+                },
+                isFollowingLoading: {
+                    read (isFollowingLoading = false) {
+                        return isFollowingLoading
+                    }
                 }
             }
         },
