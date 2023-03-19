@@ -11,12 +11,15 @@ export const CREATE_POST = gql`
                 videoURL
                 createdAt
             }
-            user {
-                _id
-                firstName
-                lastName
-                username
-                avatarURL
+            followableUser {
+                user {
+                    _id
+                    firstName
+                    lastName
+                    username
+                    avatarURL
+                }
+                following
             }
             firstLikeUser {
                 _id
