@@ -1,9 +1,12 @@
 import React from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
+import { useSnackbar } from 'notistack'
+import { useMutation } from '@apollo/client'
+import { LOGOUT } from '../../graphql/mutations/auth'
 import Box from '@mui/material/Box'
 import Dialog from '@mui/material/Dialog'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
+import LoadingButton from '@mui/lab/LoadingButton'
 import IconButton from '@mui/material/IconButton'
 import UserAvatar from '../UserAvatar'
 import { Close } from '@mui/icons-material'
@@ -16,9 +19,18 @@ interface Props {
 
 export default function LogoutModal (props: Props) {
 
-    const [loggedInUser] = useLoggedInUser()
+    const { enqueueSnackbar } = useSnackbar()
+
+    const [loggedInUser, setLoggedInUser] = useLoggedInUser()
+
+    const [logout, { loading }] = useMutation(LOGOUT)
 
     const handleLogOut = () => {
+        logout().then(() => {
+            setLoggedInUser(null)
+        }).catch(() => {
+            enqueueSnackbar('Could not log out at this moment. Please try again later', { variant: 'error' })
+        })
         props.onCloseModal()
     }
 
@@ -85,17 +97,18 @@ export default function LogoutModal (props: Props) {
                     If you change your mind, you'll have to login again.
                 </Typography>
             </Box>
-            <Button
+            <LoadingButton
                 variant='text'
                 fullWidth
                 color='error'
                 sx={{
                     color: '#ED4956',
                 }}
+                loading={loading}
                 onClick={handleLogOut}
             >
                 Log out
-            </Button>
+            </LoadingButton>
         </Dialog>
     )
 }
