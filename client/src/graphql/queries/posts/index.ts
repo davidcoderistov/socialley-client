@@ -32,6 +32,7 @@ export const GET_FOLLOWED_USERS_POSTS = gql`
                     favorite
                     isFavoriteLoading @client
                     likesCount
+                    isFollowingLoading @client
                 }
                 commentsCount
             }
@@ -183,6 +184,7 @@ export const GET_POST_DETAILS = gql`
             favorite
             isFavoriteLoading @client
             likesCount
+            isFollowingLoading @client
         }
     }
 `

@@ -30,6 +30,7 @@ export const CREATE_POST = gql`
             favorite
             isFavoriteLoading @client
             likesCount
+            isFollowingLoading @client
         }
     }
 `
