@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
+import { useSnackbar } from 'notistack'
 import {
     useComments,
     useCreateComment,
@@ -11,8 +12,13 @@ import {
     useUnmarkPostAsFavorite,
     useUpdateFollowedUserPostCommentsCount,
 } from '../../hooks/graphql/posts'
+import {
+    updatePostDetailsFollowingLoadingStatus,
+    updatePostDetailsFollowingStatus,
+} from '../../apollo/mutations/posts/postDetails'
 import { GET_POST_DETAILS } from '../../graphql/queries/posts'
 import { GetPostDetailsQueryType } from '../../graphql/types/queries/posts'
+import { FOLLOW_USER } from '../../graphql/mutations/users'
 import PostView from '../PostView/PostView'
 import { PostDetails as PostViewDetails } from '../../types'
 
@@ -23,6 +29,8 @@ interface PostDetailsViewProps {
 }
 
 export default function PostDetailsView ({ postId, onClose }: PostDetailsViewProps) {
+
+    const { enqueueSnackbar } = useSnackbar()
 
     const postDetails = useQuery<GetPostDetailsQueryType>(GET_POST_DETAILS, {
         variables: { postId },
@@ -70,6 +78,36 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
         }
     }
 
+    const [followUser] = useMutation(FOLLOW_USER)
+
+    const updateFollowingLoadingStatus = (isFollowingLoading: boolean) => {
+        postDetails.updateQuery(postDetails => updatePostDetailsFollowingLoadingStatus({
+            postDetails,
+            isFollowingLoading,
+        }))
+    }
+
+    const updateFollowingStatus = (following: boolean) => {
+        postDetails.updateQuery(postDetails => updatePostDetailsFollowingStatus({
+            postDetails,
+            following,
+        }))
+    }
+
+    const handleFollowUser = (userId: string) => {
+        updateFollowingLoadingStatus(true)
+        followUser({
+            variables: {
+                followedUserId: userId
+            }
+        }).then(() => {
+            updateFollowingStatus(true)
+        }).catch(() => {
+            updateFollowingLoadingStatus(false)
+            enqueueSnackbar('Could not follow user', { variant: 'error' })
+        })
+    }
+
     const { commentsForPost, fetchMoreComments, hasMoreComments } = useComments({ postId })
 
     const likeComment = useLikeComment()
@@ -99,7 +137,7 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
             postDetails={postViewDetails}
             isPostDetailsLoading={postDetails.loading}
             onClickUser={handleCloseViewPost}
-            onFollowUser={() => {}}
+            onFollowUser={handleFollowUser}
             onLikePost={handleLikePost}
             onBookmarkPost={handleBookmarkPost}
             comments={commentsForPost.data?.getCommentsForPost.data ?? []}
