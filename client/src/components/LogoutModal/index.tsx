@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
-import { useMutation } from '@apollo/client'
+import { useApolloClient, useMutation } from '@apollo/client'
 import { LOGOUT } from '../../graphql/mutations/auth'
 import Box from '@mui/material/Box'
 import Dialog from '@mui/material/Dialog'
@@ -19,16 +19,25 @@ interface Props {
 
 export default function LogoutModal (props: Props) {
 
+    const client = useApolloClient()
+
     const { enqueueSnackbar } = useSnackbar()
 
     const [loggedInUser, setLoggedInUser] = useLoggedInUser()
 
-    const [logout, { loading }] = useMutation(LOGOUT)
+    const [loading, setLoading] = useState(false)
+
+    const [logout] = useMutation(LOGOUT)
 
     const handleLogOut = () => {
+        setLoading(true)
         logout().then(() => {
-            setLoggedInUser(null)
+            client.clearStore().then(() => {
+                setLoading(false)
+                setLoggedInUser(null)
+            })
         }).catch(() => {
+            setLoading(false)
             enqueueSnackbar('Could not log out at this moment. Please try again later', { variant: 'error' })
         })
         props.onCloseModal()
