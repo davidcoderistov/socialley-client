@@ -112,6 +112,9 @@ export default function LogoutModal (props: Props) {
                 color='error'
                 sx={{
                     color: '#ED4956',
+                    '.MuiLoadingButton-loadingIndicator': {
+                        color: '#FFFFFF'
+                    }
                 }}
                 loading={loading}
                 onClick={handleLogOut}
