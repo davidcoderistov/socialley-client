@@ -283,7 +283,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                                 key={searchedUser.followableUser.user._id}
                                 component='div'
                                 paddingLeft='24px'
-                                paddingRight='8px'
+                                paddingRight='24px'
                                 sx={{ '&:hover': { backgroundColor: '#121212' }, cursor: 'pointer' }}
                                 onClick={() => handleClickUser(searchedUser.followableUser.user._id)}
                             >
