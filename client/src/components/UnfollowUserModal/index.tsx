@@ -17,6 +17,7 @@ interface Props {
         username: string
         avatarURL: string | null
     }
+    stopPropagation?: boolean
     onUnfollowUser: (userId: string) => void
     onCloseModal: () => void
 }
@@ -26,7 +27,9 @@ export default function UnfollowUserModal (props: Props) {
     const handleUnfollowUser = () => props.onUnfollowUser(props.user._id)
 
     const handleClickModal = (event: React.MouseEvent) => {
-        event.stopPropagation()
+        if (props.stopPropagation) {
+            event.stopPropagation()
+        }
     }
 
     return (
