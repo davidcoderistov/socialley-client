@@ -12,7 +12,7 @@ interface StaticProps {
     post: FollowedUserPost
     loading?: never
     onClickUser: (userId: string) => void
-    onFollowUser: (postId: string, userId: string) => void
+    onFollowUser: (userId: string) => void
     onClickMore: (postId: string, userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
     onViewPost: (postId: string) => void

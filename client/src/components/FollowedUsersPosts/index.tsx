@@ -151,7 +151,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }).followedUsersPosts)
     }
 
-    const handleFollowUser = (postId: string, userId: string) => {
+    const handleFollowUser = (userId: string) => {
         updateFollowingLoadingStatus(userId, true)
         followUser({
             variables: {

@@ -103,7 +103,7 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
         }))
     }
 
-    const handleFollowUser = (postId: string, userId: string) => {
+    const handleFollowUser = (userId: string) => {
         updateFollowingLoadingStatus(true)
         followUser({
             variables: {

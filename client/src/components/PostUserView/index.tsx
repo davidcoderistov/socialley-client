@@ -29,7 +29,7 @@ interface StaticProps {
     showAgo?: boolean
     dense?: boolean
     onClickUser: (userId: string) => void
-    onFollowUser: (postId: string, userId: string) => void
+    onFollowUser: (userId: string) => void
     onClickMore: (postId: string, userId: string) => void
 }
 
@@ -61,7 +61,7 @@ export default function PostUserView (props: Props) {
 
     const handleFollowUser = () => {
         if (!props.loading) {
-            props.onFollowUser(props.post._id, props.user._id)
+            props.onFollowUser(props.user._id)
         }
     }
 
