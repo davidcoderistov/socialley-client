@@ -183,7 +183,6 @@ export default function Notification (props: Props) {
             { userToUnfollow && (
                 <UnfollowUserModal
                     open={true}
-                    stopPropagation={true}
                     user={userToUnfollow}
                     onUnfollowUser={handleUnfollowUser}
                     onCloseModal={handleCloseUnfollowUserModal} />
