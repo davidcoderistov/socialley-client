@@ -27,6 +27,7 @@ interface LoadingStateProps {
     dense?: boolean
     dark?: boolean
     clickable?: boolean
+    stopPropagation?: boolean
     user?: never
     onFollowUser?: never
     onUnfollowUser?: never
@@ -38,6 +39,7 @@ interface UserStateProps {
     dense?: boolean
     dark?: boolean
     clickable?: boolean
+    stopPropagation?: boolean
     user: User
     onFollowUser: (userId: string, event: React.MouseEvent) => void
     onUnfollowUser: (userId: string) => void
@@ -46,7 +48,7 @@ interface UserStateProps {
 
 type Props = UserStateProps | LoadingStateProps
 
-export default function FollowUserDetails ({ user, dense = false, dark = false, clickable = true, isUserLoading, onFollowUser, onUnfollowUser, onClickUser }: Props) {
+export default function FollowUserDetails ({ user, dense = false, dark = false, clickable = true, stopPropagation = false, isUserLoading, onFollowUser, onUnfollowUser, onClickUser }: Props) {
 
     const navigate = useProfileNavigate()
 
@@ -201,6 +203,7 @@ export default function FollowUserDetails ({ user, dense = false, dark = false, 
             { userToUnfollow && (
                 <UnfollowUserModal
                     open={true}
+                    stopPropagation={stopPropagation}
                     user={userToUnfollow}
                     onUnfollowUser={handleUnfollowUser}
                     onCloseModal={handleCloseUnfollowUserModal} />
