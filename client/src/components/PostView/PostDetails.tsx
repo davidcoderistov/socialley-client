@@ -14,7 +14,8 @@ interface Props {
     postDetails: PostDetailsI | null
     isPostDetailsLoading: boolean
     onClickUser: (userId: string) => void
-    onFollowUser: (userId: string) => void
+    onFollowUser: (postId: string, userId: string) => void
+    onClickMore: (postId: string, userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
     comments: Comment[]
@@ -89,8 +90,8 @@ export default function PostDetails (props: Props) {
                                 post={props.postDetails}
                                 user={props.postDetails.user}
                                 onClickUser={props.onClickUser}
-                                onFollow={props.onFollowUser}
-                                onClickMore={() => {}}
+                                onFollowUser={props.onFollowUser}
+                                onClickMore={props.onClickMore}
                             />
                         ) : null}
                     </Box>
