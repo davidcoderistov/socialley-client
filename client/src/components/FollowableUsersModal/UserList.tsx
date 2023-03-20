@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import FollowUserDetails from '../FollowUserDetails'
-import UnfollowUserModal from '../UnfollowUserModal'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import _range from 'lodash/range'
 
@@ -30,78 +29,53 @@ interface Props {
 
 export default function UserList (props: Props) {
 
-    const [userToUnfollow, setUserToUnfollow] = useState<User | null>(null)
-
-    const handleOpenUnfollowUserModal = (userId: string) => {
-        const user = props.users.find(user => user._id === userId)
-        if (user) {
-            setUserToUnfollow(user)
-        }
-    }
-
-    const handleUnfollowUser = (userId: string) => {
-        setUserToUnfollow(null)
-        props.onUnfollowUser(userId)
-    }
-
-    const handleCloseUnfollowUserModal = () => setUserToUnfollow(null)
-
     return (
-        <>
-            <Box
-                id='scrollableLikingUserList'
-                component='div'
-                display='block'
-                marginTop='25px'
-                marginBottom='10px'
-                height='100%'
-                width='100%'
-                sx={{ overflowX: 'hidden', overflowY: 'auto' }}
-            >
-                { props.isInitialLoading ? _range(5).map(index => (
-                    <FollowUserDetails
-                        key={index}
-                        dark
-                        isUserLoading={true} />
-                )) : (
-                    <InfiniteScroll
-                        next={props.onFetchMoreUsers}
-                        hasMore={props.hasMoreUsers}
-                        loader={
-                            <Box
-                                component='div'
-                                display='flex'
-                                flexDirection='row'
-                                justifyContent='center'
-                                alignItems='flex-start'
-                                height='50px'
-                            >
-                                <CircularProgress size={30} sx={{ color: '#FFFFFF', mt: 1 }} />
-                            </Box>
-                        }
-                        dataLength={props.users.length}
-                        scrollableTarget='scrollableLikingUserList'
-                    >
-                        { props.users.map(user => (
-                            <FollowUserDetails
-                                key={user._id}
-                                dark
-                                user={user}
-                                onFollowUser={props.onFollowUser}
-                                onUnfollowUser={handleOpenUnfollowUserModal}
-                                onClickUser={props.onClickUser}
-                            />
-                        )) }
-                    </InfiniteScroll>
-                )}
-            </Box>
-            { userToUnfollow && (
-                <UnfollowUserModal
-                    open={true}
-                    user={userToUnfollow}
-                    onUnfollowUser={handleUnfollowUser}
-                    onCloseModal={handleCloseUnfollowUserModal} />
+        <Box
+            id='scrollableLikingUserList'
+            component='div'
+            display='block'
+            marginTop='25px'
+            marginBottom='10px'
+            height='100%'
+            width='100%'
+            sx={{ overflowX: 'hidden', overflowY: 'auto' }}
+        >
+            { props.isInitialLoading ? _range(5).map(index => (
+                <FollowUserDetails
+                    key={index}
+                    dark
+                    isUserLoading={true} />
+            )) : (
+                <InfiniteScroll
+                    next={props.onFetchMoreUsers}
+                    hasMore={props.hasMoreUsers}
+                    loader={
+                        <Box
+                            component='div'
+                            display='flex'
+                            flexDirection='row'
+                            justifyContent='center'
+                            alignItems='flex-start'
+                            height='50px'
+                        >
+                            <CircularProgress size={30} sx={{ color: '#FFFFFF', mt: 1 }} />
+                        </Box>
+                    }
+                    dataLength={props.users.length}
+                    scrollableTarget='scrollableLikingUserList'
+                >
+                    { props.users.map(user => (
+                        <FollowUserDetails
+                            key={user._id}
+                            dark
+                            user={user}
+                            onFollowUser={props.onFollowUser}
+                            onUnfollowUser={props.onUnfollowUser}
+                            onClickUser={props.onClickUser}
+                        />
+                    )) }
+                </InfiniteScroll>
             )}
-        </>
+        </Box>
     )
 }
