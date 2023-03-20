@@ -385,8 +385,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
                                 ...followedUserPost.postDetails.post
                             }}
                             onClickUser={() => {}}
-                            onFollowUser={(userId) => handleFollowUser(followedUserPost.postDetails.post._id, userId)}
-                            onClickMore={(userId) => handleClickMore(followedUserPost.postDetails.post._id, userId)}
+                            onFollowUser={handleFollowUser}
+                            onClickMore={handleClickMore}
                             onLikePost={handleLikePost}
                             onViewPost={handleViewPost}
                             onBookmarkPost={handleBookmarkPost}
@@ -423,7 +423,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     }}
                     isPostDetailsLoading={false}
                     onClickUser={handleCloseViewPost}
-                    onFollowUser={() => {}}
+                    onFollowUser={handleFollowUser}
+                    onClickMore={handleClickMore}
                     onLikePost={handleLikePost}
                     onBookmarkPost={handleBookmarkPost}
                     comments={commentsForPost.data?.getCommentsForPost.data ?? []}
