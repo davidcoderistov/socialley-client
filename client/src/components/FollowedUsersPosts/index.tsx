@@ -66,24 +66,22 @@ export default function FollowedUsersPosts (props: BoxProps) {
         notifyOnNetworkStatusChange: true,
     })
 
+    const [offset, setOffset] = useState(0)
+
     const hasMoreFollowedUsersPosts = useMemo(() => {
         if (!followedUsersPosts.error) {
             if (followedUsersPosts.data) {
-                const data = followedUsersPosts.data.getFollowedUsersPosts.data
-                const total = followedUsersPosts.data.getFollowedUsersPosts.total
-                if (data.length > 0 && data.length < total) {
-                    return true
-                }
+                return offset < followedUsersPosts.data.getFollowedUsersPosts.total
             }
         }
         return false
-    }, [followedUsersPosts])
+    }, [followedUsersPosts, offset])
 
     const handleFetchMoreFollowedUsersPosts = () => {
         if (!followedUsersPosts.loading) {
             followedUsersPosts.fetchMore({
                 variables: {
-                    offset: followedUsersPosts.data?.getFollowedUsersPosts.data.length,
+                    offset,
                     limit: 4,
                 },
                 updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetFollowedUsersPostsQueryType }) {
@@ -98,6 +96,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
                         }
                     }
                 }
+            }).finally(() => {
+                setOffset(offset + 4)
             })
         }
     }
@@ -111,7 +111,10 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 offset: 0,
                 limit: 4,
             }
-        }).finally(() => setIsFollowedUsersPostsInitialLoading(false))
+        }).finally(() => {
+            setIsFollowedUsersPostsInitialLoading(false)
+            setOffset(4)
+        })
     }, [])
 
     const [isPostSettingsModalOpen, setIsPostSettingsModalOpen] = useState(false)

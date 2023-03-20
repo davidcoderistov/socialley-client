@@ -233,7 +233,6 @@ export function addFollowedUserPost (options: AddFollowedUserPostOptions): AddFo
             getFollowedUsersPosts: {
                 ...options.followedUsersPosts.getFollowedUsersPosts,
                 data: [{ postDetails: { ...options.postDetails }, commentsCount: 0 }, ...options.followedUsersPosts.getFollowedUsersPosts.data],
-                total: options.followedUsersPosts.getFollowedUsersPosts.total + 1,
             }
         },
         success: true,
