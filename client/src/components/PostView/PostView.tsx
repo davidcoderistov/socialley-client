@@ -17,7 +17,8 @@ interface Props {
     postDetails: PostDetailsI | null
     isPostDetailsLoading: boolean
     onClickUser: (userId: string) => void
-    onFollowUser: (userId: string) => void
+    onFollowUser: (postId: string, userId: string) => void
+    onClickMore: (postId: string, userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
     comments: Comment[]
@@ -168,6 +169,7 @@ export default function PostView (props: Props) {
                                                     isPostDetailsLoading={props.isPostDetailsLoading}
                                                     onClickUser={props.onClickUser}
                                                     onFollowUser={props.onFollowUser}
+                                                    onClickMore={props.onClickMore}
                                                     onLikePost={props.onLikePost}
                                                     onBookmarkPost={props.onBookmarkPost}
                                                     comments={props.comments}
