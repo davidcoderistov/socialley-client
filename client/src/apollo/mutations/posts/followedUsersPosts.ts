@@ -66,60 +66,76 @@ export function updateFollowedUserPostLikedStatus (options: UpdateFollowedUserPo
 
 interface UpdateFollowedUserPostFollowingLoadingStatusOptions {
     followedUsersPosts: GetFollowedUsersPostsQueryType
-    postId: string
+    userId: string
     isFollowingLoading: boolean
 }
 
 interface UpdateFollowedUserPostFollowingLoadingStatusReturnValue {
     followedUsersPosts: GetFollowedUsersPostsQueryType
-    success: boolean
 }
 
-export function updateFollowedUserPostFollowingLoadingStatus (options: UpdateFollowedUserPostFollowingLoadingStatusOptions): UpdateFollowedUserPostFollowingLoadingStatusReturnValue {
-    return updateOneFollowedUserPost({
-        followedUsersPosts: options.followedUsersPosts,
-        postId: options.postId,
-        mapper (followedUserPost) {
-            return {
-                ...followedUserPost,
-                postDetails: {
-                    ...followedUserPost.postDetails,
-                    isFollowingLoading: options.isFollowingLoading,
-                }
+export function updateFollowedUserPostsFollowingLoadingStatus (options: UpdateFollowedUserPostFollowingLoadingStatusOptions): UpdateFollowedUserPostFollowingLoadingStatusReturnValue {
+    const { followedUsersPosts, userId, isFollowingLoading } = options
+
+    return {
+        followedUsersPosts: {
+            ...followedUsersPosts,
+            getFollowedUsersPosts: {
+                ...followedUsersPosts.getFollowedUsersPosts,
+                data: followedUsersPosts.getFollowedUsersPosts.data.map(followedUserPost => {
+                    if (followedUserPost.postDetails.followableUser.user._id === userId) {
+                        return {
+                            ...followedUserPost,
+                            postDetails: {
+                                ...followedUserPost.postDetails,
+                                isFollowingLoading,
+                            }
+                        }
+                    }
+                    return followedUserPost
+                })
             }
         }
-    })
+    }
 }
 
 interface UpdateFollowedUserPostFollowingStatusOptions {
     followedUsersPosts: GetFollowedUsersPostsQueryType
-    postId: string
+    userId: string
     following: boolean
 }
 
 interface UpdateFollowedUserPostFollowingStatusReturnValue {
     followedUsersPosts: GetFollowedUsersPostsQueryType
-    success: boolean
 }
 
-export function updateFollowedUserPostFollowingStatus (options: UpdateFollowedUserPostFollowingStatusOptions): UpdateFollowedUserPostFollowingStatusReturnValue {
-    return updateOneFollowedUserPost({
-        followedUsersPosts: options.followedUsersPosts,
-        postId: options.postId,
-        mapper (followedUserPost) {
-            return {
-                ...followedUserPost,
-                postDetails: {
-                    ...followedUserPost.postDetails,
-                    followableUser: {
-                        ...followedUserPost.postDetails.followableUser,
-                        following: options.following,
-                    },
-                    isFollowingLoading: false,
-                }
+export function updateFollowedUserPostsFollowingStatus (options: UpdateFollowedUserPostFollowingStatusOptions): UpdateFollowedUserPostFollowingStatusReturnValue {
+    const { followedUsersPosts, userId, following } = options
+
+    return {
+        followedUsersPosts: {
+            ...followedUsersPosts,
+            getFollowedUsersPosts: {
+                ...followedUsersPosts.getFollowedUsersPosts,
+                data: followedUsersPosts.getFollowedUsersPosts.data.map(followedUserPost => {
+                    if (followedUserPost.postDetails.followableUser.user._id === userId) {
+                        return {
+                            ...followedUserPost,
+                            postDetails: {
+                                ...followedUserPost.postDetails,
+                                followableUser: {
+                                    ...followedUserPost.postDetails.followableUser,
+                                    following,
+                                },
+                                isFollowingLoading: false,
+                            }
+                        }
+                    }
+                    return followedUserPost
+                })
             }
         }
-    })
+    }
 }
 
 interface UpdateFollowedUserPostFavoriteLoadingStatusOptions {
