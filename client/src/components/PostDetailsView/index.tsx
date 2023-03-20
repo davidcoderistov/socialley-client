@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { useSnackbar } from 'notistack'
 import {
@@ -18,8 +18,9 @@ import {
 } from '../../apollo/mutations/posts/postDetails'
 import { GET_POST_DETAILS } from '../../graphql/queries/posts'
 import { GetPostDetailsQueryType } from '../../graphql/types/queries/posts'
-import { FOLLOW_USER } from '../../graphql/mutations/users'
+import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
 import PostView from '../PostView/PostView'
+import PostSettingsModal from '../PostSettingsModal'
 import { PostDetails as PostViewDetails } from '../../types'
 
 
@@ -78,7 +79,15 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
         }
     }
 
+    const [isPostSettingsModalOpen, setIsPostSettingsModalOpen] = useState(false)
+    const [postSettingsModalIsFollowingLoading, setPostSettingsModalIsFollowingLoading] = useState(false)
+
+    const handleClickMore = () => {
+        setIsPostSettingsModalOpen(true)
+    }
+
     const [followUser] = useMutation(FOLLOW_USER)
+    const [unfollowUser] = useMutation(UNFOLLOW_USER)
 
     const updateFollowingLoadingStatus = (isFollowingLoading: boolean) => {
         postDetails.updateQuery(postDetails => updatePostDetailsFollowingLoadingStatus({
@@ -94,7 +103,7 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
         }))
     }
 
-    const handleFollowUser = (userId: string) => {
+    const handleFollowUser = (postId: string, userId: string) => {
         updateFollowingLoadingStatus(true)
         followUser({
             variables: {
@@ -106,6 +115,28 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
             updateFollowingLoadingStatus(false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
         })
+    }
+
+    const handleUnfollowUser = () => {
+        const post = postViewDetails as PostViewDetails
+        const userId = post.user._id
+        setPostSettingsModalIsFollowingLoading(true)
+        unfollowUser({
+            variables: {
+                followedUserId: userId
+            }
+        }).then(() => {
+            updateFollowingStatus(false)
+        }).catch(() => {
+            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
+        }).finally(() => {
+            handleClosePostSettingsModal()
+        })
+    }
+
+    const handleClosePostSettingsModal = () => {
+        setIsPostSettingsModalOpen(false)
+        setPostSettingsModalIsFollowingLoading(false)
     }
 
     const { commentsForPost, fetchMoreComments, hasMoreComments } = useComments({ postId })
@@ -133,20 +164,30 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
     }
 
     return postId ? (
-        <PostView
-            postDetails={postViewDetails}
-            isPostDetailsLoading={postDetails.loading}
-            onClickUser={handleCloseViewPost}
-            onFollowUser={handleFollowUser}
-            onLikePost={handleLikePost}
-            onBookmarkPost={handleBookmarkPost}
-            comments={commentsForPost.data?.getCommentsForPost.data ?? []}
-            hasMoreComments={hasMoreComments}
-            commentsLoading={commentsForPost.loading}
-            onFetchMoreComments={fetchMoreComments}
-            onLikeComment={handleLikeComment}
-            isCommentPosting={createCommentData.loading}
-            onPostComment={handlePostComment}
-            onClose={handleCloseViewPost} />
+        <>
+            <PostView
+                postDetails={postViewDetails}
+                isPostDetailsLoading={postDetails.loading}
+                onClickUser={handleCloseViewPost}
+                onFollowUser={handleFollowUser}
+                onClickMore={handleClickMore}
+                onLikePost={handleLikePost}
+                onBookmarkPost={handleBookmarkPost}
+                comments={commentsForPost.data?.getCommentsForPost.data ?? []}
+                hasMoreComments={hasMoreComments}
+                commentsLoading={commentsForPost.loading}
+                onFetchMoreComments={fetchMoreComments}
+                onLikeComment={handleLikeComment}
+                isCommentPosting={createCommentData.loading}
+                onPostComment={handlePostComment}
+                onClose={handleCloseViewPost} />
+            <PostSettingsModal
+                open={isPostSettingsModalOpen}
+                showUnfollow={Boolean(postViewDetails?.user.following)}
+                isFollowingLoading={postSettingsModalIsFollowingLoading}
+                onUnfollow={handleUnfollowUser}
+                onGoToPost={handleClosePostSettingsModal}
+                onCloseModal={handleClosePostSettingsModal} />
+        </>
     ) : null
 }
