@@ -13,6 +13,7 @@ interface StaticProps {
     loading?: never
     onClickUser: (userId: string) => void
     onFollowUser: (userId: string) => void
+    onClickMore: (userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
     onViewPost: (postId: string) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
@@ -24,6 +25,7 @@ interface LoadingProps {
     loading: true
     onClickUser?: never
     onFollowUser?: never
+    onClickMore?: never
     onLikePost?: never
     onViewPost?: never
     onBookmarkPost?: never
@@ -83,14 +85,14 @@ export default function Post (props: Props) {
                                 lastName: props.post.user.lastName,
                                 username: props.post.user.username,
                                 avatarURL: props.post.user.avatarURL,
-                                following: true,
-                                isFollowingLoading: false,
+                                following: props.post.user.following,
+                                isFollowingLoading: props.post.user.isFollowingLoading,
                             }}
                             showAgo
                             dense
                             onClickUser={props.onClickUser}
                             onFollow={props.onFollowUser}
-                            onClickMore={() => {}}
+                            onClickMore={props.onClickMore}
                         />
                     )}
                 </Box>
