@@ -291,6 +291,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                                     user={{ ...searchedUser, ...searchedUser.followableUser, ...searchedUser.followableUser.user }}
                                     dense
                                     clickable={false}
+                                    stopPropagation
                                     onFollowUser={handleFollowUser}
                                     onUnfollowUser={handleUnfollowUser} />
                             </Box>
