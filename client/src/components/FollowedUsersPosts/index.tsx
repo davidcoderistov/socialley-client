@@ -15,8 +15,8 @@ import {
     useRemoveFavoritePostForUser,
 } from '../../hooks/graphql/posts'
 import {
-    updateFollowedUserPostFollowingLoadingStatus,
-    updateFollowedUserPostFollowingStatus,
+    updateFollowedUserPostsFollowingLoadingStatus,
+    updateFollowedUserPostsFollowingStatus,
 } from '../../apollo/mutations/posts/followedUsersPosts'
 import {
     GET_FOLLOWED_USERS_POSTS,
@@ -135,38 +135,37 @@ export default function FollowedUsersPosts (props: BoxProps) {
     const [followUser] = useMutation(FOLLOW_USER)
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
 
-    const updateFollowingLoadingStatus = (postId: string, isFollowingLoading: boolean) => {
-        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostFollowingLoadingStatus({
+    const updateFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
+        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostsFollowingLoadingStatus({
             followedUsersPosts,
-            postId,
+            userId,
             isFollowingLoading,
         }).followedUsersPosts)
     }
 
-    const updateFollowingStatus = (postId: string, following: boolean) => {
-        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostFollowingStatus({
+    const updateFollowingStatus = (userId: string, following: boolean) => {
+        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostsFollowingStatus({
             followedUsersPosts,
-            postId,
+            userId,
             following,
         }).followedUsersPosts)
     }
 
     const handleFollowUser = (postId: string, userId: string) => {
-        updateFollowingLoadingStatus(postId, true)
+        updateFollowingLoadingStatus(userId, true)
         followUser({
             variables: {
                 followedUserId: userId
             }
         }).then(() => {
-            updateFollowingStatus(postId, true)
+            updateFollowingStatus(userId, true)
         }).catch(() => {
-            updateFollowingLoadingStatus(postId, false)
+            updateFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
         })
     }
 
     const handleUnfollowUser = () => {
-        const postId = postSettingsModalPostId as string
         const userId = postSettingsModalUserId as string
         setPostSettingsModalIsFollowingLoading(true)
         unfollowUser({
@@ -174,7 +173,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 followedUserId: userId
             }
         }).then(() => {
-            updateFollowingStatus(postId, false)
+            updateFollowingStatus(userId, false)
         }).catch(() => {
             enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         }).finally(() => {
