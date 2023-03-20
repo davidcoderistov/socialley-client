@@ -12,8 +12,8 @@ interface StaticProps {
     post: FollowedUserPost
     loading?: never
     onClickUser: (userId: string) => void
-    onFollowUser: (userId: string) => void
-    onClickMore: (userId: string) => void
+    onFollowUser: (postId: string, userId: string) => void
+    onClickMore: (postId: string, userId: string) => void
     onLikePost: (postId: string, liked: boolean) => void
     onViewPost: (postId: string) => void
     onBookmarkPost: (postId: string, favorite: boolean) => void
@@ -76,6 +76,7 @@ export default function Post (props: Props) {
                     ) : (
                         <PostUserView
                             post={{
+                                _id: props.post._id,
                                 title: props.post.title,
                                 createdAt: props.post.createdAt,
                             }}
@@ -91,7 +92,7 @@ export default function Post (props: Props) {
                             showAgo
                             dense
                             onClickUser={props.onClickUser}
-                            onFollow={props.onFollowUser}
+                            onFollowUser={props.onFollowUser}
                             onClickMore={props.onClickMore}
                         />
                     )}
