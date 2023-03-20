@@ -15,6 +15,10 @@ import {
     useRemoveFavoritePostForUser,
 } from '../../hooks/graphql/posts'
 import {
+    updateFollowedUserPostFollowingLoadingStatus,
+    updateFollowedUserPostFollowingStatus,
+} from '../../apollo/mutations/posts/followedUsersPosts'
+import {
     GET_FOLLOWED_USERS_POSTS,
     GET_FIRST_USER_WHO_LIKED_POST,
 } from '../../graphql/queries/posts'
@@ -27,6 +31,7 @@ import Box, { BoxProps } from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Post from '../Post'
 import PostView from '../PostView/PostView'
+import PostSettingsModal from '../PostSettingsModal'
 import AllCaughtUp from './AllCaughtUp'
 import {
     LIKE_POST,
@@ -34,6 +39,10 @@ import {
     MARK_USER_POST_AS_FAVORITE,
     UNMARK_USER_POST_AS_FAVORITE,
 } from '../../graphql/mutations/posts'
+import {
+    FOLLOW_USER,
+    UNFOLLOW_USER,
+} from '../../graphql/mutations/users'
 import {
     updateFollowedUserPostLikedStatus,
     updateFollowedUserPostLikedLoadingStatus,
@@ -104,6 +113,86 @@ export default function FollowedUsersPosts (props: BoxProps) {
             }
         }).finally(() => setIsFollowedUsersPostsInitialLoading(false))
     }, [])
+
+    const [isPostSettingsModalOpen, setIsPostSettingsModalOpen] = useState(false)
+    const [postSettingsModalShowUnfollow, setSettingsModalShowUnfollow] = useState(false)
+    const [postSettingsModalIsFollowingLoading, setPostSettingsModalIsFollowingLoading] = useState(false)
+    const [postSettingsModalPostId, setPostSettingsModalPostId] = useState<string | null>(null)
+    const [postSettingsModalUserId, setPostSettingsModalUserId] = useState<string | null>(null)
+
+    const handleClickMore = (postId: string, userId: string) => {
+        setIsPostSettingsModalOpen(true)
+        setPostSettingsModalPostId(postId)
+        setPostSettingsModalUserId(userId)
+        const post = followedUsersPosts.data?.getFollowedUsersPosts.data.find(
+            followedUserPost => followedUserPost.postDetails.post._id === postId
+        )
+        if (post) {
+            setSettingsModalShowUnfollow(post.postDetails.followableUser.following)
+        }
+    }
+
+    const [followUser] = useMutation(FOLLOW_USER)
+    const [unfollowUser] = useMutation(UNFOLLOW_USER)
+
+    const updateFollowingLoadingStatus = (postId: string, isFollowingLoading: boolean) => {
+        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostFollowingLoadingStatus({
+            followedUsersPosts,
+            postId,
+            isFollowingLoading,
+        }).followedUsersPosts)
+    }
+
+    const updateFollowingStatus = (postId: string, following: boolean) => {
+        followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostFollowingStatus({
+            followedUsersPosts,
+            postId,
+            following,
+        }).followedUsersPosts)
+    }
+
+    const handleFollowUser = (postId: string, userId: string) => {
+        updateFollowingLoadingStatus(postId, true)
+        followUser({
+            variables: {
+                followedUserId: userId
+            }
+        }).then(() => {
+            updateFollowingStatus(postId, true)
+        }).catch(() => {
+            updateFollowingLoadingStatus(postId, false)
+            enqueueSnackbar('Could not follow user', { variant: 'error' })
+        })
+    }
+
+    const handleUnfollowUser = () => {
+        const postId = postSettingsModalPostId as string
+        const userId = postSettingsModalUserId as string
+        setPostSettingsModalIsFollowingLoading(true)
+        unfollowUser({
+            variables: {
+                followedUserId: userId
+            }
+        }).then(() => {
+            updateFollowingStatus(postId, false)
+        }).catch(() => {
+            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
+        }).finally(() => {
+            handleClosePostSettingsModal()
+        })
+    }
+
+    const handleGoToPost = () => {
+        setViewingPostId(postSettingsModalPostId)
+        handleClosePostSettingsModal()
+    }
+
+    const handleClosePostSettingsModal = () => {
+        setIsPostSettingsModalOpen(false)
+        setPostSettingsModalPostId(null)
+        setPostSettingsModalUserId(null)
+        setPostSettingsModalIsFollowingLoading(false)
+    }
 
     const addLikedPostForUser = useAddLikedPostForUser()
     const removeLikedPostForUser = useRemoveLikedPostForUser()
@@ -296,7 +385,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
                                 ...followedUserPost.postDetails.post
                             }}
                             onClickUser={() => {}}
-                            onFollowUser={() => {}}
+                            onFollowUser={(userId) => handleFollowUser(followedUserPost.postDetails.post._id, userId)}
+                            onClickMore={(userId) => handleClickMore(followedUserPost.postDetails.post._id, userId)}
                             onLikePost={handleLikePost}
                             onViewPost={handleViewPost}
                             onBookmarkPost={handleBookmarkPost}
@@ -345,6 +435,13 @@ export default function FollowedUsersPosts (props: BoxProps) {
                     onPostComment={handlePostComment}
                     onClose={handleCloseViewPost} />
             )}
+            <PostSettingsModal
+                open={isPostSettingsModalOpen}
+                showUnfollow={postSettingsModalShowUnfollow}
+                isFollowingLoading={postSettingsModalIsFollowingLoading}
+                onUnfollow={handleUnfollowUser}
+                onGoToPost={handleGoToPost}
+                onCloseModal={handleClosePostSettingsModal} />
         </Box>
     )
 }
