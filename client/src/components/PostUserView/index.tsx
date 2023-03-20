@@ -12,6 +12,7 @@ import { getTimeElapsed } from '../../utils'
 
 interface StaticProps {
     post: {
+        _id: string
         title: string | null
         createdAt: number
     }
@@ -28,8 +29,8 @@ interface StaticProps {
     showAgo?: boolean
     dense?: boolean
     onClickUser: (userId: string) => void
-    onFollow: (userId: string) => void
-    onClickMore: (userId: string) => void
+    onFollowUser: (postId: string, userId: string) => void
+    onClickMore: (postId: string, userId: string) => void
 }
 
 interface LoadingProps {
@@ -39,7 +40,7 @@ interface LoadingProps {
     showAgo?: never
     dense?: boolean
     onClickUser?: never
-    onFollow?: never
+    onFollowUser?: never
     onClickMore?: never
 }
 
@@ -58,15 +59,15 @@ export default function PostUserView (props: Props) {
         }
     }
 
-    const handleFollow = () => {
+    const handleFollowUser = () => {
         if (!props.loading) {
-            props.onFollow(props.user._id)
+            props.onFollowUser(props.post._id, props.user._id)
         }
     }
 
     const handleClickMore = () => {
         if (!props.loading) {
-            props.onClickMore(props.user._id)
+            props.onClickMore(props.post._id, props.user._id)
         }
     }
 
@@ -283,7 +284,7 @@ export default function PostUserView (props: Props) {
                                                 padding: 0,
                                                 ...props.user.following && { display: 'none' }
                                             }}
-                                            onClick={handleFollow}
+                                            onClick={handleFollowUser}
                                         >Follow</Button>
                                     )}
                                 </>
