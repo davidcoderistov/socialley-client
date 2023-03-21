@@ -30,30 +30,28 @@ export default function FollowingUsersModal (props: Props) {
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
 
     const handleFetchMoreUsers = () => {
-        if (followingUsers.data) {
-            setIsLoadingMore(true)
-            followingUsers.fetchMore({
-                variables: {
-                    offset: followingUsers.data.getFollowingForUser.data.length,
-                    limit: 10,
-                },
-                updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetFollowingForUserQueryType }) {
-                    return {
-                        ...existing,
-                        getFollowingForUser: {
-                            ...existing.getFollowingForUser,
-                            data: [
-                                ...existing.getFollowingForUser.data,
-                                ...fetchMoreResult.getFollowingForUser.data,
-                            ]
-                        }
+        setIsLoadingMore(true)
+        followingUsers.fetchMore({
+            variables: {
+                offset,
+                limit: 10,
+            },
+            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetFollowingForUserQueryType }) {
+                return {
+                    ...existing,
+                    getFollowingForUser: {
+                        ...existing.getFollowingForUser,
+                        data: [
+                            ...existing.getFollowingForUser.data,
+                            ...fetchMoreResult.getFollowingForUser.data,
+                        ]
                     }
                 }
-            })
-                .then(() => setOffset(offset + 10))
-                .catch(console.log)
-                .finally(() => setIsLoadingMore(false))
-        }
+            }
+        })
+            .then(() => setOffset(offset + 10))
+            .catch(console.log)
+            .finally(() => setIsLoadingMore(false))
     }
 
     const updateFollowingUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
