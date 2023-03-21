@@ -30,6 +30,7 @@ export function useUnlikePost () {
                 postId
             }
         }).then(() => {
+            removeLikedPostForUser(postId)
             const usersWhoLikedPost = updatePostRemoveLikingUser(postId)
             if (usersWhoLikedPost) {
                 updatePostDetailsLikedStatus(
@@ -49,7 +50,6 @@ export function useUnlikePost () {
                 }
                 updatePostDetailsLikedStatus(postId, false, null)
             }
-            removeLikedPostForUser(postId)
         }).catch(() => {
             updatePostDetailsLikedLoadingStatus(postId, false)
             enqueueSnackbar(`Could not unlike this post`, { variant: 'error' })
