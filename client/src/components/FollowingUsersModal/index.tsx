@@ -18,6 +18,7 @@ export default function FollowingUsersModal (props: Props) {
 
     const { enqueueSnackbar } = useSnackbar()
 
+    const [offset, setOffset] = useState(10)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
 
     const followingUsers = useQuery<GetFollowingForUserQueryType>(GET_FOLLOWING_FOR_USER, {
@@ -48,7 +49,10 @@ export default function FollowingUsersModal (props: Props) {
                         }
                     }
                 }
-            }).catch(console.log).finally(() => setIsLoadingMore(false))
+            })
+                .then(() => setOffset(offset + 10))
+                .catch(console.log)
+                .finally(() => setIsLoadingMore(false))
         }
     }
 
@@ -115,7 +119,7 @@ export default function FollowingUsersModal (props: Props) {
             isInitialLoading={followingUsers.loading}
             isMoreLoading={isLoadingMore}
             hasMoreUsers={followingUsers.data ?
-                followingUsers.data.getFollowingForUser.data.length < followingUsers.data.getFollowingForUser.total : false}
+                offset < followingUsers.data.getFollowingForUser.total : false}
             onFetchMoreUsers={handleFetchMoreUsers}
             onFollowUser={handleFollowUser}
             onUnfollowUser={handleUnfollowUser}
