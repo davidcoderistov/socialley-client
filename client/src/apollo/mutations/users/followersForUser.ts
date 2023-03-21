@@ -1,5 +1,6 @@
 import { GetFollowersForUserQueryType } from '../../../graphql/types/queries/users'
 import { updateOneFollowerUser } from '../../utils'
+import { FollowerUser } from '../../../graphql/types/models'
 
 
 interface UpdateFollowingLoadingStatusOptions {
@@ -54,7 +55,70 @@ export function updateFollowingStatus (options: UpdateFollowingStatusOptions): U
     })
 }
 
+interface AddFollowerUserOptions {
+    followerUsers: GetFollowersForUserQueryType
+    followerUser: FollowerUser
+}
+
+interface AddFollowerUserReturnValue {
+    followerUsers: GetFollowersForUserQueryType
+    success: boolean
+}
+
+export function addFollowerUser (options: AddFollowerUserOptions): AddFollowerUserReturnValue {
+    const { followerUsers, followerUser } = options
+
+    return {
+        followerUsers: {
+            ...followerUsers,
+            getFollowersForUser: {
+                ...followerUsers.getFollowersForUser,
+                data: [followerUser, ...followerUsers.getFollowersForUser.data],
+            }
+        },
+        success: true,
+    }
+}
+
+interface RemoveFollowerUserOptions {
+    followerUsers: GetFollowersForUserQueryType
+    userId: string
+}
+
+interface RemoveFollowerUserReturnValue {
+    followerUsers: GetFollowersForUserQueryType
+    success: boolean
+}
+
+export function removeFollowerUser (options: RemoveFollowerUserOptions): RemoveFollowerUserReturnValue {
+    const { followerUsers, userId } = options
+
+    const findFollowerUserId = followerUsers.getFollowersForUser.data
+        .findIndex(followerUser => followerUser.followableUser.user._id === userId)
+
+    if (findFollowerUserId >= 0) {
+        const newFollowerUsers = [...followerUsers.getFollowersForUser.data]
+        newFollowerUsers.splice(findFollowerUserId, 1)
+        return {
+            followerUsers: {
+                ...followerUsers,
+                getFollowersForUser: {
+                    ...followerUsers.getFollowersForUser,
+                    data: newFollowerUsers,
+                }
+            },
+            success: true,
+        }
+    }
+    return {
+        followerUsers,
+        success: false,
+    }
+}
+
 export default {
     updateFollowingLoadingStatus,
     updateFollowingStatus,
+    addFollowerUser,
+    removeFollowerUser,
 }
