@@ -23,6 +23,7 @@ export default function PostLikes (props: Props) {
 
     const { enqueueSnackbar } = useSnackbar()
 
+    const [offset, setOffset] = useState(0)
     const [isUserLikesModalOpen, setIsUserLikesModalOpen] = useState(false)
     const [isInitialLoading, setIsInitialLoading] = useState(false)
 
@@ -41,31 +42,32 @@ export default function PostLikes (props: Props) {
                     offset: 0,
                     limit: 10,
                 }
-            }).finally(() => setIsInitialLoading(false))
+            }).finally(() => {
+                setOffset(10)
+                setIsInitialLoading(false)
+            })
         }
     }
 
     const handleFetchMoreUsers = () => {
-        if (usersWhoLikedPost.data) {
-            usersWhoLikedPost.fetchMore({
-                variables: {
-                    offset: usersWhoLikedPost.data.getUsersWhoLikedPost.data.length,
-                    limit: 10,
-                },
-                updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetUsersWhoLikedPostQueryType }) {
-                    return {
-                        ...existing,
-                        getUsersWhoLikedPost: {
-                            ...existing.getUsersWhoLikedPost,
-                            data: [
-                                ...existing.getUsersWhoLikedPost.data,
-                                ...fetchMoreResult.getUsersWhoLikedPost.data,
-                            ]
-                        }
+        usersWhoLikedPost.fetchMore({
+            variables: {
+                offset,
+                limit: 10,
+            },
+            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetUsersWhoLikedPostQueryType }) {
+                return {
+                    ...existing,
+                    getUsersWhoLikedPost: {
+                        ...existing.getUsersWhoLikedPost,
+                        data: [
+                            ...existing.getUsersWhoLikedPost.data,
+                            ...fetchMoreResult.getUsersWhoLikedPost.data,
+                        ]
                     }
                 }
-            })
-        }
+            }
+        }).then(() => setOffset(offset + 10))
     }
 
     const updatePostQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
@@ -205,7 +207,7 @@ export default function PostLikes (props: Props) {
                 isInitialLoading={isInitialLoading}
                 isMoreLoading={usersWhoLikedPost.loading}
                 hasMoreUsers={usersWhoLikedPost.data ?
-                    usersWhoLikedPost.data.getUsersWhoLikedPost.data.length < usersWhoLikedPost.data.getUsersWhoLikedPost.total : false}
+                    offset < usersWhoLikedPost.data.getUsersWhoLikedPost.total : false}
                 onFetchMoreUsers={handleFetchMoreUsers}
                 onFollowUser={handleFollowUser}
                 onUnfollowUser={handleUnfollowUser}
