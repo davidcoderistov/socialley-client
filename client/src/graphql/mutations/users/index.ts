@@ -4,7 +4,14 @@ import { gql } from '@apollo/client'
 export const FOLLOW_USER = gql`
     mutation followUser($followedUserId: String!) {
         followUser(followedUserId: $followedUserId) {
-            _id
+            user {
+                _id
+                firstName
+                lastName
+                username
+                avatarURL
+            }
+            following
         }
     }
 `

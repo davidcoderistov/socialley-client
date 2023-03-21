@@ -1,9 +1,7 @@
-
+import { FollowableUser } from '../../models'
 
 export interface FollowUserMutationType {
-    followUser: {
-        _id: string
-    }
+    followUser: FollowableUser
 }
 
 export interface UnfollowUserMutationType {
