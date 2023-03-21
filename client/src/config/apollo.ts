@@ -79,6 +79,12 @@ const cache = new InMemoryCache({
                 getPostsForUser: {
                     keyArgs: ['userId'],
                 },
+                getFollowingForUser: {
+                    keyArgs: ['userId'],
+                },
+                getFollowersForUser: {
+                    keyArgs: ['userId'],
+                },
                 getLikedPostsForUser: {
                     keyArgs: false,
                 },
