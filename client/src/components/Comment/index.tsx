@@ -43,6 +43,7 @@ export default function Comment (props: CommentProps) {
 
     const { enqueueSnackbar } = useSnackbar()
 
+    const [offset, setOffset] = useState(0)
     const [isUserLikesModalOpen, setIsUserLikesModalOpen] = useState(false)
     const [isInitialLoading, setIsInitialLoading] = useState(false)
 
@@ -62,31 +63,32 @@ export default function Comment (props: CommentProps) {
                     offset: 0,
                     limit: 10,
                 }
-            }).finally(() => setIsInitialLoading(false))
+            }).finally(() => {
+                setOffset(10)
+                setIsInitialLoading(false)
+            })
         }
     }
 
     const handleFetchMoreUsers = () => {
-        if (usersWhoLikedComment.data) {
-            usersWhoLikedComment.fetchMore({
-                variables: {
-                    offset: usersWhoLikedComment.data.getUsersWhoLikedComment.data.length,
-                    limit: 10,
-                },
-                updateQuery (existing, { fetchMoreResult}: { fetchMoreResult : GetUsersWhoLikedCommentQueryType }) {
-                    return {
-                        ...existing,
-                        getUsersWhoLikedComment: {
-                            ...existing.getUsersWhoLikedComment,
-                            data: [
-                                ...existing.getUsersWhoLikedComment.data,
-                                ...fetchMoreResult.getUsersWhoLikedComment.data,
-                            ]
-                        }
+        usersWhoLikedComment.fetchMore({
+            variables: {
+                offset,
+                limit: 10,
+            },
+            updateQuery (existing, { fetchMoreResult}: { fetchMoreResult : GetUsersWhoLikedCommentQueryType }) {
+                return {
+                    ...existing,
+                    getUsersWhoLikedComment: {
+                        ...existing.getUsersWhoLikedComment,
+                        data: [
+                            ...existing.getUsersWhoLikedComment.data,
+                            ...fetchMoreResult.getUsersWhoLikedComment.data,
+                        ]
                     }
                 }
-            })
-        }
+            }
+        }).then(() => setOffset(offset + 10))
     }
 
     const updateCommentQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
@@ -378,7 +380,7 @@ export default function Comment (props: CommentProps) {
                 isInitialLoading={isInitialLoading}
                 isMoreLoading={usersWhoLikedComment.loading}
                 hasMoreUsers={usersWhoLikedComment.data ?
-                    usersWhoLikedComment.data.getUsersWhoLikedComment.data.length < usersWhoLikedComment.data.getUsersWhoLikedComment.total : false}
+                    offset < usersWhoLikedComment.data.getUsersWhoLikedComment.total : false}
                 onFetchMoreUsers={handleFetchMoreUsers}
                 onFollowUser={handleFollowUser}
                 onUnfollowUser={handleUnfollowUser}
