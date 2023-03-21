@@ -1,5 +1,6 @@
 import { GetFollowingForUserQueryType } from '../../../graphql/types/queries/users'
 import { updateOneFollowingUser } from '../../utils'
+import { FollowingUser } from '../../../graphql/types/models'
 
 
 interface UpdateFollowingLoadingStatusOptions {
@@ -54,7 +55,70 @@ export function updateFollowingStatus (options: UpdateFollowingStatusOptions): U
     })
 }
 
+interface AddFollowingUserOptions {
+    followingUsers: GetFollowingForUserQueryType
+    followingUser: FollowingUser
+}
+
+interface AddFollowingUserReturnValue {
+    followingUsers: GetFollowingForUserQueryType
+    success: boolean
+}
+
+export function addFollowingUser (options: AddFollowingUserOptions): AddFollowingUserReturnValue {
+    const { followingUsers, followingUser } = options
+
+    return {
+        followingUsers: {
+            ...followingUsers,
+            getFollowingForUser: {
+                ...followingUsers.getFollowingForUser,
+                data: [followingUser, ...followingUsers.getFollowingForUser.data],
+            }
+        },
+        success: true,
+    }
+}
+
+interface RemoveFollowingUserOptions {
+    followingUsers: GetFollowingForUserQueryType
+    userId: string
+}
+
+interface RemoveFollowingUserReturnValue {
+    followingUsers: GetFollowingForUserQueryType
+    success: boolean
+}
+
+export function removeFollowingUser (options: RemoveFollowingUserOptions): RemoveFollowingUserReturnValue {
+    const { followingUsers, userId } = options
+
+    const findFollowingUserId = followingUsers.getFollowingForUser.data
+        .findIndex(followingUser => followingUser.followableUser.user._id === userId)
+
+    if (findFollowingUserId >= 0) {
+        const newFollowingUsers = [...followingUsers.getFollowingForUser.data]
+        newFollowingUsers.splice(findFollowingUserId, 1)
+        return {
+            followingUsers: {
+                ...followingUsers,
+                getFollowingForUser: {
+                    ...followingUsers.getFollowingForUser,
+                    data: newFollowingUsers,
+                }
+            },
+            success: true,
+        }
+    }
+    return {
+        followingUsers,
+        success: false,
+    }
+}
+
 export default {
     updateFollowingLoadingStatus,
     updateFollowingStatus,
+    addFollowingUser,
+    removeFollowingUser,
 }
