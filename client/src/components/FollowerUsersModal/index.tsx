@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
-import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
+import { useFollowUser } from '../../hooks/graphql/users'
 import { useSnackbar } from 'notistack'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { GET_FOLLOWERS_FOR_USER } from '../../graphql/queries/users'
 import { GetFollowersForUserQueryType } from '../../graphql/types/queries/users'
-import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
-import { FollowUserMutationType } from '../../graphql/types/mutations/users'
+import { UNFOLLOW_USER } from '../../graphql/mutations/users'
 import followerUsersMutations from '../../apollo/mutations/users/followersForUser'
 
 
@@ -28,9 +27,8 @@ export default function FollowerUsersModal (props: Props) {
         skip: !props.open || !props.userId,
     })
 
-    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
+    const followUser = useFollowUser()
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
-    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const handleFetchMoreUsers = () => {
         setIsLoadingMore(true)
@@ -78,23 +76,16 @@ export default function FollowerUsersModal (props: Props) {
     }
 
     const handleFollowUser = (userId: string) => {
-        updateFollowerUserFollowingLoadingStatus(userId, true)
-        followUser({
-            variables: {
-                followedUserId: userId
+        followUser(userId, {
+            onStart () {
+                updateFollowerUserFollowingLoadingStatus(userId, true)
+            },
+            onSuccess () {
+                updateFollowerUserFollowingStatus(userId, true)
+            },
+            onError () {
+                updateFollowerUserFollowingLoadingStatus(userId, false)
             }
-        }).then(follow => {
-            updateFollowerUserFollowingStatus(userId, true)
-            const followedUser = follow.data?.followUser
-            if (followedUser) {
-                updateFollowUserConnections({
-                    followableUser: followedUser,
-                    isFollowingLoading: false,
-                })
-            }
-        }).catch(() => {
-            updateFollowerUserFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not follow user', { variant: 'error' })
         })
     }
 
