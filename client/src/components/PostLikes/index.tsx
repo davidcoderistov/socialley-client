@@ -3,11 +3,9 @@ import Box from '@mui/material/Box'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { useSnackbar } from 'notistack'
 import { useLazyQuery } from '@apollo/client'
-import { useFollowUser } from '../../hooks/graphql/users'
+import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import { GET_USERS_WHO_LIKED_POST } from '../../graphql/queries/posts'
 import { GetUsersWhoLikedPostQueryType } from '../../graphql/types/queries/posts'
-import { useMutation } from '@apollo/client'
-import { UNFOLLOW_USER } from '../../graphql/mutations/users'
 import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
 
 
@@ -31,7 +29,7 @@ export default function PostLikes (props: Props) {
     const [getUsersWhoLikedPost, usersWhoLikedPost] = useLazyQuery<GetUsersWhoLikedPostQueryType>(GET_USERS_WHO_LIKED_POST)
 
     const followUser = useFollowUser()
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const unfollowUser = useUnfollowUser()
 
     const handleViewLikingUsers = () => {
         setIsUserLikesModalOpen(true)
@@ -106,16 +104,16 @@ export default function PostLikes (props: Props) {
     }
 
     const handleUnfollowUser = (userId: string) => {
-        updatePostQueryFollowingLoadingStatus(userId, true)
-        unfollowUser({
-            variables: {
-                followedUserId: userId
+        unfollowUser(userId, {
+            onStart () {
+                updatePostQueryFollowingLoadingStatus(userId, true)
+            },
+            onSuccess () {
+                updatePostQueryFollowingStatus(userId, false)
+            },
+            onError () {
+                updatePostQueryFollowingLoadingStatus(userId, false)
             }
-        }).then(() => {
-            updatePostQueryFollowingStatus(userId, false)
-        }).catch(() => {
-            updatePostQueryFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
 
