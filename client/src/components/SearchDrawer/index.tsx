@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client'
+import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
 import { useProfileNavigate } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
 import { GET_SEARCHED_USERS, GET_SEARCHED_USERS_FOR_USER } from '../../graphql/queries/users'
 import { GetSearchedUsersQueryType, GetSearchedUsersForUserQueryType } from '../../graphql/types/queries/users'
 import { FOLLOW_USER, UNFOLLOW_USER, MARK_USER_AS_SEARCHED } from '../../graphql/mutations/users'
+import { FollowUserMutationType } from '../../graphql/types/mutations/users'
 import MuiDrawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -106,8 +108,9 @@ export default function SearchDrawer (props: SearchDrawerProps) {
         event.stopPropagation()
     }
 
-    const [followUser] = useMutation(FOLLOW_USER)
+    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const updateSearchedUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean, searchQuery: string) => {
         client.cache.updateQuery({
