@@ -99,8 +99,15 @@ export default function PostLikes (props: Props) {
             variables: {
                 followedUserId: userId
             }
-        }).then(() => {
+        }).then(follow => {
             updatePostQueryFollowingStatus(userId, true)
+            const followedUser = follow.data?.followUser
+            if (followedUser) {
+                updateFollowUserConnections({
+                    followableUser: followedUser,
+                    isFollowingLoading: false,
+                })
+            }
         }).catch(() => {
             updatePostQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
@@ -113,15 +120,8 @@ export default function PostLikes (props: Props) {
             variables: {
                 followedUserId: userId
             }
-        }).then(follow => {
+        }).then(() => {
             updatePostQueryFollowingStatus(userId, false)
-            const followedUser = follow.data?.followUser
-            if (followedUser) {
-                updateFollowUserConnections({
-                    followableUser: followedUser,
-                    isFollowingLoading: false,
-                })
-            }
         }).catch(() => {
             updatePostQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not unfollow user', { variant: 'error' })
