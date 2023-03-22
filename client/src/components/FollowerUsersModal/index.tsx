@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery, useMutation } from '@apollo/client'
-import { useFollowUser } from '../../hooks/graphql/users'
+import { useQuery } from '@apollo/client'
+import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import { useSnackbar } from 'notistack'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { GET_FOLLOWERS_FOR_USER } from '../../graphql/queries/users'
 import { GetFollowersForUserQueryType } from '../../graphql/types/queries/users'
-import { UNFOLLOW_USER } from '../../graphql/mutations/users'
 import followerUsersMutations from '../../apollo/mutations/users/followersForUser'
 
 
@@ -28,7 +27,7 @@ export default function FollowerUsersModal (props: Props) {
     })
 
     const followUser = useFollowUser()
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const unfollowUser = useUnfollowUser()
 
     const handleFetchMoreUsers = () => {
         setIsLoadingMore(true)
@@ -90,16 +89,16 @@ export default function FollowerUsersModal (props: Props) {
     }
 
     const handleUnfollowUser = (userId: string) => {
-        updateFollowerUserFollowingLoadingStatus(userId, true)
-        unfollowUser({
-            variables: {
-                followedUserId: userId
+        unfollowUser(userId, {
+            onStart () {
+                updateFollowerUserFollowingLoadingStatus(userId, true)
+            },
+            onSuccess () {
+                updateFollowerUserFollowingStatus(userId, false)
+            },
+            onError () {
+                updateFollowerUserFollowingLoadingStatus(userId, false)
             }
-        }).then(() => {
-            updateFollowerUserFollowingStatus(userId, false)
-        }).catch(() => {
-            updateFollowerUserFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
 
