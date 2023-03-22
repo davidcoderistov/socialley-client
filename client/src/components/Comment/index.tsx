@@ -1,5 +1,6 @@
 import React, {useState, useMemo, useEffect} from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
+import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
 import { useSnackbar } from 'notistack'
 import Box from '@mui/material/Box'
 import Skeleton from '@mui/material/Skeleton'
@@ -12,6 +13,7 @@ import { Comment as CommentI } from '../../graphql/types/models'
 import { GET_USERS_WHO_LIKED_COMMENT } from '../../graphql/queries/posts'
 import { GetUsersWhoLikedCommentQueryType } from '../../graphql/types/queries/posts'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
+import { FollowUserMutationType } from '../../graphql/types/mutations/users'
 import usersWhoLikedCommentMutations from '../../apollo/mutations/posts/usersWhoLikedComment'
 
 
@@ -49,8 +51,9 @@ export default function Comment (props: CommentProps) {
 
     const [getUsersWhoLikedComment, usersWhoLikedComment] = useLazyQuery<GetUsersWhoLikedCommentQueryType>(GET_USERS_WHO_LIKED_COMMENT)
 
-    const [followUser] = useMutation(FOLLOW_USER)
+    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const handleViewLikingUsers = () => {
         const comment = props.comment as CommentI
@@ -117,8 +120,15 @@ export default function Comment (props: CommentProps) {
             variables: {
                 followedUserId: userId
             }
-        }).then(() => {
+        }).then(follow => {
             updateCommentQueryFollowingStatus(userId, true)
+            const followedUser = follow.data?.followUser
+            if (followedUser) {
+                updateFollowUserConnections({
+                    followableUser: followedUser,
+                    isFollowingLoading: false,
+                })
+            }
         }).catch(() => {
             updateCommentQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
