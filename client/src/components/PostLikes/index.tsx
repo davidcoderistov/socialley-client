@@ -3,12 +3,11 @@ import Box from '@mui/material/Box'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { useSnackbar } from 'notistack'
 import { useLazyQuery } from '@apollo/client'
-import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
+import { useFollowUser } from '../../hooks/graphql/users'
 import { GET_USERS_WHO_LIKED_POST } from '../../graphql/queries/posts'
 import { GetUsersWhoLikedPostQueryType } from '../../graphql/types/queries/posts'
 import { useMutation } from '@apollo/client'
-import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
-import { FollowUserMutationType } from '../../graphql/types/mutations/users'
+import { UNFOLLOW_USER } from '../../graphql/mutations/users'
 import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
 
 
@@ -31,9 +30,8 @@ export default function PostLikes (props: Props) {
 
     const [getUsersWhoLikedPost, usersWhoLikedPost] = useLazyQuery<GetUsersWhoLikedPostQueryType>(GET_USERS_WHO_LIKED_POST)
 
-    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
+    const followUser = useFollowUser()
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
-    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const handleViewLikingUsers = () => {
         setIsUserLikesModalOpen(true)
@@ -94,23 +92,16 @@ export default function PostLikes (props: Props) {
     }
 
     const handleFollowUser = (userId: string) => {
-        updatePostQueryFollowingLoadingStatus(userId, true)
-        followUser({
-            variables: {
-                followedUserId: userId
+        followUser(userId, {
+            onStart () {
+                updatePostQueryFollowingLoadingStatus(userId, true)
+            },
+            onSuccess () {
+                updatePostQueryFollowingStatus(userId, true)
+            },
+            onError () {
+                updatePostQueryFollowingLoadingStatus(userId, false)
             }
-        }).then(follow => {
-            updatePostQueryFollowingStatus(userId, true)
-            const followedUser = follow.data?.followUser
-            if (followedUser) {
-                updateFollowUserConnections({
-                    followableUser: followedUser,
-                    isFollowingLoading: false,
-                })
-            }
-        }).catch(() => {
-            updatePostQueryFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not follow user', { variant: 'error' })
         })
     }
 
