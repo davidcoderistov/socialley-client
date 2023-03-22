@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
+import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
 import { useSnackbar } from 'notistack'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { GET_FOLLOWING_FOR_USER } from '../../graphql/queries/users'
 import { GetFollowingForUserQueryType } from '../../graphql/types/queries/users'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
+import { FollowUserMutationType } from '../../graphql/types/mutations/users'
 import followingUsersMutations from '../../apollo/mutations/users/followingForUser'
 
 
@@ -26,8 +28,9 @@ export default function FollowingUsersModal (props: Props) {
         skip: !props.open || !props.userId,
     })
 
-    const [followUser] = useMutation(FOLLOW_USER)
+    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const handleFetchMoreUsers = () => {
         setIsLoadingMore(true)
@@ -80,8 +83,15 @@ export default function FollowingUsersModal (props: Props) {
             variables: {
                 followedUserId: userId
             }
-        }).then(() => {
+        }).then(follow => {
             updateFollowingUserFollowingStatus(userId, true)
+            const followedUser = follow.data?.followUser
+            if (followedUser) {
+                updateFollowUserConnections({
+                    followableUser: followedUser,
+                    isFollowingLoading: false,
+                })
+            }
         }).catch(() => {
             updateFollowingUserFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
