@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
+import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
 import { useSnackbar } from 'notistack'
 import {
     useComments,
@@ -19,6 +20,7 @@ import {
 import { GET_POST_DETAILS } from '../../graphql/queries/posts'
 import { GetPostDetailsQueryType } from '../../graphql/types/queries/posts'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
+import { FollowUserMutationType } from '../../graphql/types/mutations/users'
 import PostView from '../PostView/PostView'
 import PostSettingsModal from '../PostSettingsModal'
 import { PostDetails as PostViewDetails } from '../../types'
@@ -86,8 +88,9 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
         setIsPostSettingsModalOpen(true)
     }
 
-    const [followUser] = useMutation(FOLLOW_USER)
+    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const updateFollowingLoadingStatus = (isFollowingLoading: boolean) => {
         postDetails.updateQuery(postDetails => updatePostDetailsFollowingLoadingStatus({
@@ -109,8 +112,15 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
             variables: {
                 followedUserId: userId
             }
-        }).then(() => {
+        }).then(follow => {
             updateFollowingStatus(true)
+            const followedUser = follow.data?.followUser
+            if (followedUser) {
+                updateFollowUserConnections({
+                    followableUser: followedUser,
+                    isFollowingLoading: false,
+                })
+            }
         }).catch(() => {
             updateFollowingLoadingStatus(false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
