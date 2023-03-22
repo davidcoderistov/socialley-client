@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client'
-import { useFollowUser } from '../../hooks/graphql/users'
+import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import { useProfileNavigate } from '../../hooks/misc'
-import { useSnackbar } from 'notistack'
 import { GET_SEARCHED_USERS, GET_SEARCHED_USERS_FOR_USER } from '../../graphql/queries/users'
 import { GetSearchedUsersQueryType, GetSearchedUsersForUserQueryType } from '../../graphql/types/queries/users'
-import { UNFOLLOW_USER, MARK_USER_AS_SEARCHED } from '../../graphql/mutations/users'
+import { MARK_USER_AS_SEARCHED } from '../../graphql/mutations/users'
 import MuiDrawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -55,8 +54,6 @@ export default function SearchDrawer (props: SearchDrawerProps) {
     const client = useApolloClient()
 
     const navigate = useProfileNavigate()
-
-    const { enqueueSnackbar } = useSnackbar()
 
     const inputRef = useRef<HTMLInputElement>()
     const [searchQuery, setSearchQuery] = useState('')
@@ -108,7 +105,7 @@ export default function SearchDrawer (props: SearchDrawerProps) {
     }
 
     const followUser = useFollowUser()
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const unfollowUser = useUnfollowUser()
 
     const updateSearchedUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean, searchQuery: string) => {
         client.cache.updateQuery({
@@ -159,16 +156,16 @@ export default function SearchDrawer (props: SearchDrawerProps) {
 
     const handleUnfollowUser = (userId: string) => {
         if (searchQuery && searchQuery.length > 0) {
-            updateSearchedUserFollowingLoadingStatus(userId, true, searchQuery)
-            unfollowUser({
-                variables: {
-                    followedUserId: userId
+            unfollowUser(userId, {
+                onStart () {
+                    updateSearchedUserFollowingLoadingStatus(userId, true, searchQuery)
+                },
+                onSuccess () {
+                    updateSearchedUserFollowingStatus(userId, false, searchQuery)
+                },
+                onError () {
+                    updateSearchedUserFollowingLoadingStatus(userId, false, searchQuery)
                 }
-            }).then(() => {
-                updateSearchedUserFollowingStatus(userId, false, searchQuery)
-            }).catch(() => {
-                updateSearchedUserFollowingLoadingStatus(userId, false, searchQuery)
-                enqueueSnackbar('Could not unfollow user', { variant: 'error' })
             })
         }
     }
