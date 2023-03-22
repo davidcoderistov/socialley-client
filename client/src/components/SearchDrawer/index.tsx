@@ -150,8 +150,15 @@ export default function SearchDrawer (props: SearchDrawerProps) {
                 variables: {
                     followedUserId: userId
                 }
-            }).then(() => {
+            }).then(follow => {
                 updateSearchedUserFollowingStatus(userId, true, searchQuery)
+                const followedUser = follow.data?.followUser
+                if (followedUser) {
+                    updateFollowUserConnections({
+                        followableUser: followedUser,
+                        isFollowingLoading: false,
+                    })
+                }
             }).catch(() => {
                 updateSearchedUserFollowingLoadingStatus(userId, false, searchQuery)
                 enqueueSnackbar('Could not follow user', { variant: 'error' })
