@@ -3,10 +3,12 @@ import Box from '@mui/material/Box'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { useSnackbar } from 'notistack'
 import { useLazyQuery } from '@apollo/client'
+import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
 import { GET_USERS_WHO_LIKED_POST } from '../../graphql/queries/posts'
 import { GetUsersWhoLikedPostQueryType } from '../../graphql/types/queries/posts'
 import { useMutation } from '@apollo/client'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
+import { FollowUserMutationType } from '../../graphql/types/mutations/users'
 import usersWhoLikedPostMutations from '../../apollo/mutations/posts/usersWhoLikedPost'
 
 
@@ -29,8 +31,9 @@ export default function PostLikes (props: Props) {
 
     const [getUsersWhoLikedPost, usersWhoLikedPost] = useLazyQuery<GetUsersWhoLikedPostQueryType>(GET_USERS_WHO_LIKED_POST)
 
-    const [followUser] = useMutation(FOLLOW_USER)
+    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const handleViewLikingUsers = () => {
         setIsUserLikesModalOpen(true)
@@ -110,8 +113,15 @@ export default function PostLikes (props: Props) {
             variables: {
                 followedUserId: userId
             }
-        }).then(() => {
+        }).then(follow => {
             updatePostQueryFollowingStatus(userId, false)
+            const followedUser = follow.data?.followUser
+            if (followedUser) {
+                updateFollowUserConnections({
+                    followableUser: followedUser,
+                    isFollowingLoading: false,
+                })
+            }
         }).catch(() => {
             updatePostQueryFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not unfollow user', { variant: 'error' })
