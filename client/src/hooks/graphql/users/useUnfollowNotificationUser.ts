@@ -1,30 +1,25 @@
-import { useMutation } from '@apollo/client'
-import { UNFOLLOW_USER } from '../../../graphql/mutations/users'
-import { useSnackbar } from 'notistack'
+import { useUnfollowUser } from './useUnfollowUser'
 import { useUpdateNotificationUserFollowingLoadingStatus } from './useUpdateNotificationUserFollowingLoadingStatus'
 import { useUpdateNotificationUserFollowingStatus } from './useUpdateNotificationUserFollowingStatus'
 
 
 export function useUnfollowNotificationUser () {
 
-    const { enqueueSnackbar } = useSnackbar()
-
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
-
+    const unfollowUser = useUnfollowUser()
     const updateFollowingLoadingStatus = useUpdateNotificationUserFollowingLoadingStatus()
     const updateFollowingStatus = useUpdateNotificationUserFollowingStatus()
 
     return (userId: string) => {
-        updateFollowingLoadingStatus(userId, true)
-        unfollowUser({
-            variables: {
-                followedUserId: userId
+        unfollowUser(userId, {
+            onStart () {
+                updateFollowingLoadingStatus(userId, true)
+            },
+            onSuccess () {
+                updateFollowingStatus(userId, false)
+            },
+            onError () {
+                updateFollowingLoadingStatus(userId, false)
             }
-        }).then(() => {
-            updateFollowingStatus(userId, false)
-        }).catch(() => {
-            updateFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
 }
