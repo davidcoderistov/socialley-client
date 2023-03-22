@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react'
-import { useApolloClient, useQuery, useMutation } from '@apollo/client'
-import { useFollowUser } from '../../hooks/graphql/users'
-import { useSnackbar } from 'notistack'
+import { useApolloClient, useQuery } from '@apollo/client'
+import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import { GET_USER_DETAILS } from '../../graphql/queries/users'
 import { GetUserDetailsQueryType } from '../../graphql/types/queries/users'
-import { UNFOLLOW_USER } from '../../graphql/mutations/users'
 import Box from '@mui/material/Box'
 import UserProfileDetails from '../UserProfileDetails'
 import UserPostsFeed from '../UserPostsFeed'
@@ -19,8 +17,6 @@ export default function UserProfile (props: UserProfileProps) {
 
     const client = useApolloClient()
 
-    const { enqueueSnackbar } = useSnackbar()
-
     const userDetails = useQuery<GetUserDetailsQueryType>(GET_USER_DETAILS, { variables: { userId: props.userId }})
 
     const user = useMemo(() => {
@@ -28,7 +24,7 @@ export default function UserProfile (props: UserProfileProps) {
     }, [userDetails.data])
 
     const followUser = useFollowUser()
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const unfollowUser = useUnfollowUser()
 
     const updateFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         client.cache.updateQuery({
@@ -73,16 +69,16 @@ export default function UserProfile (props: UserProfileProps) {
     }
 
     const handleUnfollowUser = (userId: string) => {
-        updateFollowingLoadingStatus(userId, true)
-        unfollowUser({
-            variables: {
-                followedUserId: userId
+        unfollowUser(userId, {
+            onStart () {
+                updateFollowingLoadingStatus(userId, true)
+            },
+            onSuccess () {
+                updateFollowingStatus(userId, false)
+            },
+            onError () {
+                updateFollowingLoadingStatus(userId, false)
             }
-        }).then(() => {
-            updateFollowingStatus(userId, false)
-        }).catch(() => {
-            updateFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
 
