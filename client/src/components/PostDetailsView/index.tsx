@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react'
-import { useQuery, useMutation } from '@apollo/client'
-import { useFollowUser } from '../../hooks/graphql/users'
-import { useSnackbar } from 'notistack'
+import { useQuery } from '@apollo/client'
+import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import {
     useComments,
     useCreateComment,
@@ -19,7 +18,6 @@ import {
 } from '../../apollo/mutations/posts/postDetails'
 import { GET_POST_DETAILS } from '../../graphql/queries/posts'
 import { GetPostDetailsQueryType } from '../../graphql/types/queries/posts'
-import { UNFOLLOW_USER } from '../../graphql/mutations/users'
 import PostView from '../PostView/PostView'
 import PostSettingsModal from '../PostSettingsModal'
 import { PostDetails as PostViewDetails } from '../../types'
@@ -31,8 +29,6 @@ interface PostDetailsViewProps {
 }
 
 export default function PostDetailsView ({ postId, onClose }: PostDetailsViewProps) {
-
-    const { enqueueSnackbar } = useSnackbar()
 
     const postDetails = useQuery<GetPostDetailsQueryType>(GET_POST_DETAILS, {
         variables: { postId },
@@ -88,7 +84,7 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
     }
 
     const followUser = useFollowUser()
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const unfollowUser = useUnfollowUser()
 
     const updateFollowingLoadingStatus = (isFollowingLoading: boolean) => {
         postDetails.updateQuery(postDetails => updatePostDetailsFollowingLoadingStatus({
@@ -121,17 +117,17 @@ export default function PostDetailsView ({ postId, onClose }: PostDetailsViewPro
     const handleUnfollowUser = () => {
         const post = postViewDetails as PostViewDetails
         const userId = post.user._id
-        setPostSettingsModalIsFollowingLoading(true)
-        unfollowUser({
-            variables: {
-                followedUserId: userId
+        unfollowUser(userId, {
+            onStart () {
+                setPostSettingsModalIsFollowingLoading(true)
+            },
+            onSuccess () {
+                updateFollowingStatus(false)
+                handleClosePostSettingsModal()
+            },
+            onError () {
+                handleClosePostSettingsModal()
             }
-        }).then(() => {
-            updateFollowingStatus(false)
-        }).catch(() => {
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
-        }).finally(() => {
-            handleClosePostSettingsModal()
         })
     }
 
