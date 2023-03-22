@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react'
 import { useApolloClient, useQuery, useMutation } from '@apollo/client'
+import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
 import { useSnackbar } from 'notistack'
 import { GET_USER_DETAILS } from '../../graphql/queries/users'
 import { GetUserDetailsQueryType } from '../../graphql/types/queries/users'
 import { FOLLOW_USER, UNFOLLOW_USER } from '../../graphql/mutations/users'
+import { FollowUserMutationType } from '../../graphql/types/mutations/users'
 import Box from '@mui/material/Box'
 import UserProfileDetails from '../UserProfileDetails'
 import UserPostsFeed from '../UserPostsFeed'
@@ -26,8 +28,9 @@ export default function UserProfile (props: UserProfileProps) {
         return userDetails.data?.getUserDetails ?? null
     }, [userDetails.data])
 
-    const [followUser] = useMutation(FOLLOW_USER)
+    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const updateFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         client.cache.updateQuery({
@@ -63,8 +66,15 @@ export default function UserProfile (props: UserProfileProps) {
             variables: {
                 followedUserId: userId
             }
-        }).then(() => {
+        }).then(follow => {
             updateFollowingStatus(userId, true)
+            const followedUser = follow.data?.followUser
+            if (followedUser) {
+                updateFollowUserConnections({
+                    followableUser: followedUser,
+                    isFollowingLoading: false,
+                })
+            }
         }).catch(() => {
             updateFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
