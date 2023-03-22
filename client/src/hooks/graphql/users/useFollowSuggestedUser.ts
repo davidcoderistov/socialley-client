@@ -1,20 +1,17 @@
-import { useQuery, useMutation } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { useFollowUser } from './useFollowUser'
+import { useUnfollowUser } from './useUnfollowUser'
 import { GET_SUGGESTED_USERS } from '../../../graphql/queries/users'
 import { GetSuggestedUsersQueryType } from '../../../graphql/types/queries/users'
-import { UNFOLLOW_USER } from '../../../graphql/mutations/users'
 import suggestedUsersMutations from '../../../apollo/mutations/users/suggestedUsers'
-import { useSnackbar } from 'notistack'
 
 
 export function useFollowSuggestedUser () {
 
-    const { enqueueSnackbar } = useSnackbar()
-
     const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS)
 
     const followUser = useFollowUser()
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const unfollowUser = useUnfollowUser()
 
     const updateSuggestedUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         suggestedUsers.updateQuery((suggestedUsers) => {
@@ -51,16 +48,16 @@ export function useFollowSuggestedUser () {
     }
 
     const handleUnfollowUser = (userId: string) => {
-        updateSuggestedUserFollowingLoadingStatus(userId, true)
-        unfollowUser({
-            variables: {
-                followedUserId: userId
+        unfollowUser(userId, {
+            onStart () {
+                updateSuggestedUserFollowingLoadingStatus(userId, true)
+            },
+            onSuccess () {
+                updateSuggestedUserFollowingStatus(userId, false)
+            },
+            onError () {
+                updateSuggestedUserFollowingLoadingStatus(userId, false)
             }
-        }).then(() => {
-            updateSuggestedUserFollowingStatus(userId, false)
-        }).catch(() => {
-            updateSuggestedUserFollowingLoadingStatus(userId, false)
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
         })
     }
 
