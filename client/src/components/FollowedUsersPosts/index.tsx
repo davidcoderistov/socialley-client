@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { useFollowUser } from '../../hooks/graphql/users'
+import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import { useInfiniteScroll } from '../../hooks/misc'
 import {
     useLikeComment,
@@ -40,9 +40,6 @@ import {
     MARK_USER_POST_AS_FAVORITE,
     UNMARK_USER_POST_AS_FAVORITE,
 } from '../../graphql/mutations/posts'
-import {
-    UNFOLLOW_USER,
-} from '../../graphql/mutations/users'
 import {
     updateFollowedUserPostLikedStatus,
     updateFollowedUserPostLikedLoadingStatus,
@@ -136,7 +133,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
     }
 
     const followUser = useFollowUser()
-    const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const unfollowUser = useUnfollowUser()
 
     const updateFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostsFollowingLoadingStatus({
@@ -170,17 +167,17 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     const handleUnfollowUser = () => {
         const userId = postSettingsModalUserId as string
-        setPostSettingsModalIsFollowingLoading(true)
-        unfollowUser({
-            variables: {
-                followedUserId: userId
+        unfollowUser(userId, {
+            onStart () {
+                setPostSettingsModalIsFollowingLoading(true)
+            },
+            onSuccess () {
+                updateFollowingStatus(userId, false)
+                handleClosePostSettingsModal()
+            },
+            onError () {
+                handleClosePostSettingsModal()
             }
-        }).then(() => {
-            updateFollowingStatus(userId, false)
-        }).catch(() => {
-            enqueueSnackbar('Could not unfollow user', { variant: 'error' })
-        }).finally(() => {
-            handleClosePostSettingsModal()
         })
     }
 
