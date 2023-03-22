@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client'
-import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
+import { useFollowUser } from '../../hooks/graphql/users'
 import { useProfileNavigate } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
 import { GET_SEARCHED_USERS, GET_SEARCHED_USERS_FOR_USER } from '../../graphql/queries/users'
 import { GetSearchedUsersQueryType, GetSearchedUsersForUserQueryType } from '../../graphql/types/queries/users'
-import { FOLLOW_USER, UNFOLLOW_USER, MARK_USER_AS_SEARCHED } from '../../graphql/mutations/users'
-import { FollowUserMutationType } from '../../graphql/types/mutations/users'
+import { UNFOLLOW_USER, MARK_USER_AS_SEARCHED } from '../../graphql/mutations/users'
 import MuiDrawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -108,9 +107,8 @@ export default function SearchDrawer (props: SearchDrawerProps) {
         event.stopPropagation()
     }
 
-    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
+    const followUser = useFollowUser()
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
-    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const updateSearchedUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean, searchQuery: string) => {
         client.cache.updateQuery({
@@ -145,23 +143,16 @@ export default function SearchDrawer (props: SearchDrawerProps) {
     const handleFollowUser = (userId: string, event: React.MouseEvent) => {
         event.stopPropagation()
         if (searchQuery && searchQuery.length > 0) {
-            updateSearchedUserFollowingLoadingStatus(userId, true, searchQuery)
-            followUser({
-                variables: {
-                    followedUserId: userId
+            followUser(userId, {
+                onStart () {
+                    updateSearchedUserFollowingLoadingStatus(userId, true, searchQuery)
+                },
+                onSuccess () {
+                    updateSearchedUserFollowingStatus(userId, true, searchQuery)
+                },
+                onError () {
+                    updateSearchedUserFollowingLoadingStatus(userId, false, searchQuery)
                 }
-            }).then(follow => {
-                updateSearchedUserFollowingStatus(userId, true, searchQuery)
-                const followedUser = follow.data?.followUser
-                if (followedUser) {
-                    updateFollowUserConnections({
-                        followableUser: followedUser,
-                        isFollowingLoading: false,
-                    })
-                }
-            }).catch(() => {
-                updateSearchedUserFollowingLoadingStatus(userId, false, searchQuery)
-                enqueueSnackbar('Could not follow user', { variant: 'error' })
             })
         }
     }
