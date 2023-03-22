@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useLazyQuery, useMutation } from '@apollo/client'
+import { useFollowUpdateUserConnections } from '../../hooks/graphql/users'
 import { useInfiniteScroll } from '../../hooks/misc'
 import {
     useLikeComment,
@@ -22,6 +23,7 @@ import {
     GET_FOLLOWED_USERS_POSTS,
     GET_FIRST_USER_WHO_LIKED_POST,
 } from '../../graphql/queries/posts'
+import { FollowUserMutationType } from '../../graphql/types/mutations/users'
 import {
     GetFollowedUsersPostsQueryType,
     GetFirstUserWhoLikedPostQueryType,
@@ -135,8 +137,9 @@ export default function FollowedUsersPosts (props: BoxProps) {
         }
     }
 
-    const [followUser] = useMutation(FOLLOW_USER)
+    const [followUser] = useMutation<FollowUserMutationType>(FOLLOW_USER)
     const [unfollowUser] = useMutation(UNFOLLOW_USER)
+    const updateFollowUserConnections = useFollowUpdateUserConnections()
 
     const updateFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
         followedUsersPosts.updateQuery(followedUsersPosts => updateFollowedUserPostsFollowingLoadingStatus({
@@ -160,8 +163,15 @@ export default function FollowedUsersPosts (props: BoxProps) {
             variables: {
                 followedUserId: userId
             }
-        }).then(() => {
+        }).then(follow => {
             updateFollowingStatus(userId, true)
+            const followedUser = follow.data?.followUser
+            if (followedUser) {
+                updateFollowUserConnections({
+                    followableUser: followedUser,
+                    isFollowingLoading: false,
+                })
+            }
         }).catch(() => {
             updateFollowingLoadingStatus(userId, false)
             enqueueSnackbar('Could not follow user', { variant: 'error' })
