@@ -1,5 +1,4 @@
 import { GetUserDetailsQueryType } from '../../../graphql/types/queries/users'
-import { User } from '../../../graphql/types/models'
 
 
 interface UpdateFollowingLoadingStatusOptions {
@@ -74,36 +73,32 @@ export function decrementFollowingCount (options: DecrementFollowingCountOptions
 
 interface IncrementFollowersCountOptions {
     userDetails: GetUserDetailsQueryType
-    latestFollower: Pick<User, '_id' | 'username'> | null
 }
 
 export function incrementFollowersCount (options: IncrementFollowersCountOptions): GetUserDetailsQueryType {
-    const { userDetails, latestFollower } = options
+    const { userDetails } = options
 
     return {
         ...userDetails,
         getUserDetails: {
             ...userDetails.getUserDetails,
             followersCount: userDetails.getUserDetails.followersCount + 1,
-            latestFollower,
         }
     }
 }
 
 interface DecrementFollowersCountOptions {
     userDetails: GetUserDetailsQueryType
-    latestFollower: Pick<User, '_id' | 'username'> | null
 }
 
 export function decrementFollowersCount (options: DecrementFollowersCountOptions): GetUserDetailsQueryType {
-    const { userDetails, latestFollower } = options
+    const { userDetails } = options
 
     return {
         ...userDetails,
         getUserDetails: {
             ...userDetails.getUserDetails,
             followersCount: userDetails.getUserDetails.followersCount - 1,
-            latestFollower,
         }
     }
 }

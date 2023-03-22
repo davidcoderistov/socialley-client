@@ -54,7 +54,6 @@ export function useFollowUpdateUserConnections () {
             if (userDetails) {
                 return userDetailsMutations.incrementFollowersCount({
                     userDetails,
-                    latestFollower: { _id: loggedInUser._id, username: loggedInUser.username }
                 })
             }
         })
