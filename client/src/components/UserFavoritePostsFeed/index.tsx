@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useFetchMore } from '../../hooks/misc'
 import { useLazyQuery } from '@apollo/client'
 import { GET_FAVORITE_POSTS_FOR_USER } from '../../graphql/queries/posts'
 import { GetFavoritePostsForUserQueryType } from '../../graphql/types/queries/posts'
@@ -19,6 +20,22 @@ export default function UserFavoritePostsFeed ({ boxProps = {}, dense = false, s
 
     const [getUserFavoritePosts, userFavoritePosts] = useLazyQuery<GetFavoritePostsForUserQueryType>(GET_FAVORITE_POSTS_FOR_USER)
 
+    const [offset, fetchMoreUserFavoritePosts] = useFetchMore<GetFavoritePostsForUserQueryType>({
+        queryResult: userFavoritePosts,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getFavoritePostsForUser: {
+                    ...existing.getFavoritePostsForUser,
+                    data: [
+                        ...existing.getFavoritePostsForUser.data,
+                        ...incoming.getFavoritePostsForUser.data,
+                    ]
+                }
+            }
+        }
+    })
+
     useEffect(() => {
         if (!shouldSkipQuery && !userFavoritePosts.called) {
             getUserFavoritePosts({ variables: { offset: 0, limit: 10 } })
@@ -36,25 +53,11 @@ export default function UserFavoritePostsFeed ({ boxProps = {}, dense = false, s
         if (userFavoritePosts.loading || userFavoritePosts.error || !userFavoritePosts.data) {
             return false
         }
-        return posts.length < userFavoritePosts.data.getFavoritePostsForUser.total
-    }, [posts, userFavoritePosts.loading, userFavoritePosts.error])
+        return offset < userFavoritePosts.data.getFavoritePostsForUser.total
+    }, [offset, userFavoritePosts.loading, userFavoritePosts.error])
 
     const handleFetchMorePosts = () => {
-        userFavoritePosts.fetchMore({
-            variables: { offset: posts.length },
-            updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetFavoritePostsForUserQueryType }) {
-                return {
-                    ...existing,
-                    getFavoritePostsForUser: {
-                        ...existing.getFavoritePostsForUser,
-                        data: [
-                            ...existing.getFavoritePostsForUser.data,
-                            ...fetchMoreResult.getFavoritePostsForUser.data,
-                        ]
-                    }
-                }
-            }
-        })
+        fetchMoreUserFavoritePosts()
     }
 
     const handleClickPost = (postId: string) => {
