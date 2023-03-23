@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useInfiniteScroll } from '../../hooks/misc'
+import { useInfiniteScroll, useFetchMore } from '../../hooks/misc'
 import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import { GET_POST_LIKE_NOTIFICATIONS_FOR_USER } from '../../graphql/queries/posts'
 import { GetPostLikeNotificationsForUserQueryType } from '../../graphql/types/queries/posts'
@@ -21,11 +21,27 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
 
     const client = useApolloClient()
 
-    const [offset, setOffset] = useState(3)
     const [likesTotal, setLikesTotal] = useState(0)
     const [isLikesTotalSet, setIsLikesTotalSet] = useState(false)
 
     const postLikeNotifications = useQuery<GetPostLikeNotificationsForUserQueryType>(GET_POST_LIKE_NOTIFICATIONS_FOR_USER)
+
+    const [offset, fetchMorePostLikeNotifications] = useFetchMore<GetPostLikeNotificationsForUserQueryType>({
+        queryResult: postLikeNotifications,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getPostLikeNotificationsForUser: {
+                    ...existing.getPostLikeNotificationsForUser,
+                    data: _uniqWith([
+                        ...existing.getPostLikeNotificationsForUser.data,
+                        ...incoming.getPostLikeNotificationsForUser.data,
+                    ], (first, second) =>
+                        first.post._id === second.post._id && first.user._id === second.user._id)
+                }
+            }
+        }
+    }, 10, 3)
 
     const likes = useMemo(() => {
         if (!postLikeNotifications.loading && !postLikeNotifications.error && postLikeNotifications.data) {
@@ -40,26 +56,6 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
             setIsLikesTotalSet(true)
         }
     }, [postLikeNotifications.loading, postLikeNotifications.error, postLikeNotifications.data, isLikesTotalSet])
-
-    const fetchMorePostLikeNotifications = () => {
-        const limit = likes.length > 3 ? 5 : 10
-        postLikeNotifications.fetchMore({
-            variables: { offset, limit },
-            updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetPostLikeNotificationsForUserQueryType }) {
-                return {
-                    ...existing,
-                    getPostLikeNotificationsForUser: {
-                        ...existing.getPostLikeNotificationsForUser,
-                        data: _uniqWith([
-                            ...existing.getPostLikeNotificationsForUser.data,
-                            ...fetchMoreResult.getPostLikeNotificationsForUser.data,
-                        ], (first, second) =>
-                            first.post._id === second.post._id && first.user._id === second.user._id)
-                    }
-                }
-            }
-        }).then(() => setOffset(offset + limit))
-    }
 
     const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMorePostLikeNotifications)
 
