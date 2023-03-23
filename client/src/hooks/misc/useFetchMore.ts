@@ -14,9 +14,10 @@ export const useFetchMore = <T>(
         updateQuery: (existing: T, incoming: T) => T,
     },
     limit: number = 10,
+    initialOffset?: number
 ) => {
 
-    const [offset, setOffset] = useState(limit)
+    const [offset, setOffset] = useState(typeof initialOffset === 'number' ? initialOffset : limit)
     const [trackQuery, setTrackQuery] = useState(new Map<string, boolean>)
 
     const fetchMore = (fetchMoreArgs?: {
