@@ -1,5 +1,6 @@
 import React, {useState, useMemo, useEffect} from 'react'
 import { useLazyQuery } from '@apollo/client'
+import { useFetchMore } from '../../hooks/misc'
 import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import { useSnackbar } from 'notistack'
 import Box from '@mui/material/Box'
@@ -43,12 +44,26 @@ export default function Comment (props: CommentProps) {
 
     const { enqueueSnackbar } = useSnackbar()
 
-    const [offset, setOffset] = useState(0)
     const [isUserLikesModalOpen, setIsUserLikesModalOpen] = useState(false)
     const [isInitialLoading, setIsInitialLoading] = useState(false)
 
     const [getUsersWhoLikedComment, usersWhoLikedComment] = useLazyQuery<GetUsersWhoLikedCommentQueryType>(GET_USERS_WHO_LIKED_COMMENT)
 
+    const [offset, fetchMoreUsersWhoLikedComment] = useFetchMore<GetUsersWhoLikedCommentQueryType>({
+        queryResult: usersWhoLikedComment,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getUsersWhoLikedComment: {
+                    ...existing.getUsersWhoLikedComment,
+                    data: [
+                        ...existing.getUsersWhoLikedComment.data,
+                        ...incoming.getUsersWhoLikedComment.data,
+                    ]
+                }
+            }
+        }
+    })
     const followUser = useFollowUser()
     const unfollowUser = useUnfollowUser()
 
@@ -64,31 +79,13 @@ export default function Comment (props: CommentProps) {
                     limit: 10,
                 }
             }).finally(() => {
-                setOffset(10)
                 setIsInitialLoading(false)
             })
         }
     }
 
     const handleFetchMoreUsers = () => {
-        usersWhoLikedComment.fetchMore({
-            variables: {
-                offset,
-                limit: 10,
-            },
-            updateQuery (existing, { fetchMoreResult}: { fetchMoreResult : GetUsersWhoLikedCommentQueryType }) {
-                return {
-                    ...existing,
-                    getUsersWhoLikedComment: {
-                        ...existing.getUsersWhoLikedComment,
-                        data: [
-                            ...existing.getUsersWhoLikedComment.data,
-                            ...fetchMoreResult.getUsersWhoLikedComment.data,
-                        ]
-                    }
-                }
-            }
-        }).then(() => setOffset(offset + 10))
+        fetchMoreUsersWhoLikedComment()
     }
 
     const updateCommentQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
