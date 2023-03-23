@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useInfiniteScroll } from '../../hooks/misc'
+import { useInfiniteScroll, useFetchMore } from '../../hooks/misc'
 import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import { GET_POST_COMMENT_NOTIFICATIONS_FOR_USER } from '../../graphql/queries/posts'
 import { GetPostCommentNotificationsForUserQueryType } from '../../graphql/types/queries/posts'
@@ -22,6 +22,22 @@ export default function PostCommentNotifications (props: PostCommentNotification
 
     const postCommentNotifications = useQuery<GetPostCommentNotificationsForUserQueryType>(GET_POST_COMMENT_NOTIFICATIONS_FOR_USER)
 
+    const [offset, fetchMorePostCommentNotifications] = useFetchMore<GetPostCommentNotificationsForUserQueryType>({
+        queryResult: postCommentNotifications,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getPostCommentNotificationsForUser: {
+                    ...existing.getPostCommentNotificationsForUser,
+                    data: [
+                        ...existing.getPostCommentNotificationsForUser.data,
+                        ...incoming.getPostCommentNotificationsForUser.data,
+                    ]
+                }
+            }
+        }
+    }, 10, 3)
+
     const comments = useMemo(() => {
         if (!postCommentNotifications.loading && !postCommentNotifications.error && postCommentNotifications.data) {
             return postCommentNotifications.data.getPostCommentNotificationsForUser.data
@@ -35,24 +51,6 @@ export default function PostCommentNotifications (props: PostCommentNotification
         }
         return 0
     }, [postCommentNotifications.loading, postCommentNotifications.error, postCommentNotifications.data])
-
-    const fetchMorePostCommentNotifications = () => {
-        postCommentNotifications.fetchMore({
-            variables: { offset: comments.length, limit: comments.length > 3 ? 5 : 10 },
-            updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetPostCommentNotificationsForUserQueryType }) {
-                return {
-                    ...existing,
-                    getPostCommentNotificationsForUser: {
-                        ...existing.getPostCommentNotificationsForUser,
-                        data: [
-                            ...existing.getPostCommentNotificationsForUser.data,
-                            ...fetchMoreResult.getPostCommentNotificationsForUser.data,
-                        ]
-                    }
-                }
-            }
-        })
-    }
 
     const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMorePostCommentNotifications)
 
@@ -102,7 +100,7 @@ export default function PostCommentNotifications (props: PostCommentNotification
                         createdAt={comment.createdAt} />
                 </Box>
             )) }
-            { comments.length < commentsTotal && (
+            { offset < commentsTotal && (
                 <Box
                     ref={infiniteScrollRef}
                     component='div'
