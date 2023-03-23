@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import { useFetchMore } from '../../hooks/misc'
 import { useQuery } from '@apollo/client'
 import { GET_SUGGESTED_POSTS } from '../../graphql/queries/posts'
 import { GetSuggestedPostsQueryType } from '../../graphql/types/queries/posts'
@@ -18,6 +19,22 @@ export default function SuggestedPostsFeed ({ boxProps = {} }: { boxProps?: BoxP
         }
     })
 
+    const [offset, fetchMoreSuggestedPosts] = useFetchMore<GetSuggestedPostsQueryType>({
+        queryResult: suggestedPosts,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getSuggestedPosts: {
+                    ...existing.getSuggestedPosts,
+                    data: [
+                        ...existing.getSuggestedPosts.data,
+                        ...incoming.getSuggestedPosts.data,
+                    ]
+                }
+            }
+        }
+    }, 6)
+
     const posts = useMemo(() => {
         if (suggestedPosts.data) {
             return suggestedPosts.data.getSuggestedPosts.data
@@ -29,25 +46,11 @@ export default function SuggestedPostsFeed ({ boxProps = {} }: { boxProps?: BoxP
         if (suggestedPosts.loading || suggestedPosts.error || !suggestedPosts.data) {
             return false
         }
-        return posts.length < suggestedPosts.data.getSuggestedPosts.total
-    }, [posts, suggestedPosts.loading, suggestedPosts.error])
+        return offset < suggestedPosts.data.getSuggestedPosts.total
+    }, [offset, suggestedPosts.loading, suggestedPosts.error])
 
     const handleFetchMorePosts = () => {
-        suggestedPosts.fetchMore({
-            variables: { offset: posts.length },
-            updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetSuggestedPostsQueryType }) {
-                return {
-                    ...existing,
-                    getSuggestedPosts: {
-                        ...existing.getSuggestedPosts,
-                        data: [
-                            ...existing.getSuggestedPosts.data,
-                            ...fetchMoreResult.getSuggestedPosts.data,
-                        ]
-                    }
-                }
-            }
-        })
+        fetchMoreSuggestedPosts()
     }
 
     const handleClickPost = (postId: string) => {
