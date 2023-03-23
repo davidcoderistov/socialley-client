@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useFetchMore } from '../../hooks/misc'
 import { useLazyQuery } from '@apollo/client'
 import { GET_POSTS_FOR_USER } from '../../graphql/queries/posts'
 import { GetPostsForUserQueryType } from '../../graphql/types/queries/posts'
@@ -20,6 +21,22 @@ export default function UserPostsFeed ({ userId, postId = null, boxProps = {}, d
     const [viewingPostId, setViewingPostId] = useState<string | null>(null)
 
     const [getUserPosts, userPosts] = useLazyQuery<GetPostsForUserQueryType>(GET_POSTS_FOR_USER)
+
+    const [offset, fetchMoreUserPosts] = useFetchMore<GetPostsForUserQueryType>({
+        queryResult: userPosts,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getPostsForUser: {
+                    ...existing.getPostsForUser,
+                    data: [
+                        ...existing.getPostsForUser.data,
+                        ...incoming.getPostsForUser.data,
+                    ]
+                }
+            }
+        }
+    })
 
     useEffect(() => {
         if (!shouldSkipQuery) {
@@ -44,25 +61,11 @@ export default function UserPostsFeed ({ userId, postId = null, boxProps = {}, d
         if (userPosts.loading || userPosts.error || !userPosts.data) {
             return false
         }
-        return posts.length < userPosts.data.getPostsForUser.total
-    }, [posts, userPosts.loading, userPosts.error])
+        return offset < userPosts.data.getPostsForUser.total
+    }, [offset, userPosts.loading, userPosts.error])
 
     const handleFetchMorePosts = () => {
-        userPosts.fetchMore({
-            variables: { userId, offset: posts.length },
-            updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetPostsForUserQueryType }) {
-                return {
-                    ...existing,
-                    getPostsForUser: {
-                        ...existing.getPostsForUser,
-                        data: [
-                            ...existing.getPostsForUser.data,
-                            ...fetchMoreResult.getPostsForUser.data,
-                        ]
-                    }
-                }
-            }
-        })
+        fetchMoreUserPosts()
     }
 
     const handleClickPost = (postId: string) => {
