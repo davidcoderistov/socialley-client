@@ -36,11 +36,11 @@ export default function UserPostsFeed ({ userId, postId = null, boxProps = {}, d
                 }
             }
         }
-    })
+    }, 6)
 
     useEffect(() => {
         if (!shouldSkipQuery) {
-            getUserPosts({ variables: { userId, offset: 0, limit: 10 } })
+            getUserPosts({ variables: { userId, offset: 0, limit: 6 } })
         }
     }, [shouldSkipQuery, userId])
 

@@ -34,11 +34,11 @@ export default function UserLikedPostsFeed ({ boxProps = {}, dense = false, shou
                 }
             }
         }
-    })
+    }, 6)
 
     useEffect(() => {
         if (!shouldSkipQuery && !userLikedPosts.called) {
-            getUserLikedPosts({ variables: { offset: 0, limit: 10 } })
+            getUserLikedPosts({ variables: { offset: 0, limit: 6 } })
         }
     }, [shouldSkipQuery])
 

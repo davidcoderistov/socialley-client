@@ -34,11 +34,11 @@ export default function UserFavoritePostsFeed ({ boxProps = {}, dense = false, s
                 }
             }
         }
-    })
+    }, 6)
 
     useEffect(() => {
         if (!shouldSkipQuery && !userFavoritePosts.called) {
-            getUserFavoritePosts({ variables: { offset: 0, limit: 10 } })
+            getUserFavoritePosts({ variables: { offset: 0, limit: 6 } })
         }
     }, [shouldSkipQuery])
 
