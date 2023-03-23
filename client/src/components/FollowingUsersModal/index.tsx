@@ -26,7 +26,7 @@ export default function FollowingUsersModal (props: Props) {
         skip: !props.open || !props.userId,
     })
 
-    const [offset, fetchMoreFollowingUsers] = useFetchMore({
+    const [offset, fetchMoreFollowingUsers] = useFetchMore<GetFollowingForUserQueryType>({
         queryResult: followingUsers,
         updateQuery (existing, incoming) {
             return {
