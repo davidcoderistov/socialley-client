@@ -5,8 +5,8 @@ import _debounce from 'lodash/debounce'
 export const useInfiniteScroll = <T extends Element>(
     callback: () => void,
     rootMargin = '0px',
-    threshold = 1,
-    debounceInterval = 500
+    threshold = 0.3,
+    debounceInterval = 300
 ): ((node: T | null) => void) => {
     const observer = useRef<IntersectionObserver | null>(null)
     const handleIntersect = useCallback(
