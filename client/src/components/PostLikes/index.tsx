@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { useSnackbar } from 'notistack'
 import { useLazyQuery } from '@apollo/client'
+import { useFetchMore } from '../../hooks/misc'
 import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import { GET_USERS_WHO_LIKED_POST } from '../../graphql/queries/posts'
 import { GetUsersWhoLikedPostQueryType } from '../../graphql/types/queries/posts'
@@ -22,11 +23,26 @@ export default function PostLikes (props: Props) {
 
     const { enqueueSnackbar } = useSnackbar()
 
-    const [offset, setOffset] = useState(0)
     const [isUserLikesModalOpen, setIsUserLikesModalOpen] = useState(false)
     const [isInitialLoading, setIsInitialLoading] = useState(false)
 
     const [getUsersWhoLikedPost, usersWhoLikedPost] = useLazyQuery<GetUsersWhoLikedPostQueryType>(GET_USERS_WHO_LIKED_POST)
+
+    const [offset, fetchMoreUsersWhoLikedPost] = useFetchMore<GetUsersWhoLikedPostQueryType>({
+        queryResult: usersWhoLikedPost,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getUsersWhoLikedPost: {
+                    ...existing.getUsersWhoLikedPost,
+                    data: [
+                        ...existing.getUsersWhoLikedPost.data,
+                        ...incoming.getUsersWhoLikedPost.data,
+                    ]
+                }
+            }
+        }
+    })
 
     const followUser = useFollowUser()
     const unfollowUser = useUnfollowUser()
@@ -42,31 +58,13 @@ export default function PostLikes (props: Props) {
                     limit: 10,
                 }
             }).finally(() => {
-                setOffset(10)
                 setIsInitialLoading(false)
             })
         }
     }
 
     const handleFetchMoreUsers = () => {
-        usersWhoLikedPost.fetchMore({
-            variables: {
-                offset,
-                limit: 10,
-            },
-            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetUsersWhoLikedPostQueryType }) {
-                return {
-                    ...existing,
-                    getUsersWhoLikedPost: {
-                        ...existing.getUsersWhoLikedPost,
-                        data: [
-                            ...existing.getUsersWhoLikedPost.data,
-                            ...fetchMoreResult.getUsersWhoLikedPost.data,
-                        ]
-                    }
-                }
-            }
-        }).then(() => setOffset(offset + 10))
+        fetchMoreUsersWhoLikedPost()
     }
 
     const updatePostQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
