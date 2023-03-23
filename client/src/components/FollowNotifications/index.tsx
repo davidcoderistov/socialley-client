@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useInfiniteScroll } from '../../hooks/misc'
+import { useInfiniteScroll, useFetchMore } from '../../hooks/misc'
 import { useFollowNotificationUser, useUnfollowNotificationUser } from '../../hooks/graphql/users'
 import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import { GET_FOLLOW_NOTIFICATIONS_FOR_USER } from '../../graphql/queries/users'
@@ -22,7 +22,6 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
 
     const client = useApolloClient()
 
-    const [offset, setOffset] = useState(3)
     const [followsTotal, setFollowsTotal] = useState(0)
     const [isFollowsTotalSet, setIsFollowsTotalSet] = useState(false)
 
@@ -30,6 +29,22 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
     const unfollowUser = useUnfollowNotificationUser()
 
     const followNotifications = useQuery<GetFollowNotificationsForUserQueryType>(GET_FOLLOW_NOTIFICATIONS_FOR_USER)
+
+    const [offset, fetchMoreFollowNotifications] = useFetchMore<GetFollowNotificationsForUserQueryType>({
+        queryResult: followNotifications,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getFollowNotificationsForUser: {
+                    ...existing.getFollowNotificationsForUser,
+                    data: _uniqBy([
+                        ...existing.getFollowNotificationsForUser.data,
+                        ...incoming.getFollowNotificationsForUser.data,
+                    ], followNotification => followNotification.followableUser.user._id)
+                }
+            }
+        }
+    }, 10, 3)
 
     const follows = useMemo(() => {
         if (!followNotifications.loading && !followNotifications.error && followNotifications.data) {
@@ -44,25 +59,6 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
             setIsFollowsTotalSet(true)
         }
     }, [followNotifications.loading, followNotifications.error, followNotifications.data, isFollowsTotalSet])
-
-    const fetchMoreFollowNotifications = () => {
-        const limit = follows.length > 3 ? 5 : 10
-        followNotifications.fetchMore({
-            variables: { offset, limit },
-            updateQuery (existing, { fetchMoreResult } : { fetchMoreResult: GetFollowNotificationsForUserQueryType }) {
-                return {
-                    ...existing,
-                    getFollowNotificationsForUser: {
-                        ...existing.getFollowNotificationsForUser,
-                        data: _uniqBy([
-                            ...existing.getFollowNotificationsForUser.data,
-                            ...fetchMoreResult.getFollowNotificationsForUser.data,
-                        ], followNotification => followNotification.followableUser.user._id)
-                    }
-                }
-            }
-        }).then(() => setOffset(offset + limit))
-    }
 
     const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMoreFollowNotifications)
 
