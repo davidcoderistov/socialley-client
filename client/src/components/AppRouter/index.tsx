@@ -13,6 +13,8 @@ import {
 } from '../../graphql/types/mutations/auth'
 import { setStorageLoggedInUser } from '../../localStorage'
 import { isInvalidSessionError } from '../../utils'
+import Box from '@mui/material/Box'
+import ReactLoading from 'react-loading'
 import SignedInRouter from '../SignedInRouter'
 import LoginPage from '../../pages/LoginPage'
 import SignUpPage from '../../pages/SignUpPage'
@@ -129,9 +131,21 @@ export default function AppRouter () {
     return (
         <>
             { loadingInitialUser ? (
-                <div>
-                    LOADING
-                </div>
+                <Box
+                    component='div'
+                    width='100%'
+                    height='100vh'
+                    display='flex'
+                    flexDirection='column'
+                    justifyContent='center'
+                    alignItems='center'
+                >
+                    <ReactLoading
+                        type='spinningBubbles'
+                        color='#a94064'
+                        height='200px'
+                        width='200px' />
+                </Box>
             ) : loggedInUser ? (
                 <AppContext.Provider value={{ loggedInUser, setLoggedInUser, isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited }}>
                     <SignedInRouter />
