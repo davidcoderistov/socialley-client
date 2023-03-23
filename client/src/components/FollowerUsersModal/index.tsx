@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
 import { useSnackbar } from 'notistack'
+import { useFetchMore } from '../../hooks/misc'
 import FollowableUsersModal from '../FollowableUsersModal'
 import { GET_FOLLOWERS_FOR_USER } from '../../graphql/queries/users'
 import { GetFollowersForUserQueryType } from '../../graphql/types/queries/users'
@@ -18,7 +19,6 @@ export default function FollowerUsersModal (props: Props) {
 
     const { enqueueSnackbar } = useSnackbar()
 
-    const [offset, setOffset] = useState(10)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
 
     const followerUsers = useQuery<GetFollowersForUserQueryType>(GET_FOLLOWERS_FOR_USER, {
@@ -26,32 +26,34 @@ export default function FollowerUsersModal (props: Props) {
         skip: !props.open || !props.userId,
     })
 
+    const [offset, fetchMoreFollowerUsers] = useFetchMore<GetFollowersForUserQueryType>({
+        queryResult: followerUsers,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getFollowersForUser: {
+                    ...existing.getFollowersForUser,
+                    data: [
+                        ...existing.getFollowersForUser.data,
+                        ...incoming.getFollowersForUser.data,
+                    ]
+                }
+            }
+        }
+    })
+
     const followUser = useFollowUser()
     const unfollowUser = useUnfollowUser()
 
     const handleFetchMoreUsers = () => {
-        setIsLoadingMore(true)
-        followerUsers.fetchMore({
-            variables: {
-                offset,
-                limit: 10,
+        fetchMoreFollowerUsers({
+            onStart () {
+                setIsLoadingMore(true)
             },
-            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetFollowersForUserQueryType }) {
-                return {
-                    ...existing,
-                    getFollowersForUser: {
-                        ...existing.getFollowersForUser,
-                        data: [
-                            ...existing.getFollowersForUser.data,
-                            ...fetchMoreResult.getFollowersForUser.data,
-                        ]
-                    }
-                }
+            onFinally () {
+                setIsLoadingMore(false)
             }
         })
-            .then(() => setOffset(offset + 10))
-            .catch(console.log)
-            .finally(() => setIsLoadingMore(false))
     }
 
     const updateFollowerUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
