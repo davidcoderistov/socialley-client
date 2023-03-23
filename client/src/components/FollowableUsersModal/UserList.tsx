@@ -1,8 +1,8 @@
 import React from 'react'
+import { useInfiniteScroll } from '../../hooks/misc'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import FollowUserDetails from '../FollowUserDetails'
-import InfiniteScroll from 'react-infinite-scroll-component'
 import _range from 'lodash/range'
 
 
@@ -29,6 +29,8 @@ interface Props {
 
 export default function UserList (props: Props) {
 
+    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(props.onFetchMoreUsers)
+
     return (
         <Box
             id='scrollableLikingUserList'
@@ -46,24 +48,7 @@ export default function UserList (props: Props) {
                     dark
                     isUserLoading={true} />
             )) : (
-                <InfiniteScroll
-                    next={props.onFetchMoreUsers}
-                    hasMore={props.hasMoreUsers}
-                    loader={
-                        <Box
-                            component='div'
-                            display='flex'
-                            flexDirection='row'
-                            justifyContent='center'
-                            alignItems='flex-start'
-                            height='50px'
-                        >
-                            <CircularProgress size={30} sx={{ color: '#FFFFFF', mt: 1 }} />
-                        </Box>
-                    }
-                    dataLength={props.users.length}
-                    scrollableTarget='scrollableLikingUserList'
-                >
+                <>
                     { props.users.map(user => (
                         <FollowUserDetails
                             key={user._id}
@@ -74,7 +59,20 @@ export default function UserList (props: Props) {
                             onClickUser={props.onClickUser}
                         />
                     )) }
-                </InfiniteScroll>
+                    { props.hasMoreUsers && (
+                        <Box
+                            ref={infiniteScrollRef}
+                            component='div'
+                            display='flex'
+                            flexDirection='row'
+                            justifyContent='center'
+                            alignItems='flex-start'
+                            height='50px'
+                        >
+                            <CircularProgress size={30} sx={{ color: '#FFFFFF', mt: 1 }} />
+                        </Box>
+                    )}
+                </>
             )}
         </Box>
     )
