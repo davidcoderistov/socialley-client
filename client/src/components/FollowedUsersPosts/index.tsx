@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useFollowUser, useUnfollowUser } from '../../hooks/graphql/users'
-import { useInfiniteScroll } from '../../hooks/misc'
+import { useInfiniteScroll, useFetchMore } from '../../hooks/misc'
 import {
     useLikeComment,
     useUnlikeComment,
@@ -63,7 +63,21 @@ export default function FollowedUsersPosts (props: BoxProps) {
         notifyOnNetworkStatusChange: true,
     })
 
-    const [offset, setOffset] = useState(0)
+    const [offset, fetchMoreFollowedUsersPosts] = useFetchMore<GetFollowedUsersPostsQueryType>({
+        queryResult: followedUsersPosts,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getFollowedUsersPosts: {
+                    ...existing.getFollowedUsersPosts,
+                    data: [
+                        ...existing.getFollowedUsersPosts.data,
+                        ...incoming.getFollowedUsersPosts.data,
+                    ]
+                }
+            }
+        }
+    }, 4)
 
     const hasMoreFollowedUsersPosts = useMemo(() => {
         if (!followedUsersPosts.error) {
@@ -76,26 +90,7 @@ export default function FollowedUsersPosts (props: BoxProps) {
 
     const handleFetchMoreFollowedUsersPosts = () => {
         if (!followedUsersPosts.loading) {
-            followedUsersPosts.fetchMore({
-                variables: {
-                    offset,
-                    limit: 4,
-                },
-                updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetFollowedUsersPostsQueryType }) {
-                    return {
-                        ...existing,
-                        getFollowedUsersPosts: {
-                            ...existing.getFollowedUsersPosts,
-                            data: [
-                                ...existing.getFollowedUsersPosts.data,
-                                ...fetchMoreResult.getFollowedUsersPosts.data,
-                            ]
-                        }
-                    }
-                }
-            }).finally(() => {
-                setOffset(offset + 4)
-            })
+            fetchMoreFollowedUsersPosts()
         }
     }
 
@@ -110,7 +105,6 @@ export default function FollowedUsersPosts (props: BoxProps) {
             }
         }).finally(() => {
             setIsFollowedUsersPostsInitialLoading(false)
-            setOffset(4)
         })
     }, [])
 
