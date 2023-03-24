@@ -22,7 +22,8 @@ export default function UserPostsFeed ({ userId, postId = null, boxProps = {}, d
 
     const [getUserPosts, userPosts] = useLazyQuery<GetPostsForUserQueryType>(GET_POSTS_FOR_USER)
 
-    const [offset, fetchMoreUserPosts] = useFetchMore<GetPostsForUserQueryType>({
+    const fetchMoreUserPosts = useFetchMore<GetPostsForUserQueryType>({
+        queryName: 'getPostsForUser',
         queryResult: userPosts,
         updateQuery (existing, incoming) {
             return {
@@ -36,7 +37,7 @@ export default function UserPostsFeed ({ userId, postId = null, boxProps = {}, d
                 }
             }
         }
-    }, 6)
+    })
 
     useEffect(() => {
         if (!shouldSkipQuery) {
@@ -61,11 +62,18 @@ export default function UserPostsFeed ({ userId, postId = null, boxProps = {}, d
         if (userPosts.loading || userPosts.error || !userPosts.data) {
             return false
         }
-        return offset < userPosts.data.getPostsForUser.total
-    }, [offset, userPosts.loading, userPosts.error])
+        return userPosts.data.getPostsForUser.data.length < userPosts.data.getPostsForUser.total
+    }, [userPosts.data, userPosts.loading, userPosts.error])
 
     const handleFetchMorePosts = () => {
-        fetchMoreUserPosts()
+        if (userPosts.data) {
+            fetchMoreUserPosts({
+                variables: {
+                    offset: userPosts.data.getPostsForUser.data.length,
+                    limit: 6,
+                }
+            })
+        }
     }
 
     const handleClickPost = (postId: string) => {
