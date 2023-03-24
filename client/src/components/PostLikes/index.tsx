@@ -28,7 +28,8 @@ export default function PostLikes (props: Props) {
 
     const [getUsersWhoLikedPost, usersWhoLikedPost] = useLazyQuery<GetUsersWhoLikedPostQueryType>(GET_USERS_WHO_LIKED_POST)
 
-    const [offset, fetchMoreUsersWhoLikedPost] = useFetchMore<GetUsersWhoLikedPostQueryType>({
+    const fetchMoreUsersWhoLikedPost = useFetchMore<GetUsersWhoLikedPostQueryType>({
+        queryName: 'getUsersWhoLikedPost',
         queryResult: usersWhoLikedPost,
         updateQuery (existing, incoming) {
             return {
@@ -64,7 +65,14 @@ export default function PostLikes (props: Props) {
     }
 
     const handleFetchMoreUsers = () => {
-        fetchMoreUsersWhoLikedPost()
+        if (usersWhoLikedPost.data) {
+            fetchMoreUsersWhoLikedPost({
+                variables: {
+                    offset: usersWhoLikedPost.data.getUsersWhoLikedPost.data.length,
+                    limit: 10,
+                }
+            })
+        }
     }
 
     const updatePostQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
@@ -204,7 +212,7 @@ export default function PostLikes (props: Props) {
                 isInitialLoading={isInitialLoading}
                 isMoreLoading={usersWhoLikedPost.loading}
                 hasMoreUsers={usersWhoLikedPost.data ?
-                    offset < usersWhoLikedPost.data.getUsersWhoLikedPost.total : false}
+                    usersWhoLikedPost.data.getUsersWhoLikedPost.data.length < usersWhoLikedPost.data.getUsersWhoLikedPost.total : false}
                 onFetchMoreUsers={handleFetchMoreUsers}
                 onFollowUser={handleFollowUser}
                 onUnfollowUser={handleUnfollowUser}
