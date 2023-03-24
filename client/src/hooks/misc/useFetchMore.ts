@@ -1,61 +1,52 @@
-import { useState } from 'react'
+import { useContext } from 'react'
 import { QueryResult } from '@apollo/client'
+import AppContext from '../../config/context'
 
 
-const generateUniqueKey = (variables: { [key:string]: any } = {}) =>
-    Object.keys(variables).sort().map(key => {
+const generateUniqueKey = (queryName: string, variables: { [key:string]: any } = {}) => {
+    const variablesKey = Object.keys(variables).sort().map(key => {
         const value = variables[key]
         return `${key}-${value}`
     }).join(':')
 
+    return `${queryName}-${variablesKey}`
+}
+
 export const useFetchMore = <T>(
-    { queryResult, updateQuery }: {
+    { queryName, queryResult, updateQuery }: {
+        queryName: string,
         queryResult: QueryResult<T>,
         updateQuery: (existing: T, incoming: T) => T,
-    },
-    limit: number = 10,
-    initialOffset?: number
+    }
 ) => {
 
-    const [offset, setOffset] = useState(typeof initialOffset === 'number' ? initialOffset : limit)
-    const [trackQuery, setTrackQuery] = useState(new Map<string, boolean>)
+    const { queryTracker, setQueryTracker } = useContext(AppContext)
 
-    const fetchMore = (fetchMoreArgs?: {
-        variables?: { [key: string]: any }
+    return (fetchMoreArgs: {
+        variables: { [key: string]: any }
         onStart?: () => void
         onSuccess?: () => void
         onError?: () => void
         onFinally?: () => void
     }) => {
 
-        const variables = fetchMoreArgs?.variables || {}
-        const key = generateUniqueKey({
-            offset,
-            ...variables,
-        })
-        if (!trackQuery.has(key)) {
-            setTrackQuery(trackQuery => new Map(trackQuery).set(key, true))
-            fetchMoreArgs?.onStart?.()
+        const key = generateUniqueKey(queryName, fetchMoreArgs.variables)
+        if (!queryTracker.has(key)) {
+            setQueryTracker(queryTracker => new Map(queryTracker).set(key, true))
+            fetchMoreArgs.onStart?.()
             queryResult.fetchMore({
-                variables: {
-                    offset,
-                    limit,
-                    ...variables,
-                },
+                variables: fetchMoreArgs.variables,
                 updateQuery: (existing, { fetchMoreResult }: { fetchMoreResult: T }) => updateQuery(existing, fetchMoreResult)
             })
                 .then(() => {
-                    setOffset(offset => offset + limit)
-                    fetchMoreArgs?.onSuccess?.()
+                    fetchMoreArgs.onSuccess?.()
                 })
                 .catch(() => {
-                    fetchMoreArgs?.onError?.()
+                    fetchMoreArgs.onError?.()
                 })
                 .finally(() => {
-                    fetchMoreArgs?.onFinally?.()
+                    fetchMoreArgs.onFinally?.()
                 })
         }
     }
-
-    return [offset, fetchMore] as const
 }
