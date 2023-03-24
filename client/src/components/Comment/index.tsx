@@ -49,7 +49,8 @@ export default function Comment (props: CommentProps) {
 
     const [getUsersWhoLikedComment, usersWhoLikedComment] = useLazyQuery<GetUsersWhoLikedCommentQueryType>(GET_USERS_WHO_LIKED_COMMENT)
 
-    const [offset, fetchMoreUsersWhoLikedComment] = useFetchMore<GetUsersWhoLikedCommentQueryType>({
+    const fetchMoreUsersWhoLikedComment = useFetchMore<GetUsersWhoLikedCommentQueryType>({
+        queryName: 'getUsersWhoLikedComment',
         queryResult: usersWhoLikedComment,
         updateQuery (existing, incoming) {
             return {
@@ -64,6 +65,7 @@ export default function Comment (props: CommentProps) {
             }
         }
     })
+
     const followUser = useFollowUser()
     const unfollowUser = useUnfollowUser()
 
@@ -85,7 +87,14 @@ export default function Comment (props: CommentProps) {
     }
 
     const handleFetchMoreUsers = () => {
-        fetchMoreUsersWhoLikedComment()
+        if (usersWhoLikedComment.data) {
+            fetchMoreUsersWhoLikedComment({
+                variables: {
+                    offset: usersWhoLikedComment.data.getUsersWhoLikedComment.data.length,
+                    limit: 10,
+                }
+            })
+        }
     }
 
     const updateCommentQueryFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
@@ -377,7 +386,7 @@ export default function Comment (props: CommentProps) {
                 isInitialLoading={isInitialLoading}
                 isMoreLoading={usersWhoLikedComment.loading}
                 hasMoreUsers={usersWhoLikedComment.data ?
-                    offset < usersWhoLikedComment.data.getUsersWhoLikedComment.total : false}
+                    usersWhoLikedComment.data.getUsersWhoLikedComment.data.length < usersWhoLikedComment.data.getUsersWhoLikedComment.total : false}
                 onFetchMoreUsers={handleFetchMoreUsers}
                 onFollowUser={handleFollowUser}
                 onUnfollowUser={handleUnfollowUser}
