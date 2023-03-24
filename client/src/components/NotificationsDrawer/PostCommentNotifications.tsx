@@ -22,7 +22,8 @@ export default function PostCommentNotifications (props: PostCommentNotification
 
     const postCommentNotifications = useQuery<GetPostCommentNotificationsForUserQueryType>(GET_POST_COMMENT_NOTIFICATIONS_FOR_USER)
 
-    const [offset, fetchMorePostCommentNotifications] = useFetchMore<GetPostCommentNotificationsForUserQueryType>({
+    const fetchMorePostCommentNotifications = useFetchMore<GetPostCommentNotificationsForUserQueryType>({
+        queryName: 'getPostCommentNotificationsForUser',
         queryResult: postCommentNotifications,
         updateQuery (existing, incoming) {
             return {
@@ -36,7 +37,7 @@ export default function PostCommentNotifications (props: PostCommentNotification
                 }
             }
         }
-    }, 10, 3)
+    })
 
     const comments = useMemo(() => {
         if (!postCommentNotifications.loading && !postCommentNotifications.error && postCommentNotifications.data) {
@@ -52,7 +53,18 @@ export default function PostCommentNotifications (props: PostCommentNotification
         return 0
     }, [postCommentNotifications.loading, postCommentNotifications.error, postCommentNotifications.data])
 
-    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMorePostCommentNotifications)
+    const handleFetchMorePostCommentNotifications = () => {
+        if (postCommentNotifications.data) {
+            fetchMorePostCommentNotifications({
+                variables: {
+                    offset: postCommentNotifications.data.getPostCommentNotificationsForUser.data.length,
+                    limit: 10,
+                }
+            })
+        }
+    }
+
+    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(handleFetchMorePostCommentNotifications)
 
     useSubscription<PostCommentedSubscriptionType>(POST_COMMENTED_SUBSCRIPTION, {
         onData ({ data }) {
@@ -100,7 +112,7 @@ export default function PostCommentNotifications (props: PostCommentNotification
                         createdAt={comment.createdAt} />
                 </Box>
             )) }
-            { offset < commentsTotal && (
+            { postCommentNotifications.data && postCommentNotifications.data.getPostCommentNotificationsForUser.data.length < commentsTotal && (
                 <Box
                     ref={infiniteScrollRef}
                     component='div'
