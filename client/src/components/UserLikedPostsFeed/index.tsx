@@ -20,7 +20,8 @@ export default function UserLikedPostsFeed ({ boxProps = {}, dense = false, shou
 
     const [getUserLikedPosts, userLikedPosts] = useLazyQuery<GetLikedPostsForUserQueryType>(GET_LIKED_POSTS_FOR_USER)
 
-    const [offset, fetchMoreUserLikedPosts] = useFetchMore<GetLikedPostsForUserQueryType>({
+    const fetchMoreUserLikedPosts = useFetchMore<GetLikedPostsForUserQueryType>({
+        queryName: 'getLikedPostsForUser',
         queryResult: userLikedPosts,
         updateQuery (existing, incoming) {
             return {
@@ -34,7 +35,7 @@ export default function UserLikedPostsFeed ({ boxProps = {}, dense = false, shou
                 }
             }
         }
-    }, 6)
+    })
 
     useEffect(() => {
         if (!shouldSkipQuery && !userLikedPosts.called) {
@@ -53,11 +54,18 @@ export default function UserLikedPostsFeed ({ boxProps = {}, dense = false, shou
         if (userLikedPosts.loading || userLikedPosts.error || !userLikedPosts.data) {
             return false
         }
-        return offset < userLikedPosts.data.getLikedPostsForUser.total
-    }, [offset, userLikedPosts.loading, userLikedPosts.error])
+        return userLikedPosts.data.getLikedPostsForUser.data.length < userLikedPosts.data.getLikedPostsForUser.total
+    }, [userLikedPosts.data, userLikedPosts.loading, userLikedPosts.error])
 
     const handleFetchMorePosts = () => {
-        fetchMoreUserLikedPosts()
+        if (userLikedPosts.data) {
+            fetchMoreUserLikedPosts({
+                variables: {
+                    offset: userLikedPosts.data.getLikedPostsForUser.data.length,
+                    limit: 6,
+                }
+            })
+        }
     }
 
     const handleClickPost = (postId: string) => {
