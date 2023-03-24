@@ -30,7 +30,8 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
 
     const followNotifications = useQuery<GetFollowNotificationsForUserQueryType>(GET_FOLLOW_NOTIFICATIONS_FOR_USER)
 
-    const [offset, fetchMoreFollowNotifications] = useFetchMore<GetFollowNotificationsForUserQueryType>({
+    const fetchMoreFollowNotifications = useFetchMore<GetFollowNotificationsForUserQueryType>({
+        queryName: 'getFollowNotificationsForUser',
         queryResult: followNotifications,
         updateQuery (existing, incoming) {
             return {
@@ -44,7 +45,7 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
                 }
             }
         }
-    }, 10, 3)
+    })
 
     const follows = useMemo(() => {
         if (!followNotifications.loading && !followNotifications.error && followNotifications.data) {
@@ -60,7 +61,18 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
         }
     }, [followNotifications.loading, followNotifications.error, followNotifications.data, isFollowsTotalSet])
 
-    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMoreFollowNotifications)
+    const handleFetchMoreFollowNotifications = () => {
+        if (followNotifications.data) {
+            fetchMoreFollowNotifications({
+                variables: {
+                    offset: followNotifications.data.getFollowNotificationsForUser.data.length,
+                    limit: 10,
+                }
+            })
+        }
+    }
+
+    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(handleFetchMoreFollowNotifications)
 
     const handleFollowUser = (userId: string, event: React.MouseEvent) => {
         event.stopPropagation()
@@ -118,7 +130,7 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
                         onUnfollowUser={handleUnfollowUser} />
                 </Box>
             )) }
-            { offset < followsTotal && (
+            { followNotifications.data && followNotifications.data.getFollowNotificationsForUser.data.length < followsTotal && (
                 <Box
                     ref={infiniteScrollRef}
                     component='div'
