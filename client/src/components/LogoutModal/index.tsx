@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
 import { useApolloClient, useMutation } from '@apollo/client'
@@ -10,6 +10,7 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import IconButton from '@mui/material/IconButton'
 import UserAvatar from '../UserAvatar'
 import { Close } from '@mui/icons-material'
+import AppContext from '../../config/context'
 
 
 interface Props {
@@ -24,6 +25,7 @@ export default function LogoutModal (props: Props) {
     const { enqueueSnackbar } = useSnackbar()
 
     const [loggedInUser, setLoggedInUser] = useLoggedInUser()
+    const { setQueryTracker } = useContext(AppContext)
 
     const [loading, setLoading] = useState(false)
 
@@ -35,6 +37,7 @@ export default function LogoutModal (props: Props) {
             client.clearStore().then(() => {
                 setLoading(false)
                 setLoggedInUser(null)
+                setQueryTracker(new Map<string, boolean>())
                 props.onCloseModal()
             })
         }).catch(() => {
