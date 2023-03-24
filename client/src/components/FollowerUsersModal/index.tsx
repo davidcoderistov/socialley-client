@@ -26,7 +26,8 @@ export default function FollowerUsersModal (props: Props) {
         skip: !props.open || !props.userId,
     })
 
-    const [offset, fetchMoreFollowerUsers] = useFetchMore<GetFollowersForUserQueryType>({
+    const fetchMoreFollowerUsers = useFetchMore<GetFollowersForUserQueryType>({
+        queryName: 'getFollowersForUser',
         queryResult: followerUsers,
         updateQuery (existing, incoming) {
             return {
@@ -46,14 +47,20 @@ export default function FollowerUsersModal (props: Props) {
     const unfollowUser = useUnfollowUser()
 
     const handleFetchMoreUsers = () => {
-        fetchMoreFollowerUsers({
-            onStart () {
-                setIsLoadingMore(true)
-            },
-            onFinally () {
-                setIsLoadingMore(false)
-            }
-        })
+        if (followerUsers.data) {
+            fetchMoreFollowerUsers({
+                variables: {
+                    offset: followerUsers.data.getFollowersForUser.data.length,
+                    limit: 10,
+                },
+                onStart () {
+                    setIsLoadingMore(true)
+                },
+                onFinally () {
+                    setIsLoadingMore(false)
+                }
+            })
+        }
     }
 
     const updateFollowerUserFollowingLoadingStatus = (userId: string, isFollowingLoading: boolean) => {
@@ -119,7 +126,7 @@ export default function FollowerUsersModal (props: Props) {
             isInitialLoading={followerUsers.loading}
             isMoreLoading={isLoadingMore}
             hasMoreUsers={followerUsers.data ?
-                offset < followerUsers.data.getFollowersForUser.total : false}
+                followerUsers.data.getFollowersForUser.data.length < followerUsers.data.getFollowersForUser.total : false}
             onFetchMoreUsers={handleFetchMoreUsers}
             onFollowUser={handleFollowUser}
             onUnfollowUser={handleUnfollowUser}
