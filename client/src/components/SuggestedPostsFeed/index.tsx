@@ -19,7 +19,8 @@ export default function SuggestedPostsFeed ({ boxProps = {} }: { boxProps?: BoxP
         }
     })
 
-    const [offset, fetchMoreSuggestedPosts] = useFetchMore<GetSuggestedPostsQueryType>({
+    const fetchMoreSuggestedPosts = useFetchMore<GetSuggestedPostsQueryType>({
+        queryName: 'getSuggestedPosts',
         queryResult: suggestedPosts,
         updateQuery (existing, incoming) {
             return {
@@ -33,7 +34,7 @@ export default function SuggestedPostsFeed ({ boxProps = {} }: { boxProps?: BoxP
                 }
             }
         }
-    }, 6)
+    })
 
     const posts = useMemo(() => {
         if (suggestedPosts.data) {
@@ -46,11 +47,18 @@ export default function SuggestedPostsFeed ({ boxProps = {} }: { boxProps?: BoxP
         if (suggestedPosts.loading || suggestedPosts.error || !suggestedPosts.data) {
             return false
         }
-        return offset < suggestedPosts.data.getSuggestedPosts.total
-    }, [offset, suggestedPosts.loading, suggestedPosts.error])
+        return suggestedPosts.data.getSuggestedPosts.data.length < suggestedPosts.data.getSuggestedPosts.total
+    }, [suggestedPosts.data, suggestedPosts.loading, suggestedPosts.error])
 
     const handleFetchMorePosts = () => {
-        fetchMoreSuggestedPosts()
+        if (suggestedPosts.data) {
+            fetchMoreSuggestedPosts({
+                variables: {
+                    offset: suggestedPosts.data.getSuggestedPosts.data.length,
+                    limit: 6,
+                }
+            })
+        }
     }
 
     const handleClickPost = (postId: string) => {
