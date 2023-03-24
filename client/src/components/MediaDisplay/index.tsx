@@ -72,7 +72,7 @@ export default function MediaDisplay ({ items, backgroundColor = '#262626', minH
                             >
                                 {_range(3).map(itemIndex => (
                                     <Box
-                                        key={index * chunkedItems.length + itemIndex}
+                                        key={itemIndex < itemsChunk.length ? itemsChunk[itemIndex]._id : index * chunkedItems.length + itemIndex}
                                         component='div'
                                         flex='1 0 0%'
                                         display='block'
