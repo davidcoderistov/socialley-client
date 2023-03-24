@@ -1,3 +1,4 @@
+import React from 'react'
 import { createContext } from 'react'
 import { User } from '../types'
 
@@ -8,7 +9,7 @@ export interface AppContext {
     isSuggestedUsersPageVisited: boolean
     setIsSuggestedUsersPageVisited: (visited: boolean) => void
     queryTracker: Map<string, boolean>
-    setQueryTracker: (queryTracker: Map<string, boolean>) => void
+    setQueryTracker: React.Dispatch<React.SetStateAction<Map<string, boolean>>>
 }
 
 export default createContext<AppContext>({
