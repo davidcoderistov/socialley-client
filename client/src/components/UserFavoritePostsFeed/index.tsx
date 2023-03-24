@@ -20,7 +20,8 @@ export default function UserFavoritePostsFeed ({ boxProps = {}, dense = false, s
 
     const [getUserFavoritePosts, userFavoritePosts] = useLazyQuery<GetFavoritePostsForUserQueryType>(GET_FAVORITE_POSTS_FOR_USER)
 
-    const [offset, fetchMoreUserFavoritePosts] = useFetchMore<GetFavoritePostsForUserQueryType>({
+    const fetchMoreUserFavoritePosts = useFetchMore<GetFavoritePostsForUserQueryType>({
+        queryName: 'getFavoritePostsForUser',
         queryResult: userFavoritePosts,
         updateQuery (existing, incoming) {
             return {
@@ -34,7 +35,7 @@ export default function UserFavoritePostsFeed ({ boxProps = {}, dense = false, s
                 }
             }
         }
-    }, 6)
+    })
 
     useEffect(() => {
         if (!shouldSkipQuery && !userFavoritePosts.called) {
@@ -53,11 +54,18 @@ export default function UserFavoritePostsFeed ({ boxProps = {}, dense = false, s
         if (userFavoritePosts.loading || userFavoritePosts.error || !userFavoritePosts.data) {
             return false
         }
-        return offset < userFavoritePosts.data.getFavoritePostsForUser.total
-    }, [offset, userFavoritePosts.loading, userFavoritePosts.error])
+        return userFavoritePosts.data.getFavoritePostsForUser.data.length < userFavoritePosts.data.getFavoritePostsForUser.total
+    }, [userFavoritePosts.data, userFavoritePosts.loading, userFavoritePosts.error])
 
     const handleFetchMorePosts = () => {
-        fetchMoreUserFavoritePosts()
+        if (userFavoritePosts.data) {
+            fetchMoreUserFavoritePosts({
+                variables: {
+                    offset: userFavoritePosts.data.getFavoritePostsForUser.data.length,
+                    limit: 6,
+                }
+            })
+        }
     }
 
     const handleClickPost = (postId: string) => {
