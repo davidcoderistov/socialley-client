@@ -63,7 +63,8 @@ export default function FollowedUsersPosts (props: BoxProps) {
         notifyOnNetworkStatusChange: true,
     })
 
-    const [offset, fetchMoreFollowedUsersPosts] = useFetchMore<GetFollowedUsersPostsQueryType>({
+    const fetchMoreFollowedUsersPosts = useFetchMore<GetFollowedUsersPostsQueryType>({
+        queryName: 'getFollowedUsersPosts',
         queryResult: followedUsersPosts,
         updateQuery (existing, incoming) {
             return {
@@ -77,20 +78,25 @@ export default function FollowedUsersPosts (props: BoxProps) {
                 }
             }
         }
-    }, 4)
+    })
 
     const hasMoreFollowedUsersPosts = useMemo(() => {
         if (!followedUsersPosts.error) {
             if (followedUsersPosts.data) {
-                return offset < followedUsersPosts.data.getFollowedUsersPosts.total
+                return followedUsersPosts.data.getFollowedUsersPosts.data.length < followedUsersPosts.data.getFollowedUsersPosts.total
             }
         }
         return false
-    }, [followedUsersPosts, offset])
+    }, [followedUsersPosts])
 
     const handleFetchMoreFollowedUsersPosts = () => {
-        if (!followedUsersPosts.loading) {
-            fetchMoreFollowedUsersPosts()
+        if (!followedUsersPosts.loading && followedUsersPosts.data) {
+            fetchMoreFollowedUsersPosts({
+                variables: {
+                    offset: followedUsersPosts.data.getFollowedUsersPosts.data.length,
+                    limit: 4,
+                }
+            })
         }
     }
 
