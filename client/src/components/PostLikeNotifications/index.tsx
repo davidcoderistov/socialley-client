@@ -26,7 +26,8 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
 
     const postLikeNotifications = useQuery<GetPostLikeNotificationsForUserQueryType>(GET_POST_LIKE_NOTIFICATIONS_FOR_USER)
 
-    const [offset, fetchMorePostLikeNotifications] = useFetchMore<GetPostLikeNotificationsForUserQueryType>({
+    const fetchMorePostLikeNotifications = useFetchMore<GetPostLikeNotificationsForUserQueryType>({
+        queryName: 'getPostLikeNotificationsForUser',
         queryResult: postLikeNotifications,
         updateQuery (existing, incoming) {
             return {
@@ -41,7 +42,7 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
                 }
             }
         }
-    }, 10, 3)
+    })
 
     const likes = useMemo(() => {
         if (!postLikeNotifications.loading && !postLikeNotifications.error && postLikeNotifications.data) {
@@ -57,7 +58,18 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
         }
     }, [postLikeNotifications.loading, postLikeNotifications.error, postLikeNotifications.data, isLikesTotalSet])
 
-    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(fetchMorePostLikeNotifications)
+    const handleFetchMorePostLikeNotifications = () => {
+        if (postLikeNotifications.data) {
+            fetchMorePostLikeNotifications({
+                variables: {
+                    offset: postLikeNotifications.data.getPostLikeNotificationsForUser.data.length,
+                    limit: 10,
+                }
+            })
+        }
+    }
+
+    const infiniteScrollRef = useInfiniteScroll<HTMLDivElement>(handleFetchMorePostLikeNotifications)
 
     useSubscription<PostLikedSubscriptionType>(POST_LIKED_SUBSCRIPTION, {
         onData ({ data }) {
@@ -105,7 +117,7 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
                         createdAt={like.createdAt} />
                 </Box>
             )) }
-            { offset < likesTotal && (
+            { postLikeNotifications.data && postLikeNotifications.data.getPostLikeNotificationsForUser.data.length < likesTotal && (
                 <Box
                     ref={infiniteScrollRef}
                     component='div'
