@@ -7,11 +7,15 @@ export interface AppContext {
     setLoggedInUser: (user: User | null) => void
     isSuggestedUsersPageVisited: boolean
     setIsSuggestedUsersPageVisited: (visited: boolean) => void
+    queryTracker: Map<string, boolean>
+    setQueryTracker: (queryTracker: Map<string, boolean>) => void
 }
 
 export default createContext<AppContext>({
     loggedInUser: null,
     setLoggedInUser: () => {},
     isSuggestedUsersPageVisited: false,
-    setIsSuggestedUsersPageVisited: () => {}
+    setIsSuggestedUsersPageVisited: () => {},
+    queryTracker: new Map<string, boolean>(),
+    setQueryTracker: () => {},
 })

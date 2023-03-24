@@ -25,6 +25,7 @@ export default function AppRouter () {
 
     const [loggedInUser, setUser] = useState<User | null>(null)
     const [isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited] = useState(false)
+    const [queryTracker, setQueryTracker] = useState<Map<string, boolean>>(new Map<string, boolean>())
     const [sessionModalOpen, setSessionModalOpen] = useState(false)
 
     const [refresh] = useMutation<RefreshMutationType>(REFRESH)
@@ -147,11 +148,25 @@ export default function AppRouter () {
                         width='200px' />
                 </Box>
             ) : loggedInUser ? (
-                <AppContext.Provider value={{ loggedInUser, setLoggedInUser, isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited }}>
+                <AppContext.Provider value={{
+                    loggedInUser,
+                    setLoggedInUser,
+                    isSuggestedUsersPageVisited,
+                    setIsSuggestedUsersPageVisited,
+                    queryTracker,
+                    setQueryTracker,
+                }}>
                     <SignedInRouter />
                 </AppContext.Provider>
             ) : (
-                <AppContext.Provider value={{ loggedInUser, setLoggedInUser, isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited }}>
+                <AppContext.Provider value={{
+                    loggedInUser,
+                    setLoggedInUser,
+                    isSuggestedUsersPageVisited,
+                    setIsSuggestedUsersPageVisited,
+                    queryTracker,
+                    setQueryTracker,
+                }}>
                     <Routes>
                         <Route path='/login' element={
                             <LoginPage />
