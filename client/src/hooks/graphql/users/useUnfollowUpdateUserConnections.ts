@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client'
+import { useContext } from 'react'
 import { useLoggedInUser } from '../../misc'
 import {
     GET_USER_DETAILS,
@@ -13,11 +14,14 @@ import {
 import userDetailsMutations from '../../../apollo/mutations/users/userDetails'
 import followingForUserMutations from '../../../apollo/mutations/users/followingForUser'
 import followersForUserMutations from '../../../apollo/mutations/users/followersForUser'
+import { QueryTrackerContext } from '../../../providers/QueryTrackerProvider'
 
 
 export function useUnfollowUpdateUserConnections () {
 
     const client = useApolloClient()
+
+    const { untrackQuery } = useContext(QueryTrackerContext)
 
     const [loggedInUser] = useLoggedInUser()
 
@@ -45,6 +49,7 @@ export function useUnfollowUpdateUserConnections () {
                 })
                 if (!updateQuery.success) {
                     client.cache.evict({ fieldName: 'getFollowingForUser', args: { userId: loggedInUser._id }})
+                    untrackQuery('getFollowingForUser', { name: 'userId', value: loggedInUser._id })
                 } else {
                     return updateQuery.followingUsers
                 }
@@ -73,6 +78,7 @@ export function useUnfollowUpdateUserConnections () {
                 })
                 if (!updateQuery.success) {
                     client.cache.evict({ fieldName: 'getFollowersForUser', args: { userId }})
+                    untrackQuery('getFollowersForUser', { name: 'userId', value: userId })
                 } else {
                     return updateQuery.followerUsers
                 }
