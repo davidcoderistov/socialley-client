@@ -10,7 +10,7 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import IconButton from '@mui/material/IconButton'
 import UserAvatar from '../UserAvatar'
 import { Close } from '@mui/icons-material'
-import AppContext from '../../config/context'
+import { QueryTrackerContext } from '../../providers/QueryTrackerProvider'
 
 
 interface Props {
@@ -24,8 +24,9 @@ export default function LogoutModal (props: Props) {
 
     const { enqueueSnackbar } = useSnackbar()
 
+    const { clearQueryTracker } = useContext(QueryTrackerContext)
+
     const [loggedInUser, setLoggedInUser] = useLoggedInUser()
-    const { setQueryTracker } = useContext(AppContext)
 
     const [loading, setLoading] = useState(false)
 
@@ -37,7 +38,7 @@ export default function LogoutModal (props: Props) {
             client.clearStore().then(() => {
                 setLoading(false)
                 setLoggedInUser(null)
-                setQueryTracker(new Map<string, boolean>())
+                clearQueryTracker()
                 props.onCloseModal()
             })
         }).catch(() => {
