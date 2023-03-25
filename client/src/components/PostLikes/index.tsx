@@ -70,6 +70,9 @@ export default function PostLikes (props: Props) {
                 variables: {
                     offset: usersWhoLikedPost.data.getUsersWhoLikedPost.data.length,
                     limit: 10,
+                },
+                keyVariables: {
+                    postId: props.postId,
                 }
             })
         }

@@ -71,6 +71,9 @@ export default function UserPostsFeed ({ userId, postId = null, boxProps = {}, d
                 variables: {
                     offset: userPosts.data.getPostsForUser.data.length,
                     limit: 6,
+                },
+                keyVariables: {
+                    userId,
                 }
             })
         }

@@ -48,10 +48,14 @@ export default function FollowerUsersModal (props: Props) {
 
     const handleFetchMoreUsers = () => {
         if (followerUsers.data) {
+            const userId = props.userId as string
             fetchMoreFollowerUsers({
                 variables: {
                     offset: followerUsers.data.getFollowersForUser.data.length,
                     limit: 10,
+                },
+                keyVariables: {
+                    userId
                 },
                 onStart () {
                     setIsLoadingMore(true)

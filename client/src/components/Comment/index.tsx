@@ -87,11 +87,14 @@ export default function Comment (props: CommentProps) {
     }
 
     const handleFetchMoreUsers = () => {
-        if (usersWhoLikedComment.data) {
+        if (usersWhoLikedComment.data && !props.loading) {
             fetchMoreUsersWhoLikedComment({
                 variables: {
                     offset: usersWhoLikedComment.data.getUsersWhoLikedComment.data.length,
                     limit: 10,
+                },
+                keyVariables: {
+                    commentId: props.comment._id
                 }
             })
         }
