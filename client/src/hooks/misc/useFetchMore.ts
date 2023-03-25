@@ -1,16 +1,7 @@
 import { useContext } from 'react'
 import { QueryResult } from '@apollo/client'
-import AppContext from '../../config/context'
+import { QueryTrackerContext } from '../../providers/QueryTrackerProvider'
 
-
-const generateUniqueKey = (queryName: string, variables: { [key:string]: any } = {}) => {
-    const variablesKey = Object.keys(variables).sort().map(key => {
-        const value = variables[key]
-        return `${key}-${value}`
-    }).join(':')
-
-    return `${queryName}:${variablesKey}`
-}
 
 export const useFetchMore = <T>(
     { queryName, queryResult, updateQuery }: {
@@ -20,7 +11,7 @@ export const useFetchMore = <T>(
     }
 ) => {
 
-    const { queryTracker, setQueryTracker } = useContext(AppContext)
+    const { trackQueryEntry, hasQueryEntry } = useContext(QueryTrackerContext)
 
     return (fetchMoreArgs: {
         variables: { [key: string]: any }
@@ -31,12 +22,12 @@ export const useFetchMore = <T>(
         onFinally?: () => void
     }) => {
         const keyVariables = fetchMoreArgs.keyVariables || {}
-        const key = generateUniqueKey(queryName, {
+        const queryVariables = {
             ...fetchMoreArgs.variables,
-            ...keyVariables,
-        })
-        if (!queryTracker.has(key)) {
-            setQueryTracker(queryTracker => new Map(queryTracker).set(key, true))
+            ...keyVariables
+        }
+        if (!hasQueryEntry(queryName, queryVariables)) {
+            trackQueryEntry(queryName, queryVariables)
             fetchMoreArgs.onStart?.()
             queryResult.fetchMore({
                 variables: fetchMoreArgs.variables,
