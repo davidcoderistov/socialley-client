@@ -9,7 +9,7 @@ const generateUniqueKey = (queryName: string, variables: { [key:string]: any } =
         return `${key}-${value}`
     }).join(':')
 
-    return `${queryName}-${variablesKey}`
+    return `${queryName}:${variablesKey}`
 }
 
 export const useFetchMore = <T>(
