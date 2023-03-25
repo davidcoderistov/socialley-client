@@ -24,13 +24,17 @@ export const useFetchMore = <T>(
 
     return (fetchMoreArgs: {
         variables: { [key: string]: any }
+        keyVariables?: { [key: string]: any }
         onStart?: () => void
         onSuccess?: () => void
         onError?: () => void
         onFinally?: () => void
     }) => {
-
-        const key = generateUniqueKey(queryName, fetchMoreArgs.variables)
+        const keyVariables = fetchMoreArgs.keyVariables || {}
+        const key = generateUniqueKey(queryName, {
+            ...fetchMoreArgs.variables,
+            ...keyVariables,
+        })
         if (!queryTracker.has(key)) {
             setQueryTracker(queryTracker => new Map(queryTracker).set(key, true))
             fetchMoreArgs.onStart?.()
