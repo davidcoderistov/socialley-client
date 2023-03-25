@@ -8,8 +8,6 @@ export interface AppContext {
     setLoggedInUser: (user: User | null) => void
     isSuggestedUsersPageVisited: boolean
     setIsSuggestedUsersPageVisited: (visited: boolean) => void
-    queryTracker: Map<string, boolean>
-    setQueryTracker: React.Dispatch<React.SetStateAction<Map<string, boolean>>>
 }
 
 export default createContext<AppContext>({
@@ -17,6 +15,4 @@ export default createContext<AppContext>({
     setLoggedInUser: () => {},
     isSuggestedUsersPageVisited: false,
     setIsSuggestedUsersPageVisited: () => {},
-    queryTracker: new Map<string, boolean>(),
-    setQueryTracker: () => {},
 })
