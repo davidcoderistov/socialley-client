@@ -27,7 +27,7 @@ export default function MediaUpload (props: Props) {
                 variant='h6'
                 color='#FFFFFF'
                 marginBottom='20px'
-            >Upload photos and videos here</Typography>
+            >Upload your photos here</Typography>
             <Button
                 variant='contained'
                 color='primary'
@@ -35,7 +35,7 @@ export default function MediaUpload (props: Props) {
                 sx={{ textTransform: 'none' }}
             >
                 Select from computer
-                <FileUpload mimeTypes={['image/jpeg', 'image/png', 'video/mp4']} onChangeFile={props.onChangeFile} />
+                <FileUpload mimeTypes={['image/jpeg', 'image/png']} onChangeFile={props.onChangeFile} />
             </Button>
         </Box>
     )
