@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useFetchMore } from '../../hooks/misc'
 import { useQuery } from '@apollo/client'
 import { useFollowSuggestedUser } from '../../hooks/graphql/users'
 import { GET_SUGGESTED_USERS } from '../../graphql/queries/users'
@@ -15,6 +16,23 @@ export default function SuggestedUsersPage () {
         fetchPolicy: 'cache-only'
     })
 
+    const fetchMoreSuggestedUsers = useFetchMore<GetSuggestedUsersQueryType>({
+        queryName: 'getSuggestedUsers',
+        queryResult: suggestedUsers,
+        updateQuery (existing, incoming) {
+            return {
+                ...existing,
+                getSuggestedUsers: {
+                    ...existing.getSuggestedUsers,
+                    data: [
+                        ...existing.getSuggestedUsers.data,
+                        ...incoming.getSuggestedUsers.data,
+                    ]
+                }
+            }
+        }
+    })
+
     const [{ followUser, unfollowUser }] = useFollowSuggestedUser()
 
     const handleFollowUser = (userId: string) => {
@@ -26,23 +44,11 @@ export default function SuggestedUsersPage () {
     }
 
     useEffect(() => {
-        suggestedUsers.fetchMore({
+        fetchMoreSuggestedUsers({
             variables: {
                 offset: 5,
                 limit: 10,
             },
-            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetSuggestedUsersQueryType }) {
-                return {
-                    ...existing,
-                    getSuggestedUsers: {
-                        ...existing.getSuggestedUsers,
-                        data: [
-                            ...existing.getSuggestedUsers.data,
-                            ...fetchMoreResult.getSuggestedUsers.data,
-                        ]
-                    }
-                }
-            }
         })
     }, [])
 
