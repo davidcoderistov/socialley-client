@@ -24,7 +24,10 @@ export default function PostLikeNotifications (props: PostLikeNotificationsProps
     const [likesTotal, setLikesTotal] = useState(0)
     const [isLikesTotalSet, setIsLikesTotalSet] = useState(false)
 
-    const postLikeNotifications = useQuery<GetPostLikeNotificationsForUserQueryType>(GET_POST_LIKE_NOTIFICATIONS_FOR_USER)
+    const postLikeNotifications = useQuery<GetPostLikeNotificationsForUserQueryType>(
+        GET_POST_LIKE_NOTIFICATIONS_FOR_USER,
+        { skip: !props.visible }
+    )
 
     const fetchMorePostLikeNotifications = useFetchMore<GetPostLikeNotificationsForUserQueryType>({
         queryName: 'getPostLikeNotificationsForUser',

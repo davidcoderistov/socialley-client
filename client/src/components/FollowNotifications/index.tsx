@@ -28,7 +28,10 @@ export default function FollowNotifications (props: FollowNotificationsProps) {
     const followUser = useFollowNotificationUser()
     const unfollowUser = useUnfollowNotificationUser()
 
-    const followNotifications = useQuery<GetFollowNotificationsForUserQueryType>(GET_FOLLOW_NOTIFICATIONS_FOR_USER)
+    const followNotifications = useQuery<GetFollowNotificationsForUserQueryType>(
+        GET_FOLLOW_NOTIFICATIONS_FOR_USER,
+        { skip: !props.visible }
+    )
 
     const fetchMoreFollowNotifications = useFetchMore<GetFollowNotificationsForUserQueryType>({
         queryName: 'getFollowNotificationsForUser',

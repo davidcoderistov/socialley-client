@@ -20,7 +20,10 @@ export default function PostCommentNotifications (props: PostCommentNotification
 
     const client = useApolloClient()
 
-    const postCommentNotifications = useQuery<GetPostCommentNotificationsForUserQueryType>(GET_POST_COMMENT_NOTIFICATIONS_FOR_USER)
+    const postCommentNotifications = useQuery<GetPostCommentNotificationsForUserQueryType>(
+        GET_POST_COMMENT_NOTIFICATIONS_FOR_USER,
+        { skip: !props.visible }
+    )
 
     const fetchMorePostCommentNotifications = useFetchMore<GetPostCommentNotificationsForUserQueryType>({
         queryName: 'getPostCommentNotificationsForUser',
