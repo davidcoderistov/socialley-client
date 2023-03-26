@@ -51,7 +51,7 @@ export const QueryTrackerContext = createContext<QueryTrackerContextI>({
 
 export default function QueryTrackerProvider (props: { children: React.ReactNode }) {
 
-    const queryTrackerRef = useRef(new Map<string, boolean>)
+    const queryTrackerRef = useRef(new Map())
 
     const trackQueryEntry = (queryName: string, variables: Variables) => {
         const key = getKey(queryName, variables)
