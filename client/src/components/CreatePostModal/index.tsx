@@ -211,7 +211,7 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                         <LoadingButton
                             variant='text'
                             color='primary'
-                            sx={{ textTransform: 'none', '.MuiLoadingButton-loadingIndicator': { color: '#FFFFFF' }}}
+                            sx={{ textTransform: 'none', '.MuiLoadingButton-loadingIndicator': { color: '#1976d2' }}}
                             loading={loading}
                             onClick={onShare}
                         >Share</LoadingButton>
