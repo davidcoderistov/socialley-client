@@ -1,5 +1,4 @@
-import React, { useEffect, useContext } from 'react'
-import AppContext from '../../config/context'
+import React, { useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 import { useFollowSuggestedUser } from '../../hooks/graphql/users'
 import { GET_SUGGESTED_USERS } from '../../graphql/queries/users'
@@ -11,8 +10,6 @@ import FollowUserDetails from '../../components/FollowUserDetails'
 
 
 export default function SuggestedUsersPage () {
-
-    const { isSuggestedUsersPageVisited, setIsSuggestedUsersPageVisited } = useContext(AppContext)
 
     const suggestedUsers = useQuery<GetSuggestedUsersQueryType>(GET_SUGGESTED_USERS, {
         fetchPolicy: 'cache-only'
@@ -29,28 +26,25 @@ export default function SuggestedUsersPage () {
     }
 
     useEffect(() => {
-        if (!isSuggestedUsersPageVisited) {
-            suggestedUsers.fetchMore({
-                variables: {
-                    offset: 5,
-                    limit: 10,
-                },
-                updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetSuggestedUsersQueryType }) {
-                    return {
-                        ...existing,
-                        getSuggestedUsers: {
-                            ...existing.getSuggestedUsers,
-                            data: [
-                                ...existing.getSuggestedUsers.data,
-                                ...fetchMoreResult.getSuggestedUsers.data,
-                            ]
-                        }
+        suggestedUsers.fetchMore({
+            variables: {
+                offset: 5,
+                limit: 10,
+            },
+            updateQuery (existing, { fetchMoreResult }: { fetchMoreResult: GetSuggestedUsersQueryType }) {
+                return {
+                    ...existing,
+                    getSuggestedUsers: {
+                        ...existing.getSuggestedUsers,
+                        data: [
+                            ...existing.getSuggestedUsers.data,
+                            ...fetchMoreResult.getSuggestedUsers.data,
+                        ]
                     }
                 }
-            })
-            setIsSuggestedUsersPageVisited(true)
-        }
-    }, [isSuggestedUsersPageVisited])
+            }
+        })
+    }, [])
 
     return (
         <Box
