@@ -34,6 +34,7 @@ const PostPreview = React.forwardRef((props: { url: string | null, containerProp
                     paddingBottom='15px'
                 >
                     <TextField
+                        inputRef={inputRef}
                         label='Post title'
                         variant='outlined'
                         fullWidth
