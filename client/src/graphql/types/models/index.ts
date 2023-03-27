@@ -87,7 +87,6 @@ export interface Post {
     _id: string
     title: string | null
     photoURL: string
-    videoURL: string | null
     createdAt: number
 }
 

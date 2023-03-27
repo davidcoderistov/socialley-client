@@ -10,7 +10,6 @@ export const GET_FOLLOWED_USERS_POSTS = gql`
                         _id
                         title
                         photoURL
-                        videoURL
                         createdAt
                     }
                     followableUser {
@@ -122,7 +121,6 @@ export const GET_POSTS_FOR_USER = gql`
             data {
                 _id
                 photoURL
-                videoURL
             }
             total
         }
@@ -135,7 +133,6 @@ export const GET_LIKED_POSTS_FOR_USER = gql`
             data {
                 _id
                 photoURL
-                videoURL
             }
             total
         }
@@ -148,7 +145,6 @@ export const GET_FAVORITE_POSTS_FOR_USER = gql`
             data {
                 _id
                 photoURL
-                videoURL
             }
             total
         }
@@ -162,7 +158,6 @@ export const GET_POST_DETAILS = gql`
                 _id
                 title
                 photoURL
-                videoURL
                 createdAt
             }
             followableUser {
@@ -195,7 +190,6 @@ export const GET_SUGGESTED_POSTS = gql`
             data {
                 _id
                 photoURL
-                videoURL
             }
             total
         }

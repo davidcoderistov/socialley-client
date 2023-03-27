@@ -8,7 +8,6 @@ export const CREATE_POST = gql`
                 _id
                 title
                 photoURL
-                videoURL
                 createdAt
             }
             followableUser {
