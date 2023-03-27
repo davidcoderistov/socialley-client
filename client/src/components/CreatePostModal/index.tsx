@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { useApolloClient, useMutation } from '@apollo/client'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
@@ -9,14 +9,11 @@ import { CreatePostMutationType } from '../../graphql/types/mutations/posts'
 import Dialog from '@mui/material/Dialog'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import LoadingButton from '@mui/lab/LoadingButton'
 import IconButton from '@mui/material/IconButton'
 import { Close, ArrowBack } from '@mui/icons-material'
 import MediaUpload from './MediaUpload'
-import ThumbnailPicker from './ThumbnailPicker'
 import PostPreview from './PostPreview'
-import { createFileFromBase64 } from '../../utils'
 import { addFollowedUserPost } from '../../apollo/mutations/posts/followedUsersPosts'
 import { addPostForUser } from '../../apollo/mutations/posts/postsForUser'
 
@@ -38,22 +35,13 @@ export default function CreatePostModal (props: CreatePostModalProps) {
 
     const [step, setStep] = useState<number>(0)
     const [imageFile, setImageFile] = useState<File | null>(null)
-    const [videoFile, setVideoFile] = useState<File | null>(null)
-    const [coverPhotoUrl, setCoverPhotoUrl] = useState<string | null>(null)
-    const [coverPhotoFile, setCoverPhotoFile] = useState<File | null>(null)
-    const [nextDisabled, setNextDisabled] = useState(true)
     const [thumbnailPickerKey, setThumbnailPickerKey] = useState(1111)
     const [postPreviewKey, setPostPreviewKey] = useState(9999)
 
-    const thumbnailPickerRef = React.createRef<{ getSelectedCoverPhotoUrl: () => string | null }>()
     const postPreviewRef = React.createRef<{ getPostText: () => string }>()
 
-    const handleUploadFile = (file: File, isVideo: boolean) => {
-        if (isVideo) {
-            setVideoFile(file)
-        } else {
-            setImageFile(file)
-        }
+    const handleUploadFile = (file: File) => {
+        setImageFile(file)
         setStep(step + 1)
     }
 
@@ -61,40 +49,23 @@ export default function CreatePostModal (props: CreatePostModalProps) {
         const currStep = step - 1
         if (currStep <= 0) {
             setImageFile(null)
-            setVideoFile(null)
-            setCoverPhotoUrl(null)
-            setCoverPhotoFile(null)
-            setNextDisabled(true)
             setThumbnailPickerKey(thumbnailPickerKey + 1)
             setPostPreviewKey(postPreviewKey + 1)
         }
         setStep(currStep)
     }
 
-    const onClickNext = () => {
-        const coverPhotoUrl = thumbnailPickerRef?.current?.getSelectedCoverPhotoUrl()
-        if (coverPhotoUrl) {
-            setCoverPhotoUrl(coverPhotoUrl)
-            setCoverPhotoFile(createFileFromBase64(coverPhotoUrl, 'Cover photo'))
-        }
-        setStep(step + 1)
-    }
-
     const onShare = () => {
         const postText = postPreviewRef.current?.getPostText() ?? ''
-        let photo = null, video = null
+        let photo = null
         if (imageFile) {
             photo = imageFile
-        } else if (videoFile && coverPhotoFile) {
-            photo = coverPhotoFile
-            video = videoFile
         }
         createPost({
             variables: {
                 post: {
                     title: postText,
                     photo,
-                    video,
                 }
             },
             context: {
@@ -134,25 +105,6 @@ export default function CreatePostModal (props: CreatePostModalProps) {
         })
     }
 
-    const onUploadCoverPhoto = (file: File) => {
-        setCoverPhotoUrl(URL.createObjectURL(file))
-        setCoverPhotoFile(file)
-        setStep(step + 1)
-    }
-
-    const onCoverPhotosGenerated = () => {
-        setNextDisabled(false)
-    }
-
-    const width: number = useMemo(() => {
-        if (videoFile && step === 1) {
-            return 650
-        }
-        return 600
-    }, [step, videoFile])
-
-    const showThumbnailPicker = useMemo(() => step === 1 && videoFile, [step, videoFile])
-
     return (
         <Dialog
             open={props.open}
@@ -161,9 +113,9 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                 sx: {
                     backgroundColor: '#262626',
                     borderRadius: '20px',
-                    maxWidth: width,
+                    maxWidth: 600,
                     paddingBottom: '10px',
-                    height: videoFile && step === 1 ? 400 : 500
+                    height: 500
                 }
             }}
         >
@@ -197,17 +149,9 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                         <Box component='div' />
                     )}
                     <Typography color='#FFFFFF'>
-                        { step === 1 && videoFile ? 'Choose cover photo' : 'Create new post' }
+                        Create new post
                     </Typography>
-                    { step > 0 ? step === 1 && videoFile ? (
-                        <Button
-                            variant='text'
-                            color='primary'
-                            sx={{ textTransform: 'none' }}
-                            disabled={nextDisabled}
-                            onClick={onClickNext}
-                        >Next</Button>
-                    ) : (
+                    { step > 0 ? (
                         <LoadingButton
                             variant='text'
                             color='primary'
@@ -228,18 +172,12 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                 { step === 0 && (
                     <MediaUpload onChangeFile={handleUploadFile} />
                 )}
-                <ThumbnailPicker
-                    key={thumbnailPickerKey}
-                    ref={thumbnailPickerRef}
-                    file={videoFile}
-                    onCoverPhotosGenerated={onCoverPhotosGenerated}
-                    onUploadFile={onUploadCoverPhoto}
-                    containerProps={showThumbnailPicker ? {} : { display: 'none' }} />
-                <PostPreview
-                    key={postPreviewKey}
-                    ref={postPreviewRef}
-                    url={videoFile ? coverPhotoUrl : imageFile ? URL.createObjectURL(imageFile) : null}
-                    containerProps={step > 0 && !showThumbnailPicker ? {} : { display: 'none' }} />
+                { step === 1 && (
+                    <PostPreview
+                        key={postPreviewKey}
+                        ref={postPreviewRef}
+                        url={imageFile ? URL.createObjectURL(imageFile) : null} />
+                )}
             </Box>
         </Dialog>
     )
