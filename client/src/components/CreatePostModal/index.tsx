@@ -113,9 +113,10 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                 sx: {
                     backgroundColor: '#262626',
                     borderRadius: '20px',
-                    maxWidth: 600,
-                    paddingBottom: '10px',
-                    height: 500
+                    maxWidth: 500,
+                    paddingBottom: '15px',
+                    paddingX: '15px',
+                    height: 550
                 }
             }}
         >
