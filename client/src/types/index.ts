@@ -20,7 +20,6 @@ export interface PostDetails {
     _id: string
     title: string | null
     photoURL: string
-    videoURL: string | null
     user: {
         _id: string
         firstName: string

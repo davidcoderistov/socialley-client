@@ -9,7 +9,6 @@ import _range from 'lodash/range'
 interface Post {
     _id: string
     photoURL: string
-    videoURL: string | null
 }
 
 interface PostsFeedProps {

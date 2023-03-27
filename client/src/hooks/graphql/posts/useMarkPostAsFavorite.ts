@@ -29,7 +29,6 @@ export function useMarkPostAsFavorite () {
                 _id: postDetails._id,
                 title: postDetails.title,
                 photoURL: postDetails.photoURL,
-                videoURL: postDetails.videoURL,
             })
         }).catch(() => {
             updatePostDetailsFavoriteLoadingStatus(postId, false)

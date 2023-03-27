@@ -2,7 +2,6 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import PostUserView from '../PostUserView'
 import ImageDisplay from '../ImageDisplay'
-import PostVideoPlayer from '../PostVideoPlayer'
 import PostActions from '../PostActions'
 import PostLikes from '../PostLikes'
 import { FollowedUserPost } from '../../types'
@@ -107,9 +106,7 @@ export default function Post (props: Props) {
                     flexDirection='column'
                     position='relative'
                 >
-                    { !props.loading ? props.post.videoURL ? (
-                        <PostVideoPlayer minHeight={300} />
-                    ) : (
+                    { !props.loading ? (
                         <ImageDisplay
                             url={props.post.photoURL}
                             aspectRatioPercentage={100} />

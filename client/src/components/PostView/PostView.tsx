@@ -4,14 +4,10 @@ import Backdrop from '@mui/material/Backdrop'
 import IconButton from '@mui/material/IconButton'
 import { Close } from '@mui/icons-material'
 import ImageDisplay from '../ImageDisplay'
-import PostVideoPlayer from '../PostVideoPlayer'
 import PostDetails from './PostDetails'
 import { PostDetails as PostDetailsI } from '../../types'
 import { Comment } from '../../graphql/types/models'
 
-
-const IMAGE_POST_CONTAINER_WIDTH = 66
-const VIDEO_POST_CONTAINER_WIDTH = 75
 
 interface Props {
     postDetails: PostDetailsI | null
@@ -32,8 +28,6 @@ interface Props {
 }
 
 export default function PostView (props: Props) {
-
-    const isImg = !props.postDetails?.videoURL
 
     const handleClickBackdrop = (event: React.MouseEvent) => {
         event.stopPropagation()
@@ -81,7 +75,7 @@ export default function PostView (props: Props) {
             </Box>
             <Box
                 component='div'
-                width={`${isImg ? IMAGE_POST_CONTAINER_WIDTH : VIDEO_POST_CONTAINER_WIDTH}%`}
+                width='66%'
             >
                 <Box
                     component='div'
@@ -154,9 +148,7 @@ export default function PostView (props: Props) {
                                                 position='relative'
                                                 sx={{ pointerEvents: 'none' }}
                                             >
-                                                { !props.isPostDetailsLoading && props.postDetails ? props.postDetails.videoURL ? (
-                                                    <PostVideoPlayer minHeight={300} />
-                                                ) : (
+                                                { !props.isPostDetailsLoading && props.postDetails ? (
                                                     <ImageDisplay
                                                         url={props.postDetails.photoURL} />
                                                 ) : (

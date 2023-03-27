@@ -34,7 +34,6 @@ export function useLikePost () {
                 _id: postDetails._id,
                 title: postDetails.title,
                 photoURL: postDetails.photoURL,
-                videoURL: postDetails.videoURL,
             })
         }).catch(() => {
             updatePostDetailsLikedLoadingStatus(postId, false)
