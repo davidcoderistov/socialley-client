@@ -38,7 +38,16 @@ const PostPreview = React.forwardRef((props: { url: string | null, containerProp
                         label='Post title'
                         variant='outlined'
                         fullWidth
-                    />
+                        sx={{
+                            '& label.Mui-focused': {
+                                color: '#FFFFFF'
+                            },
+                            '& .MuiOutlinedInput-root': {
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'inherit'
+                                }
+                            }
+                        }} />
                 </Box>
                 <Box
                     component='div'
