@@ -7,13 +7,16 @@ import { getStorageLoggedInUser } from '../localStorage'
 import { FollowableUser, PostDetails } from '../graphql/types/models'
 
 
+const apiUri = process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api' : 'https://socialley-api/api'
+const wsUrl = process.env.NODE_ENV === 'development' ? 'ws://localhost:5000/api' : 'ws://socialley-api/api'
+
 const httpLink = createHttpLink({
-    uri: 'http://localhost:5000/api',
+    uri: apiUri,
     credentials: 'include',
 })
 
 const uploadLink = createUploadLink({
-    uri: 'http://localhost:5000/api',
+    uri: apiUri,
     headers: {
         'Apollo-Require-Preflight': 'true',
     },
@@ -32,7 +35,7 @@ const authLink = new ApolloLink((operation, forward) => {
 })
 
 const wsLink = new GraphQLWsLink(createClient({
-    url: 'ws://localhost:5000/api',
+    url: wsUrl,
     connectionParams: () => ({
         accessToken: getStorageLoggedInUser()?.accessToken,
     })
