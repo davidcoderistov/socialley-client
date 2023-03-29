@@ -8,7 +8,7 @@ import { FollowableUser, PostDetails } from '../graphql/types/models'
 
 
 const apiUri = process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api' : 'https://socialley-api.onrender.com/api'
-const wsUrl = process.env.NODE_ENV === 'development' ? 'ws://localhost:5000/api' : 'ws://https://socialley-api.onrender.com/api'
+const wsUrl = process.env.NODE_ENV === 'development' ? 'ws://localhost:5000/api' : 'wss://https://socialley-api.onrender.com/api'
 
 const httpLink = createHttpLink({
     uri: apiUri,
