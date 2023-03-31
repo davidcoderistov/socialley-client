@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
-import { useLazyQuery } from '@apollo/client'
-import { GET_IMAGE } from '../../graphql/queries/files'
-import { GetImageQueryType } from '../../graphql/types/queries/files'
 
 
 interface Props extends BoxProps {
@@ -12,28 +9,20 @@ interface Props extends BoxProps {
 
 export default function Image ({url, remote, ...boxProps}: Props) {
 
-    const [fetchImage, data] = useLazyQuery<GetImageQueryType>(GET_IMAGE, {
-        variables: {
-            url
-        }
-    })
     const [loading, setLoading] = useState(false)
 
     const imgUrl = useMemo(() => {
-        if (remote && !data.loading && data.data?.getImage) {
-            return `data:image/jpeg;base64,${data.data.getImage}`
+        if (loading) {
+            return null
         }
-        if (!remote && !loading) {
-            return url
-        }
-        return null
-    }, [remote, data, loading])
+        return url.trim().length > 0 ? url : null
+    }, [url, loading])
 
     useEffect(() => {
-        setLoading(true)
         if (remote) {
             fetchImage()
         } else {
+            setLoading(true)
             const image = new window.Image()
             image.src = url
             image.addEventListener('load', () => {
@@ -48,7 +37,12 @@ export default function Image ({url, remote, ...boxProps}: Props) {
                 image.removeEventListener('error', () => {})
             }
         }
-    }, [url])
+    }, [url, remote])
+
+    const fetchImage = () => {
+        setLoading(true)
+        fetch(url).finally(() => setLoading(false))
+    }
 
     return imgUrl ? (
         <Box
