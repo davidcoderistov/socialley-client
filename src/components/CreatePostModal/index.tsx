@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import { useApolloClient, useMutation } from '@apollo/client'
 import { useLoggedInUser } from '../../hooks/misc'
 import { useSnackbar } from 'notistack'
@@ -38,7 +38,7 @@ export default function CreatePostModal (props: CreatePostModalProps) {
     const [thumbnailPickerKey, setThumbnailPickerKey] = useState(1111)
     const [postPreviewKey, setPostPreviewKey] = useState(9999)
 
-    const postPreviewRef = React.createRef<{ getPostText: () => string }>()
+    const postPreviewRef = useRef<{ getPostText: () => string }>()
 
     const handleUploadFile = (file: File) => {
         setImageFile(file)
@@ -104,6 +104,15 @@ export default function CreatePostModal (props: CreatePostModalProps) {
             console.log(err)
         })
     }
+
+    const postPreview = useMemo(() => {
+        return (
+            <PostPreview
+                key={postPreviewKey}
+                ref={postPreviewRef}
+                url={imageFile ? URL.createObjectURL(imageFile) : null} />
+        )
+    }, [postPreviewKey, postPreviewRef, imageFile])
 
     return (
         <Dialog
@@ -176,12 +185,7 @@ export default function CreatePostModal (props: CreatePostModalProps) {
                 { step === 0 && (
                     <MediaUpload onChangeFile={handleUploadFile} />
                 )}
-                { step === 1 && (
-                    <PostPreview
-                        key={postPreviewKey}
-                        ref={postPreviewRef}
-                        url={imageFile ? URL.createObjectURL(imageFile) : null} />
-                )}
+                { step === 1 && postPreview }
             </Box>
         </Dialog>
     )
