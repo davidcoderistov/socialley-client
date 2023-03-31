@@ -19,9 +19,7 @@ export default function Image ({url, remote, ...boxProps}: Props) {
     }, [url, loading])
 
     useEffect(() => {
-        if (remote) {
-            fetchImage()
-        } else {
+        if (!remote) {
             setLoading(true)
             const image = new window.Image()
             image.src = url
@@ -38,11 +36,6 @@ export default function Image ({url, remote, ...boxProps}: Props) {
             }
         }
     }, [url, remote])
-
-    const fetchImage = () => {
-        setLoading(true)
-        fetch(url).finally(() => setLoading(false))
-    }
 
     return imgUrl ? (
         <Box
